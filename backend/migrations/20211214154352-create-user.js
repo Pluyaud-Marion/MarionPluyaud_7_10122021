@@ -18,6 +18,7 @@ module.exports = {
       },
       email: {
         allowNull: false,
+        unique : true,
         type: Sequelize.STRING
       },
       password: {
@@ -28,13 +29,8 @@ module.exports = {
         allowNull: true,
         type: Sequelize.STRING
       },
-      story: {
-        allowNull: true,
-        type: Sequelize.STRING
-      },
       isadmin: {
         allowNull: false,
-        default : false,
         type: Sequelize.BOOLEAN
       },
       createdAt: {
