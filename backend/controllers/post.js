@@ -4,14 +4,15 @@ const fs = require('fs');
 //importation des modèles
 const model = require("../models");
 
+
 exports.createPost = (req,res,next) => {
-    model.Post.create({
-        UserId : req.body.userId,
-        title : req.body.title,
-        content : req.body.content,
-        attachment : req.body.attachment
-        //attachment : `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    })
+    const postObject = JSON.parse(req.body.post)
+    const post = new model.Post({
+        ...postObject,
+        attachment : `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    });
+
+    post.save()
     .then(()=> res.status(201).json({message : "Publication enregistrée"}))
     .catch(error => res.status(500).json({error}))
 };
