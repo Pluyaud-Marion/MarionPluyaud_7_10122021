@@ -20,7 +20,7 @@ exports.signUp = (req, res, next) => {
             email : emailCryptoJs,
             password : hash,
             job : req.body.job,
-            isAdmin : req.body.isAdmin
+            isadmin : req.body.isadmin
         })
         .then(() => res.status(201).json({message : 'Utilisateur créé et enregistré dans la base de données'}))
         .catch(error => res.status(400).json({error}));
@@ -45,6 +45,7 @@ exports.login = (req, res, next) => {
                     return res.status(400).json({error : "Mot de passe incorrect"})
                 } else {
                     res.status(200).json({
+                        isadmin : user.isadmin,
                         userId : user.id,
                         token : jwt.sign(
                             {userId : user.id},
@@ -58,4 +59,38 @@ exports.login = (req, res, next) => {
         }
     })
     .catch(error => res.status(500).json({error}))
+};
+
+
+// visualiser un profil - retourne firstame, lastname et job
+exports.getOneProfile = (req, res, next) => {
+    model.User.findOne({
+        where : {id : req.params.id},
+        attributes : ["firstname", "lastname", "job"] 
+    })
+    
+    .then(user=> {
+        if (!user) {
+            return res.status(401).json({error : "Cet utilisateur n'existe pas"})
+        } else {
+            res.status(200).json(user);
+        }
+    })
+    .catch(error => res.status(400).json({error}))
+};
+
+//visualiser tous les profils
+exports.getAllProfile = (req, res, next) => {
+    model.User.findAll()
+    .then(allUsers => res.status(200).json(allUsers))
+    .catch(error => res.status(400).json({error}))
+};
+
+//supprime de la db l'utilisateur
+exports.deleteProfile = (req, res, next) => {
+    model.User.destroy({
+        where : {id : req.params.id}
+    })
+    .then(()=> res.status(200).json({message : "Utilisateur supprimé"}))
+    .catch(error => res.status(400).json({error}))
 };
