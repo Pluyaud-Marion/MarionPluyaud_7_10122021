@@ -81,16 +81,28 @@ exports.getOneProfile = (req, res, next) => {
 
 //visualiser tous les profils
 exports.getAllProfile = (req, res, next) => {
-    model.User.findAll()
+    model.User.findAll({
+        order : [['createdAt', 'DESC']] 
+    })
     .then(allUsers => res.status(200).json(allUsers))
     .catch(error => res.status(400).json({error}))
 };
 
 //supprime de la db l'utilisateur
 exports.deleteProfile = (req, res, next) => {
-    model.User.destroy({
-        where : {id : req.params.id}
+    model.User.findOne({
+        where : { id : req.params.id }
     })
-    .then(()=> res.status(200).json({message : "Utilisateur supprimé"}))
-    .catch(error => res.status(400).json({error}))
+    .then(user => {
+        if(user.id === res.locals.token.userId){
+            model.User.destroy({
+                where : { id : req.params.id}
+            })
+            .then(()=> res.status(200).json({message : 'Utilisateur supprimé'}))
+            .catch(error => res.status(403).json({error}))
+        } else {
+            res.status(404).json({message: "Vous n'avez pas l'autorisation de supprimer un autre utilisateur"})
+        }
+    })
+    .catch(error => res.status(400).json({error : "Cet utilisateur n'existe pas"}))
 };
