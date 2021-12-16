@@ -1,4 +1,5 @@
 const http = require('http');
+const db = require('./models')
 
 //importation du package des variables d'environnement
 const dotenv = require('dotenv');
@@ -46,14 +47,19 @@ const errorHandler = error => {
 
 //création du serveur
 const server = http.createServer(app);
-  
-server.on('error', errorHandler);
-server.on('listening', () => {
-    const address = server.address();
-    const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
-    console.log('Listening on ' + bind);
-  });
 
-//serveur écoute les requêtes sur le port défini dans la variable port (variable d'environnement)
-server.listen(port);
+db.sequelize.sync()
+.then(() => {
+  server.on('error', errorHandler);
+  server.on('listening', () => {
+      const address = server.address();
+      const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
+      console.log('Listening on ' + bind);
+    });
+  
+  //serveur écoute les requêtes sur le port défini dans la variable port (variable d'environnement)
+  server.listen(port);
+})
+.catch(error => console.log(error))
+
   
