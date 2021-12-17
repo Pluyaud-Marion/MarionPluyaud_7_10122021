@@ -9,7 +9,8 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      //un User a plusieurs post / un post n'a qu'un user -> clé UserId dans table Post
+      models.User.hasMany(models.Post);
     }
   };
   User.init({

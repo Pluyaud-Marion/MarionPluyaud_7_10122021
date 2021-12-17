@@ -106,3 +106,4 @@ exports.deleteProfile = (req, res, next) => {
     })
     .catch(error => res.status(400).json({error : "Cet utilisateur n'existe pas"}))
 };
+
