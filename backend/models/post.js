@@ -11,29 +11,20 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       /*
-      //un User a plusieurs post / un post n'a qu'un user -> clé UserId dans table Post
-      models.Post.belongsTo(models.User, {
-        //foreignKey : UserId
-        foreignKey: {
-          allowNull: false
-        },
-        onDelete:'CASCADE'
-      })
-      // un Post a plusieur comment / un comment n'a qu'un post
-      models.Post.hasMany(models.Comment)
+      Relation 0 à plusieurs entre Post et Comment
+      un Post peut avoir plusieurs Comment ou 0
       */
-
-      // Relation 1 à plusieurs entre Post et Comment
-      // un Post a plusieurs Comment
-      models.Post.hasMany(models.Comment, {
+      models.Post.hasOne(models.Comment, {
         foreignKey : {
           allowNull : false
         },
         onDelete : 'CASCADE'
       });
 
-      // Relation 1 à plusieurs entre Post et User
-      // un Post appartient à un User
+      /*
+      Relation 0 à plusieurs entre Post et User
+      un Post appartient à un User
+      */
       models.Post.belongsTo(models.User);
     }
   };

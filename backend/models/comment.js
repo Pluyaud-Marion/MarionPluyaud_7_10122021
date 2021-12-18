@@ -10,22 +10,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       /*
-      //un Comment a un post 
-      models.Comment.belongsTo(models.Post, {
-        // clé PostId
-          foreignKey : {
-              allowNull : false
-          },
-          onDelete: 'CASCADE'
-        });
-        */
-    
-      
-      // Relation 1 à plusieurs entre Comment et Post
-      // Comment appartient à Post
+      Relation 0 à plusieurs entre Comment et Post
+      Comment appartient à Post
+      */
       models.Comment.belongsTo(models.Post);
-      // Relation 1 à plusieurs entre Comment et User
-      // Comment appartient à User
+      /*
+      Relation 0 à plusieurs entre Comment et User
+      Comment appartient à User
+      */
       models.Comment.belongsTo(models.User);
     }
   };

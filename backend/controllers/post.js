@@ -24,10 +24,16 @@ exports.createPost = (req,res,next) => {
 
             const postObject = JSON.parse(req.body.post)
 
-            if(postObject.UserId === res.locals.token.userId) {
+            /* 
+            -Condition pour vérifier sécurité avec le middleware auth / mais UserId doit être rajouté dans le body de la requête 
+            -Si condition retirée -> l'UserId pour créer le post peut être celui contenu dans le token
+            */
+           
+           // if(postObject.UserId === res.locals.token.userId) {
                 
                 model.Post.create({
-                    UserId : postObject.UserId,
+                    //UserId : postObject.UserId,
+                    UserId : res.locals.token.userId,
                     title : postObject.title,
                     content: postObject.content,
                     attachment : `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
@@ -40,9 +46,9 @@ exports.createPost = (req,res,next) => {
                 }))
                 
                 .catch(error => res.status(500).json({error}))
-            } else {
-                res.status(404).json({message : "Vous n'êtes pas autorisé à faire ça"})
-            }
+           // } else {
+           //     res.status(404).json({message : "Vous n'êtes pas autorisé à faire ça"})
+           // }
 
         //si le post contient uniquement un fichier
         } else if (req.file) {
