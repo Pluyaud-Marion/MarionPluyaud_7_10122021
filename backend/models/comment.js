@@ -9,13 +9,24 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      //un User a plusieurs post / un post n'a qu'un user -> clé UserId dans table Post
+      /*
+      //un Comment a un post 
       models.Comment.belongsTo(models.Post, {
+        // clé PostId
           foreignKey : {
               allowNull : false
           },
           onDelete: 'CASCADE'
         });
+        */
+    
+      
+      // Relation 1 à plusieurs entre Comment et Post
+      // Comment appartient à Post
+      models.Comment.belongsTo(models.Post);
+      // Relation 1 à plusieurs entre Comment et User
+      // Comment appartient à User
+      models.Comment.belongsTo(models.User);
     }
   };
   Comment.init({

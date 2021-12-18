@@ -126,15 +126,23 @@ exports.deletePost = (req, res, next) => {
 
             // Si le user qui fait la requête supprimer est le user qui a créé le poste -> suppression OK
             if(post.UserId === idToken || userRequest.isadmin === true){
-     
-                const filename = post.attachment.split('/images/')[1];
-                fs.unlink(`images/${filename}`, () => {
+                if(req.file) {
+                    const filename = post.attachment.split('/images/')[1];
+                    fs.unlink(`images/${filename}`, () => {
+                        model.Post.destroy({
+                            where : { id : idParams}
+                        }) 
+                        .then(() => res.status(200).json({message : 'Le post a été supprimé'}))
+                        .catch(error => res.status(400).json({error}));
+                    });
+                } else {
                     model.Post.destroy({
                         where : { id : idParams}
                     }) 
                     .then(() => res.status(200).json({message : 'Le post a été supprimé'}))
                     .catch(error => res.status(400).json({error}));
-                });
+                }
+                
             // Si le user qui fait la requête n'est ni admin, ni celui qui a créé le post -> suppression KO
             } else {
                 res.status(404).json({ error : "Vous n'avez pas l'autorisation de supprimer un post qui ne vous appartient pas"})
@@ -162,27 +170,44 @@ exports.deletePost = (req, res, next) => {
 //             if(post.UserId === res.locals.token.userId){
 //                 console.log(post);
 //                 console.log("je suis l'utilisateur qui a créé le post, pas un admin");
-              
-//                 const filename = post.attachment.split('/images/')[1];
-//                 fs.unlink(`images/${filename}`, () => {
+//                 if (req.file) {
+//                     const filename = post.attachment.split('/images/')[1];
+//                     fs.unlink(`images/${filename}`, () => {
+//                         model.Post.destroy({
+//                             where : { id : req.params.id}
+//                         }) 
+//                         .then(() => res.status(200).json({message : 'Le post a été supprimé'}))
+//                         .catch(error => res.status(400).json({error}));
+//                     });
+//                 } else {
 //                     model.Post.destroy({
 //                         where : { id : req.params.id}
 //                     }) 
 //                     .then(() => res.status(200).json({message : 'Le post a été supprimé'}))
 //                     .catch(error => res.status(400).json({error}));
-//                 });
+//                 }
+                
 //             // Si le user qui fait la requête est un admin -> suppression OK
 //             } else if (userRequest.isadmin === true) {
-//                 const filename = post.attachment.split('/images/')[1];
-            
-//                 //fs.unlink supprime l'image de la base de données
-//                 fs.unlink(`images/${filename}`, () => {
+//                 if (req.file){
+//                     const filename = post.attachment.split('/images/')[1];
+                
+//                     //fs.unlink supprime l'image de la base de données
+//                     fs.unlink(`images/${filename}`, () => {
+//                         model.Post.destroy({
+//                             where : { id : req.params.id} //supprime post par son id de la base de données
+//                         }) 
+//                         .then(() => res.status(200).json({message : 'Le post a été supprimé par un admin'}))
+//                         .catch(error => res.status(400).json({error}))
+//                     });
+//                 } else {
 //                     model.Post.destroy({
 //                         where : { id : req.params.id} //supprime post par son id de la base de données
 //                     }) 
 //                     .then(() => res.status(200).json({message : 'Le post a été supprimé par un admin'}))
 //                     .catch(error => res.status(400).json({error}))
-//                 });
+//                 }
+                
 //             // Si le user qui fait la requête n'est ni admin, ni celui qui a créé le post -> suppression KO
 //             } else {
 //                 res.status(404).json({ error : "Vous n'avez pas l'autorisation de supprimer un post qui ne vous appartient pas"})

@@ -9,8 +9,31 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      /*
       //un User a plusieurs post / un post n'a qu'un user -> clé UserId dans table Post
       models.User.hasMany(models.Post);
+      //un User a plusieurs comment / un comment n'a qu'un post -> clé UserId dans table Comment
+      models.User.hasMany(models.Comment);
+      */
+
+      // Relation 1 à plusieurs entre User et Post
+      // Un User peut faire plusieurs Post
+      models.User.hasMany(models.Post, {
+        foreignKey : {
+          allowNull : false
+        },
+        onDelete : 'CASCADE'
+      });
+
+      //Relation 1 à plusieurs entre User et Comment
+      // Un User peut faire plusieurs Comment
+      models.User.hasMany(models.Comment, {
+        foreignKey : {
+          allowNull : false
+        },
+        onDelete : 'CASCADE'
+      });
+
     }
   };
   User.init({
