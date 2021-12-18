@@ -28,7 +28,7 @@ exports.createPost = (req,res,next) => {
             -Condition pour vérifier sécurité avec le middleware auth / mais UserId doit être rajouté dans le body de la requête 
             -Si condition retirée -> l'UserId pour créer le post peut être celui contenu dans le token
             */
-           
+
            // if(postObject.UserId === res.locals.token.userId) {
                 
                 model.Post.create({
@@ -66,11 +66,16 @@ exports.createPost = (req,res,next) => {
 
         //si le post contient uniquement du texte
         } else if (contentText){
+            /* 
+            -Condition pour vérifier sécurité avec le middleware auth / mais UserId doit être rajouté dans le body de la requête 
+            -Si condition retirée -> l'UserId pour créer le post peut être celui contenu dans le token
+            */
             const postObject = JSON.parse(req.body.post)
 
-            if(postObject.UserId === res.locals.token.userId) {
+            //if(postObject.UserId === res.locals.token.userId) {
                 model.Post.create({
-                    UserId : postObject.UserId,
+                    //UserId : postObject.UserId,
+                    UserId : res.locals.token.userId,
                     title : postObject.title,
                     content: postObject.content
                 })
@@ -79,9 +84,9 @@ exports.createPost = (req,res,next) => {
                     message : "Publication enregistrée sans fichier"
                 }))
                 .catch(error => res.status(500).json({error}))
-            } else {
-                res.status(404).json({message : "Vous n'êtes pas autorisé à faire ça"})
-            }
+            //} else {
+            //    res.status(404).json({message : "Vous n'êtes pas autorisé à faire ça"})
+            //}
             
         }
     })
