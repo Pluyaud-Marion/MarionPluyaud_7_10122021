@@ -1,6 +1,6 @@
 // importation bcrypt
 const bcrypt = require('bcrypt');
-const { mode } = require('crypto-js');
+
 //importation crypto-js
 const cryptojs = require('crypto-js');
 
@@ -10,22 +10,30 @@ const jwt = require('jsonwebtoken');
 //importation des modèles
 const model = require("../models");
 
+// regex validation pour champs firstname, lastname, job dans modèle user
 exports.signUp = (req, res, next) => {
-    const emailCryptoJs = cryptojs.HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`).toString();
-    bcrypt.hash(req.body.password, 10)
-   .then(hash => {
-        model.User.create({
-            firstname: req.body.firstname,
-            lastname : req.body.lastname,
-            email : emailCryptoJs,
-            password : hash,
-            job : req.body.job,
-            isadmin : req.body.isadmin
+    const regexEmail = /^[^@\s]{2,30}@[^@\s]{2,30}\.[^@\s]{2,5}$/
+    const email = req.body.email;
+    // si format email conforme à regex -> cryptage du mail, hashage password et enregistrement dans db
+    if (regexEmail.test(email)) {
+        const emailCryptoJs = cryptojs.HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`).toString();
+        bcrypt.hash(req.body.password, 10)
+        .then(hash => {
+            model.User.create({
+                firstname: req.body.firstname,
+                lastname : req.body.lastname,
+                email : emailCryptoJs,
+                password : hash,
+                job : req.body.job,
+                isadmin : req.body.isadmin
+            })
+            .then(() => res.status(201).json({message : 'Utilisateur créé et enregistré dans la base de données'}))
+            .catch(error => res.status(400).json({error}));
         })
-        .then(() => res.status(201).json({message : 'Utilisateur créé et enregistré dans la base de données'}))
-        .catch(error => res.status(400).json({error}));
-   })
    .catch(error => res.status(500).json({error}));
+    } else {
+        return res.status(404).json({message : "Le format de la requête est invalide"});
+    }
 };
 
 exports.login = (req, res, next) => {

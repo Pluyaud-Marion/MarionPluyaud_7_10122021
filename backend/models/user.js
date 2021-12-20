@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       Relation 0 à plusieurs entre User et Post
       Un User peut faire plusieurs Post ou 0
       */
-      models.User.hasOne(models.Post, {
+      models.User.hasMany(models.Post, {
         foreignKey : {
           allowNull : false
         },
@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
       Relation 0 à plusieurs entre User et Comment
       Un User peut faire plusieurs Comment ou 0
       */
-      models.User.hasOne(models.Comment, {
+      models.User.hasMany(models.Comment, {
         foreignKey : {
           allowNull : false
         },
@@ -42,11 +42,17 @@ module.exports = (sequelize, DataTypes) => {
     },
     firstname: {
       allowNull: false,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      validate: {
+        is:/^[a-zA-ZÀ-ÿ_-]{2,60}$/
+      }
     },
     lastname: {
       allowNull: false,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      validate: {
+        is:/^[a-zA-ZÀ-ÿ_-]{2,60}$/
+      }
     },
     email: {
       allowNull: false,
@@ -59,7 +65,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     job: {
       allowNull: true,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      validate: {
+        is:/^[a-zA-ZÀ-ÿ_-]{2,60}$/
+      }
     },
     isadmin: {
       allowNull: false,

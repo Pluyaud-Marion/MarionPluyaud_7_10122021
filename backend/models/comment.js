@@ -28,13 +28,13 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.INTEGER
     },
-    comment : {
-        type : DataTypes.STRING
+    contentCom : {
+      allowNull: true,
+      type : DataTypes.STRING
     },
-    isadmin: {
-      allowNull: false,
-      type: DataTypes.BOOLEAN,
-      defaultValue : false
+    attachmentCom : {
+      allowNull: true,
+      type : DataTypes.STRING
     },
     createdAt: {
       allowNull: false,

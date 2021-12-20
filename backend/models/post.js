@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       Relation 0 à plusieurs entre Post et Comment
       un Post peut avoir plusieurs Comment ou 0
       */
-      models.Post.hasOne(models.Comment, {
+      models.Post.hasMany(models.Comment, {
         foreignKey : {
           allowNull : false
         },
@@ -43,10 +43,6 @@ module.exports = (sequelize, DataTypes) => {
     //     key: 'id'
     //   }
     //},
-    title: {
-      allowNull: true,
-      type: DataTypes.STRING
-    },
     content: {
       allowNull: true,
       type: DataTypes.STRING
@@ -54,15 +50,6 @@ module.exports = (sequelize, DataTypes) => {
     attachment: {
       allowNull: true,
       type: DataTypes.STRING
-    },
-    like : {
-      allowNull: true,
-      defaultValue : 0,
-      type : DataTypes.STRING
-    },
-    usersLiked : {
-      allowNull : true,
-      type : DataTypes.STRING
     },
     createdAt: {
       allowNull: false,
