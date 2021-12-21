@@ -24,8 +24,8 @@ exports.createPost = (req,res,next) => {
             -Condition pour vérifier sécurité avec le middleware auth / mais UserId doit être rajouté dans le body de la requête 
             -Si condition retirée -> l'UserId pour créer le post peut être celui contenu dans le token
             */
-
-            //if(postObject.UserId === res.locals.token.userId) {
+            console.log(postObject);
+            if(postObject.UserId === res.locals.token.userId) {
                 
                 model.Post.create({
                     //UserId : postObject.UserId,
@@ -41,9 +41,9 @@ exports.createPost = (req,res,next) => {
                 }))
                 
                 .catch(error => res.status(500).json({error}))
-            //} else {
-            //return res.status(404).json({message : "Vous n'êtes pas autorisé à faire ça"})
-            //}
+            } else {
+                return res.status(404).json({message : "Vous n'êtes pas autorisé à faire ça"})
+            }
 
         //si le post contient uniquement un fichier
         } else if (req.file) {
@@ -90,8 +90,13 @@ exports.createPost = (req,res,next) => {
 
 exports.getAllPost = (req,res,next) => {
     model.Post.findAll({
+        // relie au Post, l'utilisateur qui l'a fait + les commentaires
+        include : [model.Comment, {
+            model : model.User,
+            attributes : ['firstname', 'lastname']
+        }],
         //trie dans l'ordre du + récent
-       order : [['createdAt', 'DESC']] 
+        order : [['createdAt', 'DESC']] 
     })
     .then((allPost)=> res.status(200).json(allPost))
     .catch(error => res.status(400).json({error}))
@@ -100,7 +105,8 @@ exports.getAllPost = (req,res,next) => {
 //affiche tous les posts d'une personne
 exports.getUserPost = (req, res, next) => {
     model.Post.findAll({
-        where : {userId : req.params.id },
+        where : {userId : req.params.userId },
+        include : [model.Comment],
         order : [['createdAt', 'DESC']]
     })
     .then(allPostUser => {
@@ -114,7 +120,8 @@ exports.getUserPost = (req, res, next) => {
 };
 
 exports.deletePost = (req, res, next) => {
-    const idParams = req.params.id;
+  
+    const idParams = req.params.postId;
     const idToken = res.locals.token.userId
     // renvoie l'attribut isadmin, firstname et id + cible l'utilisateur qui veut faire la requête
     model.User.findOne({

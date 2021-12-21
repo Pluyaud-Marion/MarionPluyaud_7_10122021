@@ -4,16 +4,74 @@ const fs = require('fs');
 //importation des models
 const model = require("../models");
 
+// exports.createComment = (req,res,next) => {
+//     //contient l'userId décodé du token
+//     const userIdToken = res.locals.token.userId
+    
+//     const attachment = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+//     //le commentaire contenu dans le corps de la requête
+//     const contentTextCom = req.body.comment
+   
+//     //si le commentaire contient un fichier + du texte
+//     if(req.file && contentTextCom) {
+        
+//         const commentObject = JSON.parse(req.body.comment)
+        
+//         // sécurité pour vérifier que le token contenu dans le corps de la requête est le même que celui décodé du token
+//         if(commentObject.UserId === userIdToken) {
+//             model.Comment.create({
+//                 UserId : userIdToken,
+//                 contentCom : commentObject.contentCom.trim(),
+//                 attachmentCom : attachment,
+//                 PostId : commentObject.PostId
+//             })
+//             .then(()=> res.status(201).json({ message : 'Commentaire enregisté sur le post avec un fichier et du texte'}))
+//             .catch(error => res.status(404).json({error}))
+//         //sinon -> pas d'autorisation
+//         } else {
+//             return res.status(404).json({message : "Vous n'êtes pas autorisé à faire ça"})
+//         }
+//     // si le commentaire contient qu'un fichier
+//     } else if (req.file) {
+//             model.Comment.create({
+//                 UserId : userIdToken,
+//                 attachmentCom : attachment,
+//                 PostId : req.body.PostId
+//             })
+//             .then(()=> res.status(201).json({ message : 'Commentaire enregisté sur le post avec seulement un fichier'}))
+//             .catch(error => res.status(404).json({error}))
+        
+//     //si le commentaire ne contient que du texte
+//     } else {
+//         const commentObject = JSON.parse(req.body.comment)
+
+//         //sécurité
+//         if(commentObject.UserId === userIdToken) {
+
+//             model.Comment.create({
+//                 UserId : userIdToken,
+//                 contentCom : commentObject.contentCom.trim(),
+//                 PostId : commentObject.PostId
+//             })
+//             .then(()=> res.status(201).json({ message : 'Commentaire enregisté sur le post avec seulement du texte'}))
+//             .catch(error => res.status(404).json({error}))
+//         } else {
+//             return res.status(404).json({message : "Vous n'êtes pas autorisé à faire ça"})
+//         }
+//     }
+// };
+
 exports.createComment = (req,res,next) => {
     //contient l'userId décodé du token
     const userIdToken = res.locals.token.userId
     
-    const attachment = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    
     //le commentaire contenu dans le corps de la requête
     const contentTextCom = req.body.comment
-    
+  
     //si le commentaire contient un fichier + du texte
     if(req.file && contentTextCom) {
+        const attachment = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
         const commentObject = JSON.parse(req.body.comment)
         
         // sécurité pour vérifier que le token contenu dans le corps de la requête est le même que celui décodé du token
@@ -22,7 +80,7 @@ exports.createComment = (req,res,next) => {
                 UserId : userIdToken,
                 contentCom : commentObject.contentCom.trim(),
                 attachmentCom : attachment,
-                PostId : commentObject.PostId
+                PostId : req.params.postId
             })
             .then(()=> res.status(201).json({ message : 'Commentaire enregisté sur le post avec un fichier et du texte'}))
             .catch(error => res.status(404).json({error}))
@@ -32,25 +90,26 @@ exports.createComment = (req,res,next) => {
         }
     // si le commentaire contient qu'un fichier
     } else if (req.file) {
-        model.Comment.create({
-            UserId : userIdToken,
-            attachmentCom : attachment,
-            PostId : req.body.PostId
-        })
-        .then(()=> res.status(201).json({ message : 'Commentaire enregisté sur le post avec seulement un fichier'}))
-        .catch(error => res.status(404).json({error}))
-
+        const attachment = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+            model.Comment.create({
+                UserId : userIdToken,
+                attachmentCom : attachment,
+                PostId : req.params.postId
+            })
+            .then(()=> res.status(201).json({ message : 'Commentaire enregisté sur le post avec seulement un fichier'}))
+            .catch(error => res.status(404).json({error}))
+        
     //si le commentaire ne contient que du texte
     } else {
         const commentObject = JSON.parse(req.body.comment)
-
+        console.log("je n'ai pas de fichier");
         //sécurité
         if(commentObject.UserId === userIdToken) {
 
             model.Comment.create({
                 UserId : userIdToken,
                 contentCom : commentObject.contentCom.trim(),
-                PostId : commentObject.PostId
+                PostId : req.params.postId
             })
             .then(()=> res.status(201).json({ message : 'Commentaire enregisté sur le post avec seulement du texte'}))
             .catch(error => res.status(404).json({error}))
@@ -62,7 +121,12 @@ exports.createComment = (req,res,next) => {
 // affiche tous les commentaires d'un post par son id
 exports.getAllCommentForPost = (req,res,next) => {
     model.Comment.findAll({
-        where : { PostId : req.params.id },
+        where : { PostId : req.params.postId },
+        //rattache au commentaire le post et l'utilisateur (ne retourne que son nom et prénom)
+        include : [model.Post, {
+            model : model.User, 
+            attributes : ['lastname', 'firstname']
+        }],
         order : [['createdAt', 'DESC']]
     })
     .then(allCommentPost => {
@@ -78,7 +142,7 @@ exports.getAllCommentForPost = (req,res,next) => {
 
 exports.deleteComment = (req, res, next) => {
     const idUserToken = res.locals.token.userId
-    const selectComment = { where : {id: req.params.id} }
+    const selectComment = { where : { id: req.params.commentId} }
  
     //cherche l'utilisateur qui veut faire la requête et renvoie si admin ou non
     model.User.findOne({
@@ -88,6 +152,7 @@ exports.deleteComment = (req, res, next) => {
     .then(userRequest => {
         //cherche le commentaire
         model.Comment.findOne(selectComment)
+      
         .then(comment => {
             //si utilisateur qui veut supprimer est celui qui a publié le com, OU s'il est admin
             if(comment.UserId === idUserToken || userRequest.isadmin === true ){

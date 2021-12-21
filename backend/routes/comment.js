@@ -8,8 +8,9 @@ const limiter = require('../middleware/limiter');
 
 const router = express.Router();
 
-router.post('/', auth, limiter.globalLimiter ,multer, commentController.createComment);
-router.get('/:id', auth, limiter.globalLimiter, commentController.getAllCommentForPost);
-router.delete('/:id', auth, limiter.globalLimiter,commentController.deleteComment);
+router.post('/:postId/comment', auth, limiter.globalLimiter ,multer, commentController.createComment);
+//router.post('/', auth, limiter.globalLimiter ,multer, commentController.createComment);
+router.get('/comment/:postId', auth, limiter.globalLimiter, commentController.getAllCommentForPost);
+router.delete('/comment/:commentId', auth, limiter.globalLimiter,commentController.deleteComment);
 
 module.exports = router;

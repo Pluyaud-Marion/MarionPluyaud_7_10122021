@@ -8,8 +8,9 @@ const router = express.Router();
 
 router.post('/', auth, limiter.globalLimiter, multer, postController.createPost);
 router.get('/', auth, limiter.globalLimiter, postController.getAllPost);
-router.get('/:id', auth, limiter.globalLimiter, postController.getUserPost);
-router.delete('/:id', auth, limiter.globalLimiter, postController.deletePost);
+router.get('/:userId', auth, limiter.globalLimiter, postController.getUserPost);
+
+router.delete('/:postId', auth, limiter.globalLimiter, postController.deletePost);
 
 
 module.exports = router;

@@ -73,7 +73,7 @@ exports.login = (req, res, next) => {
 // visualiser un profil - retourne firstame, lastname et job
 exports.getOneProfile = (req, res, next) => {
     model.User.findOne({
-        where : {id : req.params.id},
+        where : {id : req.params.userId},
         attributes : ["firstname", "lastname", "job"] 
     })
     
@@ -99,12 +99,12 @@ exports.getAllProfile = (req, res, next) => {
 //supprime de la db l'utilisateur
 exports.deleteProfile = (req, res, next) => {
     model.User.findOne({
-        where : { id : req.params.id }
+        where : { id : req.params.userId }
     })
     .then(user => {
         if(user.id === res.locals.token.userId){
             model.User.destroy({
-                where : { id : req.params.id}
+                where : { id : req.params.userId}
             })
             .then(()=> res.status(200).json({message : 'Utilisateur supprimé'}))
             .catch(error => res.status(403).json({error}))

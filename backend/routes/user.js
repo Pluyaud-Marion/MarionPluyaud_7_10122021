@@ -12,8 +12,8 @@ const router = express.Router();
 
 router.post('/signup', password, userController.signUp);
 router.post('/login', limiter.loginLimiter, userController.login);
-router.get('/:id', auth, limiter.globalLimiter, userController.getOneProfile);
+router.get('/:userId', auth, limiter.globalLimiter, userController.getOneProfile);
 router.get('/', auth, limiter.globalLimiter, userController.getAllProfile);
-router.delete('/:id', auth, limiter.globalLimiter, userController.deleteProfile);
+router.delete('/:userId', auth, limiter.globalLimiter, userController.deleteProfile);
 
 module.exports = router;
