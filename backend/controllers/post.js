@@ -4,7 +4,7 @@ const fs = require('fs');
 //importation des modèles
 const model = require("../models");
 
-
+//version avec userId dans les paramètres de la requête
 exports.createPost = (req,res,next) => {
     const contentText = req.body.post;
     const userIdToken = res.locals.token.userId
@@ -20,15 +20,9 @@ exports.createPost = (req,res,next) => {
 
             const postObject = JSON.parse(req.body.post)
 
-            /* 
-            -Condition pour vérifier sécurité avec le middleware auth / mais UserId doit être rajouté dans le body de la requête 
-            -Si condition retirée -> l'UserId pour créer le post peut être celui contenu dans le token
-            */
-        
-            if(postObject.UserId === res.locals.token.userId) {
+            if(req.params.userId == res.locals.token.userId) {
                 
                 model.Post.create({
-                    //UserId : postObject.UserId,
                     UserId : userIdToken,
                     content: postObject.content.trim(),
                     attachment : `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
@@ -58,18 +52,14 @@ exports.createPost = (req,res,next) => {
             }))
             .catch(error => res.status(500).json({error}))
             
-
         //si le post contient uniquement du texte
         } else if (contentText){
-            /* 
-            -Condition pour vérifier sécurité avec le middleware auth / mais UserId doit être rajouté dans le body de la requête 
-            -Si condition retirée -> l'UserId pour créer le post peut être celui contenu dans le token
-            */
+           
             const postObject = JSON.parse(req.body.post)
 
-            //if(postObject.UserId === res.locals.token.userId) {
+            if(req.params.userId == res.locals.token.userId) {
+
                 model.Post.create({
-                    //UserId : postObject.UserId,
                     UserId : userIdToken,
                     content: postObject.content.trim()
                 })
@@ -78,16 +68,98 @@ exports.createPost = (req,res,next) => {
                     message : "Publication enregistrée sans fichier"
                 }))
                 .catch(error => res.status(500).json({error}))
-            //} else {
-            //    res.status(404).json({message : "Vous n'êtes pas autorisé à faire ça"})
-            //}
+            } else {
+                res.status(404).json({message : "Vous n'êtes pas autorisé à faire ça"})
+            }
             
         }
     })
     .catch(error => res.status(400).json({error}))
     
 };
+// VERSION AVEC USERID DANS LE CORPS DE LA REQUETE
+// exports.createPost = (req,res,next) => {
+//     const contentText = req.body.post;
+//     const userIdToken = res.locals.token.userId
+//     //trouve l'auteur du post grâce à son id
+//     model.User.findOne({
+//         attributes: ['firstname', 'lastname', 'id'],
+//         where : {id : userIdToken}
+//     })
+//     //auteur contenue dans la promesse -> authorPost
+//     .then(authorPost => {
+//         //si le post contient un fichier + du texte
+//         if(req.file && contentText){
 
+//             const postObject = JSON.parse(req.body.post)
+
+//             /* 
+//             -Condition pour vérifier sécurité avec le middleware auth / mais UserId doit être rajouté dans le body de la requête 
+//             -Si condition retirée -> l'UserId pour créer le post peut être celui contenu dans le token
+//             */
+        
+//             if(postObject.UserId === res.locals.token.userId) {
+                
+//                 model.Post.create({
+//                     //UserId : postObject.UserId,
+//                     UserId : userIdToken,
+//                     content: postObject.content.trim(),
+//                     attachment : `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+//                 })
+                
+//                 //contient le post créé -> affiche le message de réussite + l'auteur du post
+//                 .then(() => res.status(201).json({
+//                     authorPost,
+//                     message : "Publication enregistrée avec texte et fichier",
+//                 }))
+                
+//                 .catch(error => res.status(500).json({error}))
+//             } else {
+//                 return res.status(404).json({message : "Vous n'êtes pas autorisé à faire ça"})
+//             }
+
+//         //si le post contient uniquement un fichier
+//         } else if (req.file) {
+  
+//             model.Post.create({
+//                 UserId : userIdToken,
+//                 attachment : `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+//             })
+//             .then(()=> res.status(201).json({
+//                 authorPost,
+//                 message : "Publication enregistrée sans texte, uniquement avec fichier"
+//             }))
+//             .catch(error => res.status(500).json({error}))
+            
+
+//         //si le post contient uniquement du texte
+//         } else if (contentText){
+//             /* 
+//             -Condition pour vérifier sécurité avec le middleware auth / mais UserId doit être rajouté dans le body de la requête 
+//             -Si condition retirée -> l'UserId pour créer le post peut être celui contenu dans le token
+//             */
+//             const postObject = JSON.parse(req.body.post)
+
+//             //if(postObject.UserId === res.locals.token.userId) {
+//                 model.Post.create({
+//                     //UserId : postObject.UserId,
+//                     UserId : userIdToken,
+//                     content: postObject.content.trim()
+//                 })
+//                 .then(()=> res.status(201).json({
+//                     authorPost,
+//                     message : "Publication enregistrée sans fichier"
+//                 }))
+//                 .catch(error => res.status(500).json({error}))
+//             //} else {
+//             //    res.status(404).json({message : "Vous n'êtes pas autorisé à faire ça"})
+//             //}
+            
+//         }
+//     })
+//     .catch(error => res.status(400).json({error}))
+    
+// };
 exports.getAllPost = (req,res,next) => {
     model.Post.findAll({
         // relie au Post, l'utilisateur qui l'a fait + les commentaires
