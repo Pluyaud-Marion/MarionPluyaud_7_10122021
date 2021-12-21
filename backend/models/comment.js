@@ -13,12 +13,16 @@ module.exports = (sequelize, DataTypes) => {
       Relation 0 à plusieurs entre Comment et Post
       Comment appartient à Post
       */
-      models.Comment.belongsTo(models.Post);
+      models.Comment.belongsTo(models.Post, {
+        onDelete : 'CASCADE'
+      });
       /*
       Relation 0 à plusieurs entre Comment et User
       Comment appartient à User
       */
-      models.Comment.belongsTo(models.User);
+      models.Comment.belongsTo(models.User, {
+        onDelete : 'CASCADE'
+      });
     }
   };
   Comment.init({

@@ -24,7 +24,7 @@ exports.createPost = (req,res,next) => {
             -Condition pour vérifier sécurité avec le middleware auth / mais UserId doit être rajouté dans le body de la requête 
             -Si condition retirée -> l'UserId pour créer le post peut être celui contenu dans le token
             */
-            console.log(postObject);
+        
             if(postObject.UserId === res.locals.token.userId) {
                 
                 model.Post.create({

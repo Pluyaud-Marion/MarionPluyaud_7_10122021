@@ -25,7 +25,9 @@ module.exports = (sequelize, DataTypes) => {
       Relation 0 à plusieurs entre Post et User
       un Post appartient à un User
       */
-      models.Post.belongsTo(models.User);
+      models.Post.belongsTo(models.User, {
+        onDelete : 'CASCADE'
+      });
     }
   };
   Post.init({
