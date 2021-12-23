@@ -4,63 +4,6 @@ const fs = require('fs');
 //importation des models
 const model = require("../models");
 
-// exports.createComment = (req,res,next) => {
-//     //contient l'userId décodé du token
-//     const userIdToken = res.locals.token.userId
-    
-//     const attachment = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-//     //le commentaire contenu dans le corps de la requête
-//     const contentTextCom = req.body.comment
-   
-//     //si le commentaire contient un fichier + du texte
-//     if(req.file && contentTextCom) {
-        
-//         const commentObject = JSON.parse(req.body.comment)
-        
-//         // sécurité pour vérifier que le token contenu dans le corps de la requête est le même que celui décodé du token
-//         if(commentObject.UserId === userIdToken) {
-//             model.Comment.create({
-//                 UserId : userIdToken,
-//                 contentCom : commentObject.contentCom.trim(),
-//                 attachmentCom : attachment,
-//                 PostId : commentObject.PostId
-//             })
-//             .then(()=> res.status(201).json({ message : 'Commentaire enregisté sur le post avec un fichier et du texte'}))
-//             .catch(error => res.status(404).json({error}))
-//         //sinon -> pas d'autorisation
-//         } else {
-//             return res.status(404).json({message : "Vous n'êtes pas autorisé à faire ça"})
-//         }
-//     // si le commentaire contient qu'un fichier
-//     } else if (req.file) {
-//             model.Comment.create({
-//                 UserId : userIdToken,
-//                 attachmentCom : attachment,
-//                 PostId : req.body.PostId
-//             })
-//             .then(()=> res.status(201).json({ message : 'Commentaire enregisté sur le post avec seulement un fichier'}))
-//             .catch(error => res.status(404).json({error}))
-        
-//     //si le commentaire ne contient que du texte
-//     } else {
-//         const commentObject = JSON.parse(req.body.comment)
-
-//         //sécurité
-//         if(commentObject.UserId === userIdToken) {
-
-//             model.Comment.create({
-//                 UserId : userIdToken,
-//                 contentCom : commentObject.contentCom.trim(),
-//                 PostId : commentObject.PostId
-//             })
-//             .then(()=> res.status(201).json({ message : 'Commentaire enregisté sur le post avec seulement du texte'}))
-//             .catch(error => res.status(404).json({error}))
-//         } else {
-//             return res.status(404).json({message : "Vous n'êtes pas autorisé à faire ça"})
-//         }
-//     }
-// };
-
 exports.createComment = (req,res,next) => {
     //contient l'userId décodé du token
     const userIdToken = res.locals.token.userId
