@@ -7,159 +7,70 @@ const model = require("../models");
 //version avec userId dans les paramètres de la requête
 exports.createPost = (req,res,next) => {
     const contentText = req.body.post;
-    const userIdToken = res.locals.token.userId
-    //trouve l'auteur du post grâce à son id
-    model.User.findOne({
-        attributes: ['firstname', 'lastname', 'id'],
-        where : {id : userIdToken}
-    })
-    //auteur contenue dans la promesse -> authorPost
-    .then(authorPost => {
-        //si le post contient un fichier + du texte
-        if(req.file && contentText){
+    const userIdToken = Number (res.locals.token.userId)
+    const paramUserId = Number(req.params.userId)
 
-            const postObject = JSON.parse(req.body.post)
+    if(userIdToken !== paramUserId) {
+        return res.status(404).json({message : "Vous n'êtes pas autorisé à faire ça"})
+    } else {
 
-            if(req.params.userId == res.locals.token.userId) {
+        //trouve l'auteur du post grâce à son id
+        model.User.findOne({
+            attributes: ['firstname', 'lastname', 'id'],
+            where : {id : userIdToken}
+        })
+        //auteur contenue dans la promesse -> authorPost
+        .then(authorPost => {
+            //si le post contient un fichier + du texte
+            if(req.file && contentText){
+
+                const postObject = JSON.parse(req.body.post)
+                    model.Post.create({
+                        UserId : userIdToken,
+                        content: postObject.content.trim(),
+                        attachment : `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+                    })
+                    //contient le post créé -> affiche le message de réussite + l'auteur du post
+                    .then(() => res.status(201).json({
+                        authorPost,
+                        message : "Publication enregistrée avec texte et fichier",
+                    }))
+                    
+                    .catch(error => res.status(500).json({error}))
                 
+            //si le post contient uniquement un fichier
+            } else if (req.file) {
+
                 model.Post.create({
                     UserId : userIdToken,
-                    content: postObject.content.trim(),
                     attachment : `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-                })
-                
-                //contient le post créé -> affiche le message de réussite + l'auteur du post
-                .then(() => res.status(201).json({
-                    authorPost,
-                    message : "Publication enregistrée avec texte et fichier",
-                }))
-                
-                .catch(error => res.status(500).json({error}))
-            } else {
-                return res.status(404).json({message : "Vous n'êtes pas autorisé à faire ça"})
-            }
-
-        //si le post contient uniquement un fichier
-        } else if (req.file) {
-  
-            model.Post.create({
-                UserId : userIdToken,
-                attachment : `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-            })
-            .then(()=> res.status(201).json({
-                authorPost,
-                message : "Publication enregistrée sans texte, uniquement avec fichier"
-            }))
-            .catch(error => res.status(500).json({error}))
-            
-        //si le post contient uniquement du texte
-        } else if (contentText){
-           
-            const postObject = JSON.parse(req.body.post)
-
-            if(req.params.userId == res.locals.token.userId) {
-
-                model.Post.create({
-                    UserId : userIdToken,
-                    content: postObject.content.trim()
                 })
                 .then(()=> res.status(201).json({
                     authorPost,
-                    message : "Publication enregistrée sans fichier"
+                    message : "Publication enregistrée sans texte, uniquement avec fichier"
                 }))
                 .catch(error => res.status(500).json({error}))
-            } else {
-                res.status(404).json({message : "Vous n'êtes pas autorisé à faire ça"})
+                
+            //si le post contient uniquement du texte
+            } else if (contentText){
+            
+                const postObject = JSON.parse(req.body.post)
+
+                    model.Post.create({
+                        UserId : userIdToken,
+                        content: postObject.content.trim()
+                    })
+                    .then(()=> res.status(201).json({
+                        authorPost,
+                        message : "Publication enregistrée sans fichier"
+                    }))
+                    .catch(error => res.status(500).json({error}))
             }
-            
-        }
-    })
-    .catch(error => res.status(400).json({error}))
-    
+        })
+        .catch(error => res.status(400).json({error}))
+    }
 };
-// VERSION AVEC USERID DANS LE CORPS DE LA REQUETE
-// exports.createPost = (req,res,next) => {
-//     const contentText = req.body.post;
-//     const userIdToken = res.locals.token.userId
-//     //trouve l'auteur du post grâce à son id
-//     model.User.findOne({
-//         attributes: ['firstname', 'lastname', 'id'],
-//         where : {id : userIdToken}
-//     })
-//     //auteur contenue dans la promesse -> authorPost
-//     .then(authorPost => {
-//         //si le post contient un fichier + du texte
-//         if(req.file && contentText){
 
-//             const postObject = JSON.parse(req.body.post)
-
-//             /* 
-//             -Condition pour vérifier sécurité avec le middleware auth / mais UserId doit être rajouté dans le body de la requête 
-//             -Si condition retirée -> l'UserId pour créer le post peut être celui contenu dans le token
-//             */
-        
-//             if(postObject.UserId === res.locals.token.userId) {
-                
-//                 model.Post.create({
-//                     //UserId : postObject.UserId,
-//                     UserId : userIdToken,
-//                     content: postObject.content.trim(),
-//                     attachment : `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-//                 })
-                
-//                 //contient le post créé -> affiche le message de réussite + l'auteur du post
-//                 .then(() => res.status(201).json({
-//                     authorPost,
-//                     message : "Publication enregistrée avec texte et fichier",
-//                 }))
-                
-//                 .catch(error => res.status(500).json({error}))
-//             } else {
-//                 return res.status(404).json({message : "Vous n'êtes pas autorisé à faire ça"})
-//             }
-
-//         //si le post contient uniquement un fichier
-//         } else if (req.file) {
-  
-//             model.Post.create({
-//                 UserId : userIdToken,
-//                 attachment : `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-//             })
-//             .then(()=> res.status(201).json({
-//                 authorPost,
-//                 message : "Publication enregistrée sans texte, uniquement avec fichier"
-//             }))
-//             .catch(error => res.status(500).json({error}))
-            
-
-//         //si le post contient uniquement du texte
-//         } else if (contentText){
-//             /* 
-//             -Condition pour vérifier sécurité avec le middleware auth / mais UserId doit être rajouté dans le body de la requête 
-//             -Si condition retirée -> l'UserId pour créer le post peut être celui contenu dans le token
-//             */
-//             const postObject = JSON.parse(req.body.post)
-
-//             //if(postObject.UserId === res.locals.token.userId) {
-//                 model.Post.create({
-//                     //UserId : postObject.UserId,
-//                     UserId : userIdToken,
-//                     content: postObject.content.trim()
-//                 })
-//                 .then(()=> res.status(201).json({
-//                     authorPost,
-//                     message : "Publication enregistrée sans fichier"
-//                 }))
-//                 .catch(error => res.status(500).json({error}))
-//             //} else {
-//             //    res.status(404).json({message : "Vous n'êtes pas autorisé à faire ça"})
-//             //}
-            
-//         }
-//     })
-//     .catch(error => res.status(400).json({error}))
-    
-// };
 exports.getAllPost = (req,res,next) => {
     model.Post.findAll({
         // relie au Post, l'utilisateur qui l'a fait + les commentaires
@@ -236,3 +147,41 @@ exports.deletePost = (req, res, next) => {
     .catch(error => res.status(400).json({error}))
 };
 
+// NON ACTIF
+// exports.modifyPost = (req, res, next) => {
+//     //on trouve l'user qui envoie la requête
+//     model.User.findOne({
+//         where : {id : res.locals.token.userId}
+//     })
+//     .then(userRequest => {
+//         //cible le post à modifier par son id
+//         model.Post.findOne({
+//             where : { id: req.params.postId } 
+//         })
+//         .then(post => { // post = le post actuel
+//             console.log(post);
+     
+//             if(!post) {
+//                 return res.status(401).json({error : "Ce post n'existe pas"})
+//             } else {
+//                 if (userRequest.isadmin === true || post.UserId === res.locals.token.userId) {
+                    
+                       
+//                         //const postObject = JSON.parse(req.body.post)
+//                         //console.log(postObject)
+//                         post.update({
+//                             content : req.post.content,
+//                             attachment : `${req.protocol}://${req.get('host')}/images/${req.file.filename}` 
+//                         })
+//                         .then(() => res.status(200).json({message: "Post modifié"}))
+//                         .catch(error => res.status(400).json({error}))
+                    
+//                 } else {
+//                     return res.status(404).json({error : "Vous n'avez pas le droit de faire ça"})
+//                 }
+//             }
+//         })
+//         .catch(error => res.status(400).json({error}))
+//     })
+//     .catch(error => res.status(400).json({error}))
+// }

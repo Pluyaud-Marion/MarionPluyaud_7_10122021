@@ -6,17 +6,15 @@ const model = require("../models");
 
 exports.createComment = (req,res,next) => {
     //contient l'userId décodé du token
-    const userIdToken = res.locals.token.userId
-    
+    const userIdToken = Number(res.locals.token.userId)
     
     //le commentaire contenu dans le corps de la requête
     const contentTextCom = req.body.comment
-  
+    
     //si le commentaire contient un fichier + du texte
     if(req.file && contentTextCom) {
         const attachment = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
         const commentObject = JSON.parse(req.body.comment)
-        
         // sécurité pour vérifier que le token contenu dans le corps de la requête est le même que celui décodé du token
         if(commentObject.UserId === userIdToken) {
             model.Comment.create({
@@ -48,7 +46,6 @@ exports.createComment = (req,res,next) => {
         console.log("je n'ai pas de fichier");
         //sécurité
         if(commentObject.UserId === userIdToken) {
-
             model.Comment.create({
                 UserId : userIdToken,
                 contentCom : commentObject.contentCom.trim(),
