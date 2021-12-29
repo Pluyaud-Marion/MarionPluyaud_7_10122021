@@ -104,7 +104,6 @@ exports.getUserPost = (req, res, next) => {
 };
 
 exports.deletePost = (req, res, next) => {
-  
     const idParams = req.params.postId;
     const idToken = res.locals.token.userId
     // renvoie l'attribut isadmin, firstname et id + cible l'utilisateur qui veut faire la requête
@@ -112,7 +111,7 @@ exports.deletePost = (req, res, next) => {
         attributes : ["isadmin", "firstname", "id"], 
         where : { id : idToken} //id de l'utilisateur
     })
-    .then((userRequest) => { // userAdmin : le résultat de la promesse -> l'utilisateur qui veut faire la requête
+    .then((userRequest) => { // userRequest : le résultat de la promesse -> l'utilisateur qui veut faire la requête
         //cible le post à supprimer par son id
         model.Post.findOne({
             where : { id: idParams } //id du post
@@ -137,7 +136,6 @@ exports.deletePost = (req, res, next) => {
                     .then(() => res.status(200).json({message : 'Le post a été supprimé'}))
                     .catch(error => res.status(400).json({error}));
                 }
-                
             // Si le user qui fait la requête n'est ni admin, ni celui qui a créé le post -> suppression KO
             } else {
                 res.status(404).json({ error : "Vous n'avez pas l'autorisation de supprimer un post qui ne vous appartient pas"})
@@ -147,38 +145,6 @@ exports.deletePost = (req, res, next) => {
     })
     .catch(error => res.status(400).json({error}))
 };
-//fonctionnel sans fichier
-// exports.modifyPost = (req, res, next) => {
-//     //on trouve l'user qui envoie la requête
-//     model.User.findOne({
-//         where : {id : res.locals.token.userId}
-//     })
-//     .then(userRequest => {
-//         console.log("userRequest", userRequest)
-//         //cible le post à modifier par son id
-//         model.Post.findOne({
-//             where : { id: req.params.postId } 
-//         })
-//         .then(post => {
-//             console.log("post",post)
-//             if(!post) {
-//                 return res.status(401).json({error : "Ce post n'existe pas"})
-//             } else {
-//                 if (userRequest.isadmin || post.UserId === res.locals.token.userId) {
-//                     post.update({
-//                         content : req.body.content
-//                     })
-//                     .then(() => res.status(200).json({message: "Post modifié"}))
-//                     .catch(error => res.status(402).json({error}))
-//                 } else {
-//                     return res.status(404).json({error : "Vous n'avez pas le droit de faire ça"})
-//                 }
-//             }
-//         })
-//         .catch(error => res.status(403).json({error}))
-//     })
-//     .catch(error => res.status(402).json({error}))
-// };
 
 exports.modifyPost = (req, res, next) => {
     const contentText = req.body.post;
@@ -201,7 +167,7 @@ exports.modifyPost = (req, res, next) => {
                         const postObject = JSON.parse(req.body.post)
                         post.update({
                             attachment : `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
-                            content: postObject.content
+                            content: postObject.content.trim()
                         })
                         .then(() => res.status(200).json({message: "Post modifié avec fichier et texte"}))
                         .catch(error => res.status(402).json({error}))
@@ -216,7 +182,7 @@ exports.modifyPost = (req, res, next) => {
                     } else if (contentText) {
                         const postObject = JSON.parse(req.body.post)
                         post.update({
-                            content : postObject.content
+                            content : postObject.content.trim()
                         })
                         .then(() => res.status(200).json({message: "Post modifié avec texte uniquement"}))
                         .catch(error => res.status(402).json({error}))

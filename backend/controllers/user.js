@@ -38,6 +38,7 @@ exports.signUp = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
+    //chiffrement de l'email
     const emailCryptoJs = cryptojs.HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`).toString();
     
     //cherche l'email dans la db
@@ -45,13 +46,17 @@ exports.login = (req, res, next) => {
         where : {email : emailCryptoJs}
     })
     .then(user => {
+        //si l'user n'existe pas dans la db
         if(!user){
             return res.status(400).json({error : "User inexistant"})
+            //si user existe = on compare mot de passe enregistré dans db avec cet user, et celui de la requete 
         } else {
             bcrypt.compare(req.body.password, user.password)
             .then(verifyPassword => {
+                //si verif KO
                 if(!verifyPassword) { 
                     return res.status(400).json({error : "Mot de passe incorrect"})
+                //si vérif ok -> connecté -> on retourne l'userId + isadmin + le token (qui contient userId, la clé, l'expiration)
                 } else {
                     res.status(200).json({
                         isadmin : user.isadmin,
@@ -73,10 +78,12 @@ exports.login = (req, res, next) => {
 
 // visualiser un profil en partie - retourne firstame, lastname et job
 exports.getOneProfileSimplify = (req, res, next) => {
+    //ciblage de l'user avec l'userId envoyé dans les paramètres de la requête
     model.User.findOne({
         where : {id : req.params.userId},
         attributes : ["firstname", "lastname", "job"] 
     })
+    //user = contient l'utilisateur qu'on a demandé dans les paramètres des requete
     .then(user=> {
         if (!user) {
             return res.status(401).json({error : "Cet utilisateur n'existe pas"})
@@ -89,15 +96,17 @@ exports.getOneProfileSimplify = (req, res, next) => {
 
 // visualiser un profil en totalité / admin ou utilisateur lui même
 exports.getOneProfileFull = (req, res, next) => {
-    //on trouve l'user qui envoie la requête
+    //on trouve l'user qui envoie la requête -> userRequest
     model.User.findOne({
         where : {id : res.locals.token.userId}
     })
     .then(userRequest => {
+        //on trouve l'user concerné par la requête (celui envoyé dans les params de requete) -> user
         model.User.findOne({
             where : {id : req.params.userId},
         })
         .then(user=> {
+            // si l'user qui veut faire la requête est admin ou si c'est le même que celui qui a fait l'user qu'on cible
             if (userRequest.isadmin === true || userRequest.id === user.id ) {
                 if (!user) {
                     return res.status(401).json({error : "Cet utilisateur n'existe pas"})
@@ -116,11 +125,13 @@ exports.getOneProfileFull = (req, res, next) => {
 
 // L'admin peut visualiser tous les profils - 
 exports.adminGetAllProfile = (req, res, next) => {
+    //on cherche l'user qui envoie la requête -> userRequest
     model.User.findOne({
         attributes : ["isadmin", "firstname", "id"],
         where : { id : res.locals.token.userId}
     })
     .then((userRequest) =>{
+        //s'il est admin = on visualise tous les users de la db
         if(userRequest.isadmin === true) {
             model.User.findAll({
             order : [['createdAt', 'DESC']] 
@@ -136,10 +147,12 @@ exports.adminGetAllProfile = (req, res, next) => {
 
 //supprime de la db l'utilisateur
 exports.deleteProfile = (req, res, next) => {
+    //on cherche l'user qu'on envoie dans les paramètres de la requete -> user
     model.User.findOne({
         where : { id : req.params.userId }
     })
     .then(user => {
+        //si celui qui a fait cet user est le même que celui qui veut faire la requête = on supprime l'user ciblé dans les paramètres
         if(user.id === res.locals.token.userId){
             model.User.destroy({
                 where : { id : req.params.userId}
