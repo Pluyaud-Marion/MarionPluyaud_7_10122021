@@ -4,6 +4,7 @@ const fs = require('fs');
 //importation des modèles
 const model = require("../models");
 
+
 //version avec userId dans les paramètres de la requête
 exports.createPost = (req,res,next) => {
     const contentText = req.body.post;
@@ -146,42 +147,86 @@ exports.deletePost = (req, res, next) => {
     })
     .catch(error => res.status(400).json({error}))
 };
-
-// NON ACTIF
+//fonctionnel sans fichier
 // exports.modifyPost = (req, res, next) => {
 //     //on trouve l'user qui envoie la requête
 //     model.User.findOne({
 //         where : {id : res.locals.token.userId}
 //     })
 //     .then(userRequest => {
+//         console.log("userRequest", userRequest)
 //         //cible le post à modifier par son id
 //         model.Post.findOne({
 //             where : { id: req.params.postId } 
 //         })
-//         .then(post => { // post = le post actuel
-//             console.log(post);
-     
+//         .then(post => {
+//             console.log("post",post)
 //             if(!post) {
 //                 return res.status(401).json({error : "Ce post n'existe pas"})
 //             } else {
-//                 if (userRequest.isadmin === true || post.UserId === res.locals.token.userId) {
-                    
-                       
-//                         //const postObject = JSON.parse(req.body.post)
-//                         //console.log(postObject)
-//                         post.update({
-//                             content : req.post.content,
-//                             attachment : `${req.protocol}://${req.get('host')}/images/${req.file.filename}` 
-//                         })
-//                         .then(() => res.status(200).json({message: "Post modifié"}))
-//                         .catch(error => res.status(400).json({error}))
-                    
+//                 if (userRequest.isadmin || post.UserId === res.locals.token.userId) {
+//                     post.update({
+//                         content : req.body.content
+//                     })
+//                     .then(() => res.status(200).json({message: "Post modifié"}))
+//                     .catch(error => res.status(402).json({error}))
 //                 } else {
 //                     return res.status(404).json({error : "Vous n'avez pas le droit de faire ça"})
 //                 }
 //             }
 //         })
-//         .catch(error => res.status(400).json({error}))
+//         .catch(error => res.status(403).json({error}))
 //     })
-//     .catch(error => res.status(400).json({error}))
-// }
+//     .catch(error => res.status(402).json({error}))
+// };
+
+exports.modifyPost = (req, res, next) => {
+    const contentText = req.body.post;
+    //on trouve l'user qui envoie la requête
+    model.User.findOne({
+        where : {id : res.locals.token.userId}
+    })
+    .then(userRequest => {
+        //cible le post à modifier par son id
+        model.Post.findOne({
+            where : { id: req.params.postId } 
+        })
+        .then(post => {
+            if(!post) {
+                return res.status(401).json({error : "Ce post n'existe pas"})
+            } else {
+                if (userRequest.isadmin || post.UserId === res.locals.token.userId) {
+                    
+                    if (req.file && contentText) {
+                        const postObject = JSON.parse(req.body.post)
+                        post.update({
+                            attachment : `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+                            content: postObject.content
+                        })
+                        .then(() => res.status(200).json({message: "Post modifié avec fichier et texte"}))
+                        .catch(error => res.status(402).json({error}))
+
+                    } else if (req.file) {  
+                        post.update({
+                            attachment : `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+                        })
+                        .then(() => res.status(200).json({message: "Post modifié avec fichier uniquement"}))
+                        .catch(error => res.status(402).json({error}))
+                     
+                    } else if (contentText) {
+                        const postObject = JSON.parse(req.body.post)
+                        post.update({
+                            content : postObject.content
+                        })
+                        .then(() => res.status(200).json({message: "Post modifié avec texte uniquement"}))
+                        .catch(error => res.status(402).json({error}))
+                    }
+                } else {
+                    return res.status(404).json({error : "Vous n'avez pas le droit de faire ça"})
+                }
+            }
+        })
+        .catch(error => res.status(403).json({error}))
+    })
+    .catch(error => res.status(402).json({error}))
+}

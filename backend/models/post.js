@@ -63,7 +63,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    updatedAt: false,
+    //updatedAt: false,
     modelName: 'Post',
   });
   return Post;
