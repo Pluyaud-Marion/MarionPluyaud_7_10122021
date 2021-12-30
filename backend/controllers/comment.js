@@ -23,7 +23,9 @@ exports.createComment = (req,res) => {
 				attachmentCom : attachment,
 				PostId : req.params.postId
 			})
-				.then(()=> res.status(201).json({ message : "Commentaire enregisté sur le post avec un fichier et du texte"}))
+				.then(()=> {
+					return res.status(201).json({ message : "Commentaire enregisté sur le post avec un fichier et du texte"});
+				})
 				.catch(error => res.status(404).json({error}));
 			//sinon -> pas d'autorisation
 		} else {
@@ -37,7 +39,9 @@ exports.createComment = (req,res) => {
 			attachmentCom : attachment,
 			PostId : req.params.postId
 		})
-			.then(()=> res.status(201).json({ message : "Commentaire enregisté sur le post avec seulement un fichier"}))
+			.then(()=> {
+				return res.status(201).json({ message : "Commentaire enregisté sur le post avec seulement un fichier"});
+			})
 			.catch(error => res.status(404).json({error}));
         
 		//si le commentaire ne contient que du texte
@@ -51,7 +55,9 @@ exports.createComment = (req,res) => {
 				contentCom : commentObject.contentCom.trim(),
 				PostId : req.params.postId
 			})
-				.then(()=> res.status(201).json({ message : "Commentaire enregisté sur le post avec seulement du texte"}))
+				.then(()=> {
+					return res.status(201).json({ message : "Commentaire enregisté sur le post avec seulement du texte"});
+				})
 				.catch(error => res.status(404).json({error}));
 		} else {
 			return res.status(404).json({message : "Vous n'êtes pas autorisé à faire ça"});
@@ -70,10 +76,11 @@ exports.getAllCommentForPost = (req,res) => {
 		order : [["createdAt", "DESC"]]
 	})
 		.then(allCommentPost => {
-			if(allCommentPost.length <= 0){ //si le tableau des comments de ce post est vide
-				return res.status(400).json({message : "Ce post n'a pas de commentaire"});
+			if(allCommentPost.length){ //si le tableau des comments de ce post est vide
+				return res.status(200).json(allCommentPost);
+
 			} else {
-				res.status(200).json(allCommentPost);
+				return res.status(400).json({message : "Ce post n'a pas de commentaire"});
 			}
 		})
 		.catch(error => res.status(400).json({error}));
@@ -102,23 +109,30 @@ exports.deleteComment = (req, res) => {
             
 							fs.unlink(`images/${filename}`, () => {
 								model.Comment.destroy(selectComment)
-									.then(() => res.status(200).json({message : "Le commentaire a été supprimé"}))
+									.then(() => {
+										return res.status(200).json({message : "Le commentaire a été supprimé"});
+									})
 									.catch(error => res.status(400).json({error}));
 							});
 							// si y a pas de  fichier
 						} else {
 							model.Comment.destroy(selectComment)
-								.then(() => res.status(200).json({message : "Le commentaire a été supprimé"}))
+								.then(() => {
+									return res.status(200).json({message : "Le commentaire a été supprimé"});
+								})
 								.catch(error => res.status(400).json({error}));
 						}
 						// si celui qui veut supprimer n'est ni l'auteur du com, ni un admin
 					} else {
-						res.status(404).json({ error : "Vous n'avez pas l'autorisation de supprimer un commentaire qui ne vous appartient pas"});
+						return res.status(404).json({ error : "Vous n'avez pas l'autorisation de supprimer un commentaire qui ne vous appartient pas"});
 
 					} 
 				})
-				//.catch(error => res.status(404).json({error : "Ce commentaire n'existe plus"}));
-				.catch(() => res.status(404).json({message : "Ce commentaire n'existe plus"}));
+				.catch(error => {
+					console.log(error);
+					return res.status(404).json({error : "Ce commentaire n'existe plus"});
+				});
+		
 		})
 		.catch(error => res.status(400).json({error}));
 

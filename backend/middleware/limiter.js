@@ -7,26 +7,26 @@ const nodemailer = require("nodemailer");
 
 //paramétrage du transporter
 const transporter = nodemailer.createTransport({
-	host : process.env.SMTPPATH,
+	host : process.env.SMTP_PATH,
 	port : 465,
 	secure : true,
 	auth : {
-		user : process.env.EMAILENVOI,
-		pass: process.env.EMAILPASSWORD,
+		user : process.env.EMAIL_ENVOI,
+		pass: process.env.EMAIL_PASSWORD,
 	},
 });
 
 //paramétrage pour le dépassement de requête sur l'API globale
-const globalFullRequest = {
-	from : process.env.EMAILENVOI,
-	to : process.env.EMAILDESTINATAIRE,
+const emailsParamsGlobal = {
+	from : process.env.EMAIL_ENVOI,
+	to : process.env.EMAIL_DESTINATAIRE,
 	subject : "Attention danger sur l'application",
 	text : "Un utilisateur a effectué 50 requêtes en 15min sur l'application, il y a danger pour la sécurité de l'application"
 };
 //paramétrage pour le dépassement de requête sur le login
-const loginFullRequest = {
-	from : process.env.EMAILENVOI,
-	to : process.env.EMAILDESTINATAIRE,
+const emailsParamsLogin = {
+	from : process.env.EMAIL_SENT,
+	to : process.env.EMAIL_RECEIVED,
 	subject : "Attention danger sur l'application",
 	text : "Un utilisateur a fait plus de 5 tentatives de connexion sur l'application avec des identifiants invalides, il y a danger pour la sécurité de l'application"
 };
@@ -39,7 +39,7 @@ exports.loginLimiter = rateLimit({
 
 	//fonction appelée dès que limite atteinte
 	onLimitReached: () => {
-		transporter.sendMail(loginFullRequest);
+		transporter.sendMail(emailsParamsLogin);
 	}
 });
 
@@ -51,6 +51,6 @@ exports.globalLimiter = rateLimit({
     
 	//fonction appelée dès que limite atteinte
 	onLimitReached : () => {
-		transporter.sendMail(globalFullRequest);
+		transporter.sendMail(emailsParamsGlobal);
 	}
 });

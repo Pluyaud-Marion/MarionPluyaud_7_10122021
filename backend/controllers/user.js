@@ -93,7 +93,8 @@ exports.getOneProfileSimplify = (req, res) => {
 		.catch(error => res.status(400).json({error}));
 };
 
-// visualiser un profil en totalité / admin ou utilisateur lui même
+// visualiser un profil en totalité / admin ou utilisateur lui même 
+// exclu le password qui n'est jamais renvoyé
 exports.getOneProfileFull = (req, res) => {
 	//on trouve l'user qui envoie la requête -> userRequest
 	model.User.findOne({
@@ -103,6 +104,7 @@ exports.getOneProfileFull = (req, res) => {
 			//on trouve l'user concerné par la requête (celui envoyé dans les params de requete) -> user
 			model.User.findOne({
 				where : {id : req.params.userId},
+				attributes: {exclude: ["password"]}
 			})
 				.then(user=> {
 					// si l'user qui veut faire la requête est admin ou si c'est le même que celui qui a fait l'user qu'on cible
@@ -123,6 +125,7 @@ exports.getOneProfileFull = (req, res) => {
 
 
 // L'admin peut visualiser tous les profils - 
+// exclu le password qui n'est jamais renvoyé
 exports.adminGetAllProfile = (req, res) => {
 	//on cherche l'user qui envoie la requête -> userRequest
 	model.User.findOne({
@@ -133,6 +136,7 @@ exports.adminGetAllProfile = (req, res) => {
 			//s'il est admin = on visualise tous les users de la db
 			if(userRequest.isadmin === true) {
 				model.User.findAll({
+					attributes: {exclude: ["password"]},
 					order : [["createdAt", "DESC"]] 
 				})
 					.then(allUsers => res.status(200).json(allUsers))
@@ -162,12 +166,14 @@ exports.deleteProfile = (req, res) => {
 				res.status(404).json({message: "Vous n'avez pas l'autorisation de supprimer un autre utilisateur"});
 			}
 		})
-		//.catch(error => res.status(400).json({error : "Cet utilisateur n'existe pas"}));
-		.catch(() => res.status(400).json({message : "Cet utilisateur n'existe pas"}));
+		.catch(error => {
+			console.log(error);
+			return res.status(400).json({message : "Cet utilisateur n'existe pas"});
+		});
 };
 
 //l'admin peut modifier tous les profils / l'utilisateur lui même peut modifier son profil
-exports.modifyProfile = (req, res) => {
+exports.updateProfile = (req, res) => {
 	const regexEmail = /^[^@\s]{2,30}@[^@\s]{2,30}\.[^@\s]{2,5}$/;
 	const email = req.body.email;
 	//on trouve l'user qui envoie la requête

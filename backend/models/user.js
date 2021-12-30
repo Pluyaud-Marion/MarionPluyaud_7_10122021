@@ -61,7 +61,7 @@ module.exports = (sequelize, DataTypes) => {
 		},
 		password: {
 			allowNull: false,
-			type: DataTypes.STRING
+			type: DataTypes.STRING,
 		},
 		job: {
 			allowNull: true,
@@ -83,7 +83,8 @@ module.exports = (sequelize, DataTypes) => {
 			allowNull: false,
 			type: DataTypes.DATE
 		}
-	}, {
+	}, 
+	{
 		sequelize,
 		modelName: "User",
 	});

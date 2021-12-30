@@ -37,11 +37,10 @@ exports.createPost = (req,res) => {
 							message : "Publication enregistrée avec texte et fichier",
 						}))
                     
-						.catch(error => res.status(500).json({error}));
+						.catch(error => res.status(400).json({error}));
                 
 					//si le post contient uniquement un fichier
 				} else if (req.file) {
-
 					model.Post.create({
 						UserId : userIdToken,
 						attachment : `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
@@ -50,7 +49,7 @@ exports.createPost = (req,res) => {
 							authorPost,
 							message : "Publication enregistrée sans texte, uniquement avec fichier"
 						}))
-						.catch(error => res.status(500).json({error}));
+						.catch(error => res.status(400).json({error}));
                 
 					//si le post contient uniquement du texte
 				} else if (contentText){
@@ -65,7 +64,7 @@ exports.createPost = (req,res) => {
 							authorPost,
 							message : "Publication enregistrée sans fichier"
 						}))
-						.catch(error => res.status(500).json({error}));
+						.catch(error => res.status(400).json({error}));
 				}
 			})
 			.catch(error => res.status(400).json({error}));
@@ -97,7 +96,7 @@ exports.getUserPost = (req, res) => {
 			if(allPostUser.length <= 0){ //si le tableau des posts de cet utilisateur est vide
 				return res.status(400).json({message : "Cet utilisateur n'a rien publié"});
 			} else {
-				res.status(200).json(allPostUser);
+				return res.status(200).json(allPostUser);
 			}
 		})
 		.catch(error => res.status(400).json({error}));
@@ -138,16 +137,19 @@ exports.deletePost = (req, res) => {
 						}
 						// Si le user qui fait la requête n'est ni admin, ni celui qui a créé le post -> suppression KO
 					} else {
-						res.status(404).json({ error : "Vous n'avez pas l'autorisation de supprimer un post qui ne vous appartient pas"});
+						return res.status(404).json({ error : "Vous n'avez pas l'autorisation de supprimer un post qui ne vous appartient pas"});
 					} 
 				})
-				//.catch(error => res.status(500).json({error : "Ce post n'existe plus"}));
-				.catch(() => res.status(500).json({message : "Ce post n'existe plus"}));
+				.catch(error => {
+					console.log(error);
+					return res.status(400).json({error : "Ce post n'existe plus"});
+				});
+			
 		})
 		.catch(error => res.status(400).json({error}));
 };
 
-exports.modifyPost = (req, res) => {
+exports.updatePost = (req, res) => {
 	const contentText = req.body.post;
 	//on trouve l'user qui envoie la requête
 	model.User.findOne({
@@ -160,7 +162,7 @@ exports.modifyPost = (req, res) => {
 			})
 				.then(post => {
 					if(!post) {
-						return res.status(401).json({error : "Ce post n'existe pas"});
+						return res.status(400).json({error : "Ce post n'existe pas"});
 					} else {
 						if (userRequest.isadmin || post.UserId === res.locals.token.userId) {
                     
@@ -171,29 +173,31 @@ exports.modifyPost = (req, res) => {
 									content: postObject.content.trim()
 								})
 									.then(() => res.status(200).json({message: "Post modifié avec fichier et texte"}))
-									.catch(error => res.status(402).json({error}));
+									.catch(error => res.status(400).json({error}));
 
 							} else if (req.file) {  
 								post.update({
 									attachment : `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
 								})
 									.then(() => res.status(200).json({message: "Post modifié avec fichier uniquement"}))
-									.catch(error => res.status(402).json({error}));
+									.catch(error => res.status(400).json({error}));
                      
 							} else if (contentText) {
 								const postObject = JSON.parse(req.body.post);
 								post.update({
 									content : postObject.content.trim()
 								})
-									.then(() => res.status(200).json({message: "Post modifié avec texte uniquement"}))
-									.catch(error => res.status(402).json({error}));
+									.then(() => {
+										return res.status(200).json({message: "Post modifié avec texte uniquement"});
+									})
+									.catch(error => res.status(400).json({error}));
 							}
 						} else {
 							return res.status(404).json({error : "Vous n'avez pas le droit de faire ça"});
 						}
 					}
 				})
-				.catch(error => res.status(403).json({error}));
+				.catch(error => res.status(400).json({error}));
 		})
-		.catch(error => res.status(402).json({error}));
+		.catch(error => res.status(400).json({error}));
 };

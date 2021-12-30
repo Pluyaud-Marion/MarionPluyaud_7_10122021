@@ -15,7 +15,7 @@ router.post("/login", limiter.loginLimiter, userController.login);
 router.get("/full/:userId", auth, limiter.globalLimiter, userController.getOneProfileFull);
 router.get("/:userId", auth, limiter.globalLimiter, userController.getOneProfileSimplify);
 router.get("/", auth, limiter.globalLimiter, userController.adminGetAllProfile);
-router.put("/:userId", auth, limiter.globalLimiter, userController.modifyProfile);
+router.put("/:userId", auth, limiter.globalLimiter, userController.updateProfile);
 router.delete("/:userId", auth, limiter.globalLimiter, userController.deleteProfile);
 
 module.exports = router;
