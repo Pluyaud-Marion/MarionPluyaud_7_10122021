@@ -11,7 +11,8 @@ const router = express.Router();
 
 router.post("/comment/:postId", auth, limiter.globalLimiter ,multer, commentController.createComment);
 
-router.get("/comment/:postId", auth, limiter.globalLimiter, commentController.getAllCommentForPost);
+//attention auth retiré
+router.get("/comment/:postId", limiter.globalLimiter, commentController.getAllCommentForPost);
 
 router.delete("/comment/:commentId", auth, limiter.globalLimiter,commentController.deleteComment);
 

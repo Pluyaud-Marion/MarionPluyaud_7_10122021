@@ -1,19 +1,31 @@
 <template>
   <section>
+    <!-- 
     <div class="container">
       <h2>Inscription</h2>
       <form class="formulaire" action="" method="post">
         <div class="firstname">
           <label for="firstname">Prénom : </label>
-          <input type="text" id="firstname" placeholder="Votre prénom" />
+          <input
+            v-model="firstname"
+            type="text"
+            id="firstname"
+            placeholder="Votre prénom"
+          />
         </div>
         <div class="lastname">
           <label for="lastname">Nom : </label>
-          <input type="text" id="lastname" placeholder="Votre nom" />
+          <input
+            v-model="lastname"
+            type="text"
+            id="lastname"
+            placeholder="Votre nom"
+          />
         </div>
         <div class="email">
           <label for="email">Email : </label>
           <input
+            v-model="email"
             type="email"
             id="email"
             placeholder="votreadressemail@gmail.com"
@@ -21,27 +33,135 @@
         </div>
         <div class="password">
           <label for="password">Mot de passe : </label>
-          <input type="text" id="password" placeholder="********" />
+          <input
+            v-model="password"
+            type="text"
+            id="password"
+            placeholder="********"
+          />
         </div>
         <div class="job">
           <label for="job">Fonction : </label>
           <input
+            v-model="job"
             type="text"
             id="job"
             placeholder="Votre fonction dans l'entreprise"
           />
         </div>
         <div>
-          <button class="button" type="submit">Créer mon compte</button>
+          <button
+            @click="createAccount()"
+            class="button"
+            :class="{ 'button--inactif': !validatedFields() }"
+          >
+            Créer mon compte
+          </button>
         </div>
       </form>
+      
+    </div>
+    -->
+    <div class="container">
+      <h2>Inscription</h2>
+      <div class="firstname">
+        <input
+          v-model="firstname"
+          type="text"
+          id="firstname"
+          placeholder="Prénom"
+        />
+      </div>
+      <div class="lastname">
+        <input v-model="lastname" type="text" id="lastname" placeholder="Nom" />
+      </div>
+      <div class="email">
+        <input
+          v-model="email"
+          type="email"
+          id="email"
+          placeholder="Adresse email"
+        />
+      </div>
+      <div class="password">
+        <input
+          v-model="password"
+          type="text"
+          id="password"
+          placeholder="Mot de passe"
+        />
+      </div>
+      <div class="job">
+        <input
+          v-model="job"
+          type="text"
+          id="job"
+          placeholder="Votre fonction dans l'entreprise"
+        />
+      </div>
+      <div>
+        <button
+          @click="createAccount()"
+          class="button"
+          :class="{ 'button--inactif': !validatedFields() }"
+        >
+          <span v-if="status == 'loading'">Création en cours...</span>
+          <span v-else>Créer mon compte</span>
+        </button>
+      </div>
     </div>
   </section>
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   name: "SignupHome",
+  data: function () {
+    return {
+      firstname: "",
+      lastname: "",
+      email: "",
+      password: "",
+      job: "",
+    };
+  },
+  computed: {
+    ...mapState(["status"]), //on récupère le state status
+  },
+  methods: {
+    validatedFields: function () {
+      if (
+        this.email != "" &&
+        this.firstname != "" &&
+        this.lastname != "" &&
+        this.password != ""
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    createAccount: function () {
+      const self = this;
+      this.$store
+        .dispatch("createAccount", {
+          email: this.email,
+          firstname: this.firstname,
+          lastname: this.lastname,
+          password: this.password,
+          job: this.job,
+        })
+        .then(
+          function () {
+            self.$router.push("/posts");
+          },
+          function (error) {
+            console.log(error);
+          }
+        );
+    },
+  },
 };
 </script>
 
@@ -93,7 +213,17 @@ h2 {
     color: white;
     font-weight: bold;
     font-size: medium;
-    cursor: pointer;
+    //cursor: pointer;
+  }
+  .button--inactif {
+    width: 50%;
+    height: 30px;
+    border-radius: 10px;
+    background-color: grey;
+    opacity: 80%;
+    color: white;
+    font-weight: bold;
+    font-size: medium;
   }
 }
 </style>

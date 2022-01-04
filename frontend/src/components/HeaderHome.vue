@@ -22,7 +22,7 @@
 
 <script>
 export default {
-  name: "HeaderLogin",
+  name: "HeaderHome",
   // data() {
   //   return {
   //     buttonActiveSignup: false,
@@ -77,5 +77,6 @@ export default {
 }
 h1 {
   color: red;
+  opacity: 80%;
 }
 </style>
