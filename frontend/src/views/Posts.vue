@@ -15,5 +15,16 @@ export default {
     Header,
     News,
   },
+  /*ESSAI Avec Vuex
+  mounted: function () {
+    //moment où la vue est affichée
+    console.log(this.$store.state.user);
+    if (this.$store.state.user.userId == -1) {
+      this.$router.push("/login");
+      return;
+    }
+    this.$store.dispatch("getUserInfos");
+  },
+  */
 };
 </script>

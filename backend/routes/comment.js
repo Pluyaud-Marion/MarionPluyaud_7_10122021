@@ -8,8 +8,9 @@ const limiter = require("../middleware/limiter");
 
 const router = express.Router();
 
-
-router.post("/comment/:postId", auth, limiter.globalLimiter ,multer, commentController.createComment);
+//attention route modifiée dans controller
+//ATTENTION AUTH RETIRE
+router.post("/comment/:postId", limiter.globalLimiter ,multer, commentController.createComment);
 
 //attention auth retiré
 router.get("/comment/:postId", limiter.globalLimiter, commentController.getAllCommentForPost);

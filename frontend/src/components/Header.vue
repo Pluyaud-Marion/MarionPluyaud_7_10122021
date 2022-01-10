@@ -7,8 +7,14 @@
         alt="logo groupomania"
       />
       <div class="button-container">
-        <span class="profile">Profil</span>
+        <span class="profile">
+          <router-link to="/profile">Profil</router-link>
+        </span>
         <span class="deconnexion">Déconnexion</span>
+
+        <router-link to="/">
+          <i class="fas fa-home"></i>
+        </router-link>
       </div>
     </div>
     <h1>Groupomania : Votre réseau social d'entreprise</h1>
@@ -36,7 +42,7 @@ export default {
     width: 30%;
 
     .deconnexion,
-    .profile {
+    .profile .fa-home {
       width: 100%;
       height: 50px;
       opacity: 80%;
@@ -47,6 +53,10 @@ export default {
     }
 
     .deconnexion {
+      margin-left: 10%;
+    }
+    .fa-home {
+      color: red;
       margin-left: 10%;
     }
   }

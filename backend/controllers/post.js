@@ -4,14 +4,14 @@ const fs = require("fs");
 //importation des modèles
 const model = require("../models");
 
-exports.createPost = (req, res) => {
-	model.Post.create({
-		UserId : req.body.userId,
-		content : req.body.content
-	})
-		.then(() => res.status(201).json({message : "post enregistré"}))
-		.catch(error => res.status(400).json({error}));
-};
+// exports.createPost = (req, res) => {
+// 	model.Post.create({
+// 		UserId : req.body.userId,
+// 		content : req.body.content
+// 	})
+// 		.then(() => res.status(201).json({message : "post enregistré"}))
+// 		.catch(error => res.status(400).json({error}));
+// };
 
 //version avec userId dans les paramètres de la requête
 // exports.createPost = (req,res) => {
@@ -78,7 +78,71 @@ exports.createPost = (req, res) => {
 // 			.catch(error => res.status(400).json({error}));
 // 	}
 // };
+exports.createPost = (req,res) => {
+	const contentText = req.body.post;
+	//const userIdToken = Number (req.body.userId);
+	//const paramUserId = Number(req.params.userId);
 
+	// if(userIdToken !== paramUserId) {
+	// 	return res.status(404).json({message : "Vous n'êtes pas autorisé à faire ça"});
+	// } else {
+
+	//trouve l'auteur du post grâce à son id
+	// model.User.findOne({
+	// 	attributes: ["firstname", "lastname", "id"],
+	// 	where : {id : userIdToken}
+	// })
+	// 	//auteur contenue dans la promesse -> authorPost
+	// 	.then(authorPost => {
+	//si le post contient un fichier + du texte
+	if(req.file && contentText){
+
+		const postObject = JSON.parse(req.body.post);
+		console.log(postObject);
+		model.Post.create({
+			UserId : req.params.userId,
+			content: postObject.content,
+			attachment : `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
+		})
+		//contient le post créé -> affiche le message de réussite + l'auteur du post
+			.then(() => res.status(201).json({
+				//authorPost,
+				message : "Publication enregistrée avec texte et fichier",
+			}))
+                    
+			.catch(error => res.status(400).json({error}));
+                
+		//si le post contient uniquement un fichier
+	} else if (req.file) {
+		model.Post.create({
+			UserId : req.params.userId,
+			attachment : `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
+		})
+			.then(()=> res.status(201).json({
+				//authorPost,
+				message : "Publication enregistrée sans texte, uniquement avec fichier"
+			}))
+			.catch(error => res.status(400).json({error}));
+                
+		//si le post contient uniquement du texte
+	} else if (contentText){
+            
+		const postObject = JSON.parse(req.body.post);
+
+		model.Post.create({
+			UserId : req.params.userId,
+			content: postObject.content
+		})
+			.then(()=> res.status(201).json({
+				//authorPost,
+				message : "Publication enregistrée sans fichier"
+			}))
+			.catch(error => res.status(400).json({error}));
+	}
+	//	})
+	//.catch(error => res.status(400).json({error}));
+//	}
+};
 exports.getAllPost = (req,res) => {
 	model.Post.findAll({
 		// relie au Post, l'utilisateur qui l'a fait + les commentaires
@@ -86,6 +150,7 @@ exports.getAllPost = (req,res) => {
 			model : model.User,
 			attributes : ["firstname", "lastname"]
 		}],
+	
 		//trie dans l'ordre du + récent
 		order : [["createdAt", "DESC"]] 
 	})

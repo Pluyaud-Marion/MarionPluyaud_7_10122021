@@ -1,6 +1,7 @@
 
 <template>
   <section>
+    <!--
     <div class="container">
       <h2>Connexion à votre compte</h2>
       <div class="email">
@@ -15,25 +16,27 @@
         />
       </div>
       <div>
-        <div v-if="status == 'error_login'">
+        <div v-if="status === 'error_login'">
           Echec de la connexion, vérifiez vos identifiants
         </div>
         <button @click="login()" class="button">
-          <span v-if="status == 'loading'">Connexion en cours...</span>
+          <span v-if="status === 'loading'">Connexion en cours...</span>
           <span v-else>Connexion</span>
 
-          <!-- <router-link to="/posts">Envoyer</router-link> 
-          -->
+          <router-link to="/posts">Envoyer</router-link> 
+         
         </button>
       </div>
     </div>
-    <!-- AVEC FORMULAIRE
+    -->
+
     <div class="container">
       <h2>Connexion à votre compte</h2>
       <form class="formulaire" action="" method="post">
         <div class="email">
           <label for="email">Email : </label>
           <input
+            v-model="email"
             type="email"
             id="email"
             placeholder="votreadressemail@gmail.com"
@@ -41,16 +44,25 @@
         </div>
         <div class="password">
           <label for="password">Mot de passe : </label>
-          <input type="text" id="password" placeholder="********" />
+          <input
+            v-model="password"
+            type="text"
+            id="password"
+            placeholder="********"
+          />
         </div>
         <div>
-          <button class="button" type="submit">
+          <button
+            class="button"
+            type="submit"
+            :class="{ 'button--inactif': !validatedFields() }"
+          >
             <router-link to="/posts">Envoyer</router-link>
           </button>
         </div>
       </form>
     </div>
-    -->
+
     <!-- 
       TESTS
     <div>{{ firstname }}</div>
@@ -68,10 +80,26 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+//import { mapState } from "vuex";
 
 export default {
   name: "LoginHome",
+  data: function () {
+    return {
+      email: "",
+      password: "",
+    };
+  },
+  methods: {
+    validatedFields: function () {
+      if (this.email != "" && this.password != "") {
+        return true;
+      } else {
+        return false;
+      }
+    },
+  },
+  /* ESSAI avec vuex
   data: function () {
     return {
       email: "",
@@ -99,21 +127,25 @@ export default {
         );
     },
   },
-  // data() {
-  //   return {
-  //     firstname: "Marion",
-  //     posts: [],
-  //     //show: false,
-  //   };
-  // },
-  // created() {
-  //   fetch("http://localhost:3000/api/post/")
-  //     .then((response) => response.json())
-  //     .then((response) => {
-  //       this.posts = response; //on rempli le tableau posts avec les response(les posts récupérés dans la db) -> this pour accéder aux données de l'application vue
-  //       console.log(this.posts);
-  //     });
-  // },
+  */
+
+  /*
+  data() {
+    return {
+      firstname: "Marion",
+      posts: [],
+      //show: false,
+    };
+  },
+  created() {
+    fetch("http://localhost:3000/api/post/")
+      .then((response) => response.json())
+      .then((response) => {
+        this.posts = response; //on rempli le tableau posts avec les response(les posts récupérés dans la db) -> this pour accéder aux données de l'application vue
+        console.log(this.posts);
+      });
+  },
+  */
 };
 </script>
 
@@ -161,5 +193,15 @@ section {
   color: white;
   font-weight: bold;
   font-size: small;
+}
+.button--inactif {
+  width: 50%;
+  height: 30px;
+  border-radius: 10px;
+  background-color: grey;
+  opacity: 80%;
+  color: white;
+  font-weight: bold;
+  font-size: medium;
 }
 </style>

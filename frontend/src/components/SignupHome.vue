@@ -1,6 +1,5 @@
 <template>
   <section>
-    <!-- 
     <div class="container">
       <h2>Inscription</h2>
       <form class="formulaire" action="" method="post">
@@ -51,17 +50,17 @@
         </div>
         <div>
           <button
-            @click="createAccount()"
             class="button"
+            type="submit"
             :class="{ 'button--inactif': !validatedFields() }"
           >
-            Créer mon compte
+            <router-link to="/posts">Créer mon compte</router-link>
           </button>
         </div>
       </form>
-      
     </div>
-    -->
+
+    <!--
     <div class="container">
       <h2>Inscription</h2>
       <div class="firstname">
@@ -110,13 +109,38 @@
         </button>
       </div>
     </div>
+    -->
   </section>
 </template>
 
 <script>
-import { mapState } from "vuex";
+//import { mapState } from "vuex";
 export default {
   name: "SignupHome",
+  data: function () {
+    return {
+      firstname: "",
+      lastname: "",
+      email: "",
+      password: "",
+      job: "",
+    };
+  },
+  methods: {
+    validatedFields: function () {
+      if (
+        this.email != "" &&
+        this.firstname != "" &&
+        this.lastname != "" &&
+        this.password != ""
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+  },
+  /* ESSAI avec vuex
   data: function () {
     return {
       firstname: "",
@@ -162,6 +186,7 @@ export default {
         );
     },
   },
+  */
 };
 </script>
 

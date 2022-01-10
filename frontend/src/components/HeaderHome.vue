@@ -12,7 +12,7 @@
         </button>
 
         <button class="button-login">
-          <router-link to="/login">Connexion</router-link>
+          <router-link to="/">Connexion</router-link>
         </button>
       </div>
     </div>
