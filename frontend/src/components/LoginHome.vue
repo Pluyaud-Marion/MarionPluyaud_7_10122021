@@ -32,35 +32,33 @@
 
     <div class="container">
       <h2>Connexion à votre compte</h2>
-      <form class="formulaire" action="" method="post">
-        <div class="email">
-          <label for="email">Email : </label>
-          <input
-            v-model="email"
-            type="email"
-            id="email"
-            placeholder="votreadressemail@gmail.com"
-          />
-        </div>
-        <div class="password">
-          <label for="password">Mot de passe : </label>
-          <input
-            v-model="password"
-            type="text"
-            id="password"
-            placeholder="********"
-          />
-        </div>
-        <div>
-          <button
-            class="button"
-            type="submit"
-            :class="{ 'button--inactif': !validatedFields() }"
-          >
-            <router-link to="/posts">Envoyer</router-link>
-          </button>
-        </div>
-      </form>
+
+      <div class="email">
+        <input
+          v-model="email"
+          type="email"
+          id="email"
+          placeholder="adresse email"
+        />
+      </div>
+      <div class="password">
+        <input
+          v-model="password"
+          type="text"
+          id="password"
+          placeholder="********"
+        />
+      </div>
+      <div>
+        <button
+          class="button"
+          type="submit"
+          @click="login()"
+          v-show="validatedFields()"
+        >
+          <router-link to="/posts">Envoyer</router-link>
+        </button>
+      </div>
     </div>
 
     <!-- 
@@ -81,7 +79,7 @@
 
 <script>
 //import { mapState } from "vuex";
-
+import axios from "axios";
 export default {
   name: "LoginHome",
   data: function () {
@@ -91,11 +89,29 @@ export default {
     };
   },
   methods: {
-    validatedFields: function () {
+    validatedFields() {
       if (this.email != "" && this.password != "") {
         return true;
       } else {
         return false;
+      }
+    },
+    login() {
+      if (this.validatedFields()) {
+        // si les champs sont complétés
+        axios
+          .post("http://localhost:3000/api/user/login", {
+            email: this.email,
+            password: this.password,
+          })
+          .then((response) => {
+            const name = response.data.firstname + " " + response.data.lastname;
+            localStorage.setItem("token", response.data.token);
+
+            localStorage.setItem("userId", response.data.userId);
+            localStorage.setItem("name", name);
+          })
+          .catch((error) => console.log(error));
       }
     },
   },
@@ -126,24 +142,6 @@ export default {
           }
         );
     },
-  },
-  */
-
-  /*
-  data() {
-    return {
-      firstname: "Marion",
-      posts: [],
-      //show: false,
-    };
-  },
-  created() {
-    fetch("http://localhost:3000/api/post/")
-      .then((response) => response.json())
-      .then((response) => {
-        this.posts = response; //on rempli le tableau posts avec les response(les posts récupérés dans la db) -> this pour accéder aux données de l'application vue
-        console.log(this.posts);
-      });
   },
   */
 };
@@ -193,15 +191,5 @@ section {
   color: white;
   font-weight: bold;
   font-size: small;
-}
-.button--inactif {
-  width: 50%;
-  height: 30px;
-  border-radius: 10px;
-  background-color: grey;
-  opacity: 80%;
-  color: white;
-  font-weight: bold;
-  font-size: medium;
 }
 </style>

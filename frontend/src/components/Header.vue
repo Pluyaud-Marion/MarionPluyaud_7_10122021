@@ -7,16 +7,19 @@
         alt="logo groupomania"
       />
       <div class="button-container">
+        <span class="actus">
+          <router-link to="/posts">Actus</router-link>
+        </span>
         <span class="profile">
           <router-link to="/profile">Profil</router-link>
         </span>
-        <span class="deconnexion">Déconnexion</span>
 
         <router-link to="/">
-          <i class="fas fa-home"></i>
+          <span class="deconnexion">Déconnexion</span>
         </router-link>
       </div>
     </div>
+    <h2 class="name">Bienvenue {{ name }}</h2>
     <h1>Groupomania : Votre réseau social d'entreprise</h1>
   </section>
 </template>
@@ -24,6 +27,15 @@
 <script>
 export default {
   name: "Header",
+  data() {
+    return {
+      name: "",
+    };
+  },
+  created() {
+    let name = localStorage.getItem("name");
+    this.name = name;
+  },
 };
 </script>
 
@@ -39,14 +51,15 @@ export default {
   }
   .button-container {
     display: flex;
-    width: 30%;
+    width: 50%;
+    align-items: center;
 
     .deconnexion,
-    .profile .fa-home {
+    .profile {
       width: 100%;
-      height: 50px;
+
       opacity: 80%;
-      color: red;
+      color: black;
       font-weight: bold;
       font-size: large;
       cursor: pointer;
@@ -55,11 +68,10 @@ export default {
     .deconnexion {
       margin-left: 10%;
     }
-    .fa-home {
-      color: red;
-      margin-left: 10%;
-    }
   }
+}
+.name {
+  font-size: medium;
 }
 h1 {
   color: red;

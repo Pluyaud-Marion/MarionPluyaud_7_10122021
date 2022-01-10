@@ -6,11 +6,10 @@ const auth = require("../middleware/authentification");
 const limiter = require("../middleware/limiter");
 const router = express.Router();
 
-//ATTENTION AUTH RETIRE
-router.post("/:userId", limiter.globalLimiter, multer, postController.createPost);
 
-//ATTENTION AUTH RETIRE
-router.get("/", limiter.globalLimiter, postController.getAllPost);
+router.post("/:userId", auth, limiter.globalLimiter, multer, postController.createPost);
+
+router.get("/", auth, limiter.globalLimiter, postController.getAllPost);
 
 router.get("/:userId", auth, limiter.globalLimiter, postController.getUserPost);
 

@@ -2,62 +2,63 @@
   <section>
     <div class="container">
       <h2>Inscription</h2>
-      <form class="formulaire" action="" method="post">
-        <div class="firstname">
-          <label for="firstname">Prénom : </label>
-          <input
-            v-model="firstname"
-            type="text"
-            id="firstname"
-            placeholder="Votre prénom"
-          />
-        </div>
-        <div class="lastname">
-          <label for="lastname">Nom : </label>
-          <input
-            v-model="lastname"
-            type="text"
-            id="lastname"
-            placeholder="Votre nom"
-          />
-        </div>
-        <div class="email">
-          <label for="email">Email : </label>
-          <input
-            v-model="email"
-            type="email"
-            id="email"
-            placeholder="votreadressemail@gmail.com"
-          />
-        </div>
-        <div class="password">
-          <label for="password">Mot de passe : </label>
-          <input
-            v-model="password"
-            type="text"
-            id="password"
-            placeholder="********"
-          />
-        </div>
-        <div class="job">
-          <label for="job">Fonction : </label>
-          <input
-            v-model="job"
-            type="text"
-            id="job"
-            placeholder="Votre fonction dans l'entreprise"
-          />
-        </div>
-        <div>
-          <button
-            class="button"
-            type="submit"
-            :class="{ 'button--inactif': !validatedFields() }"
-          >
-            <router-link to="/posts">Créer mon compte</router-link>
-          </button>
-        </div>
-      </form>
+
+      <div class="firstname">
+        <label for="firstname">Prénom : </label>
+        <input
+          v-model="firstname"
+          type="text"
+          id="firstname"
+          placeholder="Votre prénom"
+        />
+      </div>
+      <div class="lastname">
+        <label for="lastname">Nom : </label>
+        <input
+          v-model="lastname"
+          type="text"
+          id="lastname"
+          placeholder="Votre nom"
+        />
+      </div>
+      <div class="email">
+        <label for="email">Email : </label>
+        <input
+          v-model="email"
+          type="email"
+          id="email"
+          placeholder="votreadressemail@gmail.com"
+        />
+      </div>
+      <div class="password">
+        <label for="password">Mot de passe : </label>
+        <input
+          v-model="password"
+          type="text"
+          id="password"
+          placeholder="********"
+        />
+      </div>
+      <div class="job">
+        <label for="job">Fonction : </label>
+        <input
+          v-model="job"
+          type="text"
+          id="job"
+          placeholder="Votre fonction dans l'entreprise"
+        />
+      </div>
+
+      <div>
+        <button
+          class="button"
+          type="submit"
+          v-show="validatedFields()"
+          @click="signup()"
+        >
+          <router-link to="/">Créer mon compte</router-link>
+        </button>
+      </div>
     </div>
 
     <!--
@@ -114,7 +115,9 @@
 </template>
 
 <script>
+import axios from "axios";
 //import { mapState } from "vuex";
+// import axios from "axios";
 export default {
   name: "SignupHome",
   data: function () {
@@ -138,6 +141,22 @@ export default {
       } else {
         return false;
       }
+    },
+    signup() {
+      axios
+        .post("http://localhost:3000/api/user/signup", {
+          firstname: this.firstname,
+          lastname: this.lastname,
+          email: this.email,
+          password: this.password,
+          job: this.job,
+        })
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
   },
   /* ESSAI avec vuex
@@ -239,16 +258,6 @@ h2 {
     font-weight: bold;
     font-size: medium;
     //cursor: pointer;
-  }
-  .button--inactif {
-    width: 50%;
-    height: 30px;
-    border-radius: 10px;
-    background-color: grey;
-    opacity: 80%;
-    color: white;
-    font-weight: bold;
-    font-size: medium;
   }
 }
 </style>

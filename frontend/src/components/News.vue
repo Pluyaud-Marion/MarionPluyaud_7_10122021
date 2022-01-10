@@ -9,11 +9,12 @@
     <input name="file" type="file" v-on:change="fileChangePost" />
 
     <button @click="createPost()">Créer un post</button>
+    <div v-if="posts.length < 1">Désolé il n'y a pas de post...</div>
     <!-- 1ère boucle = pour chaque post sur le tableau posts -->
     <article class="vignette" v-for="post in posts" v-bind:key="post.id">
       <div>Post de : {{ post.User.firstname + " " + post.User.lastname }}</div>
       <span class="createdat">Post créé le : {{ post.createdAt }}</span>
-      <button @click="updatePost(post.id)">Mettre à jour</button>
+      <button @click="updatePost(post.id)">Modifier le Post</button>
       <img v-bind:src="post.attachment" alt="image de la publication" />
       <div class="content">{{ post.content }}</div>
       <div>
@@ -31,7 +32,8 @@
       <!-- 2ème boucle = Boucle sur chaque commentaire dans le tableau des commentaires du post = post.Comments -->
       <div v-for="comment in post.Comments" v-bind:key="comment.id">
         <div class="comment">
-          Commentaires : {{ comment.contentCom }}
+          {{ user }} a commenté : {{ comment.contentCom }}
+
           <!-- si pas d'url d'image = pas de balise img -->
           <img
             v-if="comment.attachmentCom != null"
@@ -51,7 +53,7 @@
 </template>
 
 <script>
-//import axios from "axios";
+import axios from "axios";
 
 export default {
   name: "News",
@@ -62,43 +64,45 @@ export default {
       //comments: [],
       commentaire: null,
       attachmentCom: null,
-
       contentPost: null,
       attachment: null,
+      //user: "",
     };
   },
   created() {
-    //affiche les posts et leurs commentaires
-    fetch("http://localhost:3000/api/post/")
-      .then((response) => response.json())
-      .then((response) => {
-        this.posts = response;
-        console.log("posts", this.posts);
-      });
-  },
+    let userToken = localStorage.getItem("token");
 
-  /* 
-  METHODES AVEC AXIOS --------- avec button
-  */
-  methods: {
-    //updatePost(postId) {
-    //console.log(postId);
-    /*  axios
-      .get(`http://localhost:3000/api/post/${postId}`)
+    let configHeaders = {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+    //affiche les posts et leurs commentaires
+    axios
+      .get("http://localhost:3000/api/post/", configHeaders)
+
       .then((response) => {
-        //this.posts = response.data; //n'affiche que les datas
-        console.log(this.posts);
+        this.posts = response.data;
+        console.log("data posts", response.data);
       })
-      .catch((error) => console.log(error)); */
-    //},
+      .catch((error) => console.log(error));
+  },
+  methods: {
     fileChangePost(e) {
       console.log(e);
       this.attachment = e.target.files || e.dataTransfer.files;
       console.log(this.attachment);
     },
     createPost() {
-      console.log(this.attachment);
       //rajouter UserId en paramètre
+      let userTokenStorage = localStorage.getItem("token");
+      let userIdStorage = localStorage.getItem("userId");
+
+      let configHeaders = {
+        headers: {
+          Authorization: `Bearer ${userTokenStorage}`,
+        },
+      };
       let infos = JSON.stringify({
         content: this.contentPost,
       });
@@ -106,12 +110,12 @@ export default {
       formData.append("post", infos);
       formData.append("file", this.attachment);
 
-      let request = {
-        method: "POST",
-        body: formData,
-      };
-      fetch("http://localhost:3000/api/post/1", request)
-        .then((response) => response.json())
+      axios
+        .post(
+          `http://localhost:3000/api/post/${userIdStorage}`,
+          formData,
+          configHeaders
+        )
         .then((response) => {
           console.log(response);
           window.location.reload();
@@ -120,27 +124,34 @@ export default {
     },
 
     createComment(postId) {
+      let userTokenStorage = localStorage.getItem("token");
+      let userIdStorage = localStorage.getItem("userId");
+
+      let configHeaders = {
+        headers: {
+          Authorization: `Bearer ${userTokenStorage}`,
+        },
+      };
       let infos = JSON.stringify({
+        UserId: userIdStorage,
         contentCom: this.commentaire,
       });
 
       const formData = new FormData();
-      // formData.append("comment", infos);
-      // formData.append("image", this.attachmentCom);
       formData.append("comment", infos);
       formData.append("image", this.attachmentCom);
-      console.log(formData.get("comment"));
-      console.log(formData.get("image"));
 
-      let request = {
-        method: "POST",
-        body: formData,
-      };
-      fetch(`http://localhost:3000/api/post/comment/${postId}`, request)
-        .then((response) => response.json())
+      axios
+        .post(
+          `http://localhost:3000/api/post/comment/${postId}`,
+          formData,
+          configHeaders
+        )
         .then((response) => {
           console.log(response);
           window.location.reload();
+
+          //this.user = user;
         })
         .catch((error) => console.log(error));
     },
@@ -149,6 +160,35 @@ export default {
       this.attachmentCom = e.target.files || e.dataTransfer.files;
       console.log(this.attachmentCom);
     },
+
+    // updatePost(postId) {
+    //   let userTokenStorage = localStorage.getItem("token");
+
+    //   let configHeaders = {
+    //     headers: {
+    //       Authorization: `Bearer ${userTokenStorage}`,
+    //     },
+    //   };
+    //   let infos = JSON.stringify({
+    //     content: this.contentPost,
+    //   });
+
+    //   const formData = new FormData();
+    //   formData.append("post", infos);
+    //   formData.append("image", this.attachment);
+
+    //   axios
+    //     .put(
+    //       `http://localhost:3000/api/post/${postId}`,
+    //       formData,
+    //       configHeaders
+    //     )
+    //     .then((response) => {
+    //       console.log(response);
+    //       window.location.reload();
+    //     })
+    //     .catch((error) => console.log(error));
+    // },
 
     // showComments() {
     //   axios

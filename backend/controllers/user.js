@@ -2,7 +2,7 @@
 const bcrypt = require("bcrypt");
 
 //importation crypto-js
-const cryptojs = require("crypto-js");
+//const cryptojs = require("crypto-js");
 
 //importation jwt
 const jwt = require("jsonwebtoken");
@@ -16,13 +16,14 @@ exports.signUp = (req, res) => {
 	const email = req.body.email;
 	// si format email conforme à regex -> cryptage du mail, hashage password et enregistrement dans db
 	if (regexEmail.test(email)) {
-		const emailCryptoJs = cryptojs.HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`).toString();
+		//const emailCryptoJs = cryptojs.HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`).toString();
 		bcrypt.hash(req.body.password, 10)
 			.then(hash => {
 				model.User.create({
 					firstname: req.body.firstname,
 					lastname : req.body.lastname,
-					email : emailCryptoJs,
+					//email : emailCryptoJs,
+					email: req.body.email,
 					password : hash,
 					job : req.body.job,
 					isadmin : req.body.isadmin
@@ -38,11 +39,12 @@ exports.signUp = (req, res) => {
 
 exports.login = (req, res) => {
 	//chiffrement de l'email
-	const emailCryptoJs = cryptojs.HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`).toString();
+	//const emailCryptoJs = cryptojs.HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`).toString();
     
 	//cherche l'email dans la db
 	model.User.findOne({ 
-		where : {email : emailCryptoJs}
+		//where : {email : emailCryptoJs}
+		where : {email : req.body.email}
 	})
 		.then(user => {
 			//si l'user n'existe pas dans la db
@@ -58,6 +60,8 @@ exports.login = (req, res) => {
 							//si vérif ok -> connecté -> on retourne l'userId + isadmin + le token (qui contient userId, la clé, l'expiration)
 						} else {
 							res.status(200).json({
+								firstname: user.firstname,
+								lastname: user.lastname,
 								isadmin : user.isadmin,
 								userId : user.id,
 								token : jwt.sign(
@@ -112,6 +116,7 @@ exports.getOneProfileFull = (req, res) => {
 						if (!user) {
 							return res.status(401).json({error : "Cet utilisateur n'existe pas"});
 						} else {
+
 							res.status(200).json(user);
 						} 
 					} else {
@@ -191,13 +196,14 @@ exports.updateProfile = (req, res) => {
 							return res.status(401).json({error : "Cet utilisateur n'existe pas"});
 						} else {
 							if (regexEmail.test(email)) {
-								const emailCryptoJs = cryptojs.HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`).toString();
+								//const emailCryptoJs = cryptojs.HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`).toString();
 								bcrypt.hash(req.body.password, 10)
 									.then(hash => {
 										user.update({
 											firstname: req.body.firstname,
 											lastname : req.body.lastname,
-											email : emailCryptoJs,
+											//email : emailCryptoJs,
+											email: req.body.email,
 											password : hash,
 											job : req.body.job,
 											isadmin : req.body.isadmin
