@@ -107,9 +107,9 @@ export default {
           .then((response) => {
             const name = response.data.firstname + " " + response.data.lastname;
             localStorage.setItem("token", response.data.token);
-
             localStorage.setItem("userId", response.data.userId);
             localStorage.setItem("name", name);
+            localStorage.setItem("isadmin", response.data.isadmin);
           })
           .catch((error) => console.log(error));
       }

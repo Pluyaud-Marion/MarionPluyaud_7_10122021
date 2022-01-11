@@ -25,6 +25,7 @@ exports.signUp = (req, res) => {
 					//email : emailCryptoJs,
 					email: req.body.email,
 					password : hash,
+		
 					job : req.body.job,
 					isadmin : req.body.isadmin
 				})
@@ -177,8 +178,7 @@ exports.deleteProfile = (req, res) => {
 		});
 };
 
-//l'admin peut modifier tous les profils / l'utilisateur lui même peut modifier son profil
-exports.updateProfile = (req, res) => {
+exports.updateProfileByAdmin = (req, res) => {
 	const regexEmail = /^[^@\s]{2,30}@[^@\s]{2,30}\.[^@\s]{2,5}$/;
 	const email = req.body.email;
 	//on trouve l'user qui envoie la requête
@@ -191,7 +191,51 @@ exports.updateProfile = (req, res) => {
 				where : {id : req.params.userId},
 			})
 				.then(user=> {
-					if (userRequest.isadmin === true || userRequest.id === user.id ) {
+					if (userRequest.isadmin === true) {
+						if (!user) {
+							return res.status(401).json({error : "Cet utilisateur n'existe pas"});
+						} else {
+							if (regexEmail.test(email)) {
+								//const emailCryptoJs = cryptojs.HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`).toString();
+
+								user.update({
+									firstname: req.body.firstname,
+									lastname : req.body.lastname,
+									//email : emailCryptoJs,
+									email: req.body.email,
+									job : req.body.job,
+									isadmin : req.body.isadmin
+								})
+									.then(() => res.status(200).json({message: "Utilisateur modifié"}))
+									.catch(error => res.status(400).json({error}));
+								
+							} else {
+								return res.status(404).json({message : "Le format de la requête est invalide"});
+							}
+						} 
+					} else {
+						return res.status(404).json({error : "Vous n'avez pas le droit de faire ça"});
+					}
+				})
+				.catch(error => res.status(400).json({error}));
+		})
+		.catch(error => res.status(400).json({error}));
+};
+
+exports.updateProfileByUser = (req, res) => {
+	const regexEmail = /^[^@\s]{2,30}@[^@\s]{2,30}\.[^@\s]{2,5}$/;
+	const email = req.body.email;
+	//on trouve l'user qui envoie la requête
+	model.User.findOne({
+		where : {id : res.locals.token.userId}
+	})
+		.then(userRequest => {
+			//on trouve l'user qu'il veut modifier
+			model.User.findOne({
+				where : {id : req.params.userId},
+			})
+				.then(user=> {
+					if (userRequest.id === user.id ) {
 						if (!user) {
 							return res.status(401).json({error : "Cet utilisateur n'existe pas"});
 						} else {
@@ -205,6 +249,7 @@ exports.updateProfile = (req, res) => {
 											//email : emailCryptoJs,
 											email: req.body.email,
 											password : hash,
+									
 											job : req.body.job,
 											isadmin : req.body.isadmin
 										})
