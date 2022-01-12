@@ -3,8 +3,7 @@
     <h1>Votre Profil - {{ user }}</h1>
     <!-- Si admin = false -->
     <div v-if="admin.length == 5">
-      Tes informations
-      <!-- <button v-if="admin.length == 4">{{ admin }}</button> -->
+      Mes informations
       <p>Prénom : {{ infos.firstname }}</p>
 
       <input
@@ -47,6 +46,7 @@
       <button v-show="!show" @click="show = !show">Modifier ton profil</button>
       <button @click="deleteProfile()">Supprimer ton profil</button>
     </div>
+
     <div v-else>
       Vous êtes administrateur du site
       <button @click="showAllProfiles()">
@@ -58,7 +58,12 @@
         v-for="profile in profiles"
         v-bind:key="profile.id"
       >
-        <button v-show="!show" @click="show = !show">
+        <!-- l'id du user à modifier doit être ciblé pour n'ouvrir les modifs que sur le  user concerné -->
+        <!-- <button v-show="!show" @click="show = !show">
+          Modifier le profil de cet utilisateur
+        </button> -->
+
+        <button @click="showInput(profile.id)">
           Modifier le profil de cet utilisateur
         </button>
         <div>
@@ -221,7 +226,8 @@ export default {
         })
         .catch((error) => console.log(error));
     },
-    updateByAdmin(id) {
+    updateByAdmin(userId) {
+      // en paramètres l'id du user à modifier
       let userToken = localStorage.getItem("token");
 
       let configHeaders = {
@@ -232,7 +238,7 @@ export default {
 
       axios
         .put(
-          `http://localhost:3000/api/user/admin/${id}`,
+          `http://localhost:3000/api/user/admin/${userId}`,
           {
             firstname: this.newFirstname,
             lastname: this.newLastname,
@@ -250,6 +256,10 @@ export default {
           window.location.reload(); // recharge la page
         })
         .catch((error) => console.log(error));
+    },
+    showInput(userId) {
+      console.log(userId);
+      this.show = !this.show;
     },
   },
 };
