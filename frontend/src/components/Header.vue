@@ -7,16 +7,15 @@
         alt="logo groupomania"
       />
       <div class="button-container">
-        <span class="actus">
-          <router-link to="/posts">Actus</router-link>
-        </span>
-        <span class="profile">
+        <div class="news">
+          <router-link to="/posts">Actualités</router-link>
+        </div>
+        <div class="profile">
           <router-link to="/profile">Profil</router-link>
-        </span>
-
-        <router-link to="/">
-          <span class="deconnexion">Déconnexion</span>
-        </router-link>
+        </div>
+        <div class="logout">
+          <router-link to="/">Deconnexion</router-link>
+        </div>
       </div>
     </div>
     <h2 class="name">Bienvenue {{ name }}</h2>
@@ -42,7 +41,6 @@ export default {
 <style scoped lang="scss">
 #logo-button {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   height: 110px;
 
@@ -51,30 +49,27 @@ export default {
   }
   .button-container {
     display: flex;
-    width: 50%;
     align-items: center;
-
-    .deconnexion,
+    margin-left: 40%;
+    .news,
+    .logout,
     .profile {
       width: 100%;
-
       opacity: 80%;
       color: black;
       font-weight: bold;
       font-size: large;
       cursor: pointer;
-    }
-
-    .deconnexion {
       margin-left: 10%;
     }
   }
 }
-.name {
-  font-size: medium;
-}
+
 h1 {
   color: red;
   opacity: 80%;
+}
+.name {
+  margin-top: 0;
 }
 </style>

@@ -118,6 +118,7 @@ export default {
   data() {
     return {
       show: false,
+
       user: null,
       userId: null,
       infos: "",
@@ -205,6 +206,7 @@ export default {
       axios
         .delete(`http://localhost:3000/api/user/${userId}`, configHeaders)
         .then(() => {
+          alert("Attention cet utilisateur va être supprimé");
           location.replace(location.origin);
         })
         .catch((error) => console.log(error));
@@ -260,6 +262,7 @@ export default {
     showInput(userId) {
       console.log(userId);
       this.show = !this.show;
+      // this.$refs.userId = !this.show;
     },
   },
 };
