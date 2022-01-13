@@ -137,11 +137,13 @@ exports.createPost = (req,res) => {
 exports.getAllPost = (req,res) => {
 	model.Post.findAll({
 		// relie au Post, l'utilisateur qui l'a fait + les commentaires
-		include : [model.Comment, {
-			model : model.User,
-			attributes : ["firstname", "lastname"]
+		// include : [model.Comment, {
+		// 	model : model.User,
+		// 	attributes : ["firstname", "lastname", "id"]
+		// }],
+		include:[model.User, {
+			model : model.Comment, include: model.User
 		}],
-	
 		//trie dans l'ordre du + récent
 		order : [["createdAt", "DESC"]] 
 	})

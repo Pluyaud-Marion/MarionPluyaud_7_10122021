@@ -48,15 +48,22 @@
       </div>
       <!-- Partie modifier apparait que si admin ou user auteur du post -->
       <div v-if="admin.length == 4 || userId == post.UserId">
+        <!-- 
+          La fonction qui affiche les posts boucle sur chaque post et passe tous les showUpdate à false
+          Dans la boucle (dans chaque post) elle boucle sur les commentaires et passe tous les showDoCom à false. 
+          Le bouton modifier est a show = true
+          Le champ de modif du post est à show = false
+          Au clic sur bouton Modifier = appel de la méthode "showInputUpdatePost qui prend en paramètre l'id du post qu'on veut modifier et qui passe pour cet id v-show à true (le fait apparaitre)"
+           -->
         <button
           class="button"
-          v-show="!showUpdate"
-          @click="showUpdate = !showUpdate"
+          v-show="!showUpdate[post.id]"
+          @click="showInputUpdatePost(post.id)"
         >
           Modifier
         </button>
         <textarea
-          v-show="showUpdate"
+          v-show="showUpdate[post.id]"
           name="update-post"
           id="update-post"
           cols="60"
@@ -64,7 +71,12 @@
           placeholder="Modifiez votre post..."
           v-model="updateTextPost"
         ></textarea>
-        <button class="button" v-show="showUpdate" @click="updatePost(post.id)">
+        <input name="file" type="file" v-on:change="fileChangePost" />
+        <button
+          class="button"
+          v-show="showUpdate[post.id]"
+          @click="updatePost(post.id)"
+        >
           Valider la modification
         </button>
         <!-- <input
@@ -82,14 +94,22 @@
         Supprimer
       </button>
       <div class="comments">
+        <!-- 
+          La fonction qui affiche les posts boucle sur chaque post et passe tous les showUpdate à false
+          Dans la boucle (dans chaque post) elle boucle sur les commentaires et passe tous les showDoCom à false. 
+          Le bouton commenter est a show = true
+          Le champ du commentaire est à show = false
+          Au clic sur bouton commenter = appel de la méthode "showInputDoCom qui prend en paramètre l'id du post sur lequel est le commentaire et qui passe pour cet id v-show à true (le fait apparaitre)"
+           -->
         <button
           class="button"
-          v-show="!showDoCom"
-          @click="showDoCom = !showDoCom"
+          v-show="!showDoCom[post.id]"
+          @click="showInputDoCom(post.id)"
         >
           Commenter
         </button>
-        <div class="new-comment" v-show="showDoCom">
+
+        <div class="new-comment" v-show="showDoCom[post.id]">
           <!-- <input
             type="text"
             v-model.lazy="commentaire"
@@ -108,7 +128,6 @@
             Publier le commentaire
           </button>
         </div>
-        <!-- <button @click="showComments()">Afficher les commentaires</button> -->
 
         <!-- 2ème boucle = Boucle sur chaque commentaire dans le tableau des commentaires du post = post.Comments -->
         <div
@@ -118,8 +137,10 @@
         >
           <div class="comment">
             <div class="comment-text">
-              {{ nameAuthorComment }} a commenté : {{ comment.contentCom }}
+              {{ comment.User.firstname + " " + comment.User.lastname }} a
+              commenté : {{ comment.contentCom }}
             </div>
+
             <!-- si pas d'url d'image = pas de div -->
             <div v-if="comment.attachmentCom" class="comment-file">
               <img
@@ -139,12 +160,6 @@
           </div>
         </div>
       </div>
-
-      <!--
-      <div class="comment">
-        Commentaires : {{ post.Comments.map((comment) => comment.contentCom) }}
-      </div>
-      -->
     </article>
   </section>
 </template>
@@ -157,18 +172,17 @@ export default {
 
   data() {
     return {
-      showDoCom: false,
+      showDoCom: [],
       admin: "",
       userId: "",
-      showUpdate: false,
+      showUpdate: [],
       posts: [],
-      //comments: [],
+
       commentaire: null,
       attachmentCom: null,
       contentPost: null,
       attachment: null,
       updateTextPost: null,
-      nameAuthorComment: null,
 
       //user: "",
     };
@@ -188,10 +202,17 @@ export default {
     //affiche les posts et leurs commentaires
     axios
       .get("http://localhost:3000/api/post/", configHeaders)
-
+      // fonction qui affiche les posts boucle sur chaque post et passe tous les showUpdate à false
+      // Dans la boucle (dans chaque post) elle boucle sur les commentaires et passe tous les showDoCom à false
       .then((response) => {
         this.posts = response.data;
         console.log("data posts", response.data);
+        for (const post of this.posts) {
+          this.showUpdate[post.id] = false;
+          for (const comment of this.post.Comments) {
+            this.showDoCom[comment.id] = false;
+          }
+        }
       })
       .catch((error) => console.log(error));
   },
@@ -230,11 +251,6 @@ export default {
     updatePost(postId) {
       let userTokenStorage = localStorage.getItem("token");
 
-      let configHeaders = {
-        headers: {
-          Authorization: `Bearer ${userTokenStorage}`,
-        },
-      };
       let infos = JSON.stringify({
         content: this.updateTextPost,
       });
@@ -243,12 +259,15 @@ export default {
       formData.append("post", infos);
       formData.append("image", this.attachment);
 
-      axios
-        .put(
-          `http://localhost:3000/api/post/${postId}`,
-          formData,
-          configHeaders
-        )
+      axios({
+        method: "put",
+        url: `http://localhost:3000/api/post/${postId}`,
+        data: formData,
+        headers: {
+          "content-type": "multipart/form-data",
+          Authorization: `Bearer ${userTokenStorage}`,
+        },
+      })
         .then((response) => {
           console.log(response);
           window.location.reload();
@@ -283,11 +302,6 @@ export default {
     createComment(postId) {
       let userTokenStorage = localStorage.getItem("token");
       let userIdStorage = localStorage.getItem("userId");
-      let nameAuthorComment = localStorage.getItem("name");
-      this.nameAuthorComment = nameAuthorComment;
-
-      console.log(nameAuthorComment);
-      console.log(userTokenStorage);
 
       let infos = JSON.stringify({
         UserId: userIdStorage,
@@ -309,7 +323,9 @@ export default {
         },
       })
         .then((response) => {
-          console.log(response);
+          console.log("response", response);
+          console.log("infos", infos);
+
           window.location.reload();
         })
         .catch((error) => console.log(error));
@@ -339,6 +355,12 @@ export default {
           window.location.reload();
         })
         .catch((error) => console.log(error));
+    },
+    showInputUpdatePost(postId) {
+      this.showUpdate[postId] = !this.showUpdate[postId];
+    },
+    showInputDoCom(postId) {
+      this.showDoCom[postId] = !this.showDoCom[postId];
     },
   },
 };

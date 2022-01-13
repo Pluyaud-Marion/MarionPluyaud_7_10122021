@@ -7,43 +7,47 @@
       <p>Prénom : {{ infos.firstname }}</p>
 
       <input
-        v-show="show"
+        v-show="showUser"
         type="text"
         placeholder="Modifier prénom"
         v-model="newFirstname"
       />
       <p>Nom : {{ infos.lastname }}</p>
       <input
-        v-show="show"
+        v-show="showUser"
         type="text"
         placeholder="Modifier nom"
         v-model="newLastname"
       />
       <p>Email : {{ infos.email }}</p>
       <input
-        v-show="show"
+        v-show="showUser"
         type="text"
         placeholder="Modifier email"
         v-model="newEmail"
       />
       <p>Mot de passe : ********</p>
       <input
-        v-show="show"
+        v-show="showUser"
         type="text"
         placeholder="Modifier mot de passe"
         v-model="newPassword"
       />
       <p>Fonction dans l'entreprise : {{ infos.job }}</p>
       <input
-        v-show="show"
+        v-show="showUser"
         type="text"
         placeholder="Modifier fonction"
         v-model="newJob"
       />
       <p>Date de création du compte : {{ infos.createdAt }}</p>
-      <button v-show="show" @click="update()">Valider les modifications</button>
+      <button v-show="showUser" @click="update()">
+        Valider les modifications
+      </button>
 
-      <button v-show="!show" @click="show = !show">Modifier ton profil</button>
+      <button v-show="!showUser" @click="showUser = !showUser">
+        Modifier ton profil
+      </button>
       <button @click="deleteProfile()">Supprimer ton profil</button>
     </div>
 
@@ -52,20 +56,18 @@
       <button @click="showAllProfiles()">
         Voir tous les profils d'utilisateurs
       </button>
-
+      <!-- 
+          La fonction qui affiche les profils boucle sur chaque profil et passe tous les show à false
+           
+          Le bouton modifier le profil est a show = true
+          Les champs de modif sont à show = false
+          Au clic sur bouton Modifier le profil = appel de la méthode "showInput" qui prend en paramètre l'id du profil qu'on veut modifier et qui passe pour cet id v-show à true (le fait apparaitre)"
+           -->
       <article
         class="bloc-profil"
         v-for="profile in profiles"
         v-bind:key="profile.id"
       >
-        <!-- l'id du user à modifier doit être ciblé pour n'ouvrir les modifs que sur le  user concerné -->
-        <!-- <button
-        
-          @click="this.show[profile.id] = !this.show[profile.id]"
-        >
-          Modifier le profil de cet utilisateur
-        </button> -->
-
         <button v-show="!show[profile.id]" @click="showInput(profile.id)">
           Modifier le profil de cet utilisateur
         </button>
@@ -121,6 +123,7 @@ export default {
   data() {
     return {
       show: [],
+      showUser: false,
 
       user: null,
       userId: null,
@@ -227,6 +230,7 @@ export default {
         .get("http://localhost:3000/api/user", configHeaders)
         .then((response) => {
           this.profiles = response.data;
+          //La fonction qui affiche les profils boucle sur chaque profil et passe tous les show à false
           for (const profile of this.profiles) {
             this.show[profile.id] = false;
           }
