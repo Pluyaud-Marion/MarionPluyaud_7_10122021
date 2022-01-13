@@ -31,9 +31,9 @@
       <div class="authorPost">
         {{ post.User.firstname + " " + post.User.lastname }}
       </div>
-      <p class="created-at">Post créé le : {{ post.createdAt }}</p>
+      <p class="created-at">{{ formatDate(post.createdAt) }}</p>
       <p class="updated-at" v-if="post.updatedAt > post.createdAt">
-        Post modifié le : {{ post.updatedAt }}
+        Post modifié le : {{ formatDate(post.updatedAt) }}
       </p>
 
       <div>
@@ -137,9 +137,12 @@
         >
           <div class="comment">
             <div class="comment-text">
-              {{ comment.User.firstname + " " + comment.User.lastname }} a
-              commenté : {{ comment.contentCom }}
+              {{ comment.User.firstname + " " + comment.User.lastname }} :
+              {{ comment.contentCom }}
             </div>
+            <span class="dateComment">
+              {{ formatDate(comment.createdAt) }}</span
+            >
 
             <!-- si pas d'url d'image = pas de div -->
             <div v-if="comment.attachmentCom" class="comment-file">
@@ -166,7 +169,8 @@
 
 <script>
 import axios from "axios";
-
+import { formatRelative } from "date-fns";
+import { fr } from "date-fns/locale";
 export default {
   name: "News",
 
@@ -216,7 +220,12 @@ export default {
       })
       .catch((error) => console.log(error));
   },
+
   methods: {
+    formatDate(date) {
+      return formatRelative(new Date(date), new Date(), { locale: fr });
+    },
+
     fileChangePost(e) {
       this.attachment = e.target.files[0] || e.dataTransfer.files;
     },

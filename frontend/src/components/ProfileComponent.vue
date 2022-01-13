@@ -12,6 +12,7 @@
         placeholder="Modifier prénom"
         v-model="newFirstname"
       />
+
       <p>Nom : {{ infos.lastname }}</p>
       <input
         v-show="showUser"
@@ -26,10 +27,10 @@
         placeholder="Modifier email"
         v-model="newEmail"
       />
-      <p>Mot de passe : ********</p>
+      <p>Mot de passe : {{ "*********" }}</p>
       <input
         v-show="showUser"
-        type="text"
+        type="password"
         placeholder="Modifier mot de passe"
         v-model="newPassword"
       />
