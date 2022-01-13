@@ -56,7 +56,8 @@
           @click="login()"
           v-show="validatedFields()"
         >
-          <router-link to="/posts">Envoyer</router-link>
+          Envoyer
+          <!-- <router-link to="/posts">Envoyer</router-link> -->
         </button>
       </div>
     </div>
@@ -105,11 +106,15 @@ export default {
             password: this.password,
           })
           .then((response) => {
-            const name = response.data.firstname + " " + response.data.lastname;
-            localStorage.setItem("token", response.data.token);
-            localStorage.setItem("userId", response.data.userId);
-            localStorage.setItem("name", name);
-            localStorage.setItem("isadmin", response.data.isadmin);
+            if (response) {
+              const name =
+                response.data.firstname + " " + response.data.lastname;
+              localStorage.setItem("token", response.data.token);
+              localStorage.setItem("userId", response.data.userId);
+              localStorage.setItem("name", name);
+              localStorage.setItem("isadmin", response.data.isadmin);
+              window.location = "/posts";
+            }
           })
           .catch((error) => console.log(error));
       }

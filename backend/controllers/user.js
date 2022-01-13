@@ -197,14 +197,16 @@ exports.updateProfileByAdmin = (req, res) => {
 						} else {
 							if (regexEmail.test(email)) {
 								//const emailCryptoJs = cryptojs.HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`).toString();
-
+								
 								user.update({
 									firstname: req.body.firstname,
-									lastname : req.body.lastname,
-									//email : emailCryptoJs,
+									lastname: req.body.lastname,
 									email: req.body.email,
-									job : req.body.job,
-									isadmin : req.body.isadmin
+									job: req.body.job,
+									isadmin: req.body.isadmin,
+							
+									//email : emailCryptoJs,
+								
 								})
 									.then(() => res.status(200).json({message: "Utilisateur modifié"}))
 									.catch(error => res.status(400).json({error}));

@@ -30,7 +30,7 @@ exports.createComment = (req,res) => {
 		if(commentObjectUserId === userIdToken) {
 			model.Comment.create({
 				UserId : userIdToken,
-				contentCom : commentObject.contentCom.trim(),
+				contentCom : commentObject.contentCom,
 				attachmentCom : attachment,
 				PostId : req.params.postId
 			})
@@ -65,7 +65,7 @@ exports.createComment = (req,res) => {
 
 			model.Comment.create({
 				UserId : userIdToken,
-				contentCom : commentObject.contentCom.trim(),
+				contentCom : commentObject.contentCom,
 				PostId : req.params.postId
 			})
 				.then(()=> {

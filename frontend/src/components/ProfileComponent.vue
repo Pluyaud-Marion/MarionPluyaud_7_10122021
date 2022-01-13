@@ -59,17 +59,20 @@
         v-bind:key="profile.id"
       >
         <!-- l'id du user à modifier doit être ciblé pour n'ouvrir les modifs que sur le  user concerné -->
-        <!-- <button v-show="!show" @click="show = !show">
+        <!-- <button
+        
+          @click="this.show[profile.id] = !this.show[profile.id]"
+        >
           Modifier le profil de cet utilisateur
         </button> -->
 
-        <button @click="showInput(profile.id)">
+        <button v-show="!show[profile.id]" @click="showInput(profile.id)">
           Modifier le profil de cet utilisateur
         </button>
         <div>
           Prénom : {{ profile.firstname }}
           <input
-            v-show="show"
+            v-show="show[profile.id]"
             type="text"
             placeholder="Modifier prénom"
             v-model.lazy="newFirstname"
@@ -78,7 +81,7 @@
         <div>
           Nom : {{ profile.lastname }}
           <input
-            v-show="show"
+            v-show="show[profile.id]"
             type="text"
             placeholder="Modifier nom"
             v-model.lazy="newLastname"
@@ -87,7 +90,7 @@
         <div>
           Job : {{ profile.job }}
           <input
-            v-show="show"
+            v-show="show[profile.id]"
             type="text"
             placeholder="Modifier fonction"
             v-model.lazy="newJob"
@@ -96,7 +99,7 @@
         <div>
           Email : {{ profile.email }}
           <input
-            v-show="show"
+            v-show="show[profile.id]"
             type="text"
             placeholder="Modifier email"
             v-model.lazy="newEmail"
@@ -117,7 +120,7 @@ export default {
   name: "ProfileComponent",
   data() {
     return {
-      show: false,
+      show: [],
 
       user: null,
       userId: null,
@@ -224,6 +227,9 @@ export default {
         .get("http://localhost:3000/api/user", configHeaders)
         .then((response) => {
           this.profiles = response.data;
+          for (const profile of this.profiles) {
+            this.show[profile.id] = false;
+          }
           console.log(response);
         })
         .catch((error) => console.log(error));
@@ -261,8 +267,7 @@ export default {
     },
     showInput(userId) {
       console.log(userId);
-      this.show = !this.show;
-      // this.$refs.userId = !this.show;
+      this.show[userId] = !this.show[userId];
     },
   },
 };

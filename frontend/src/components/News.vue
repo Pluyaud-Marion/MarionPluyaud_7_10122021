@@ -39,8 +39,12 @@
       <div>
         <div class="content">{{ post.content }}</div>
 
-        <!-- si pas de fichier avec le post = pas de balise img = v-if="post.attachment" -->
-        <img v-bind:src="post.attachment" alt="image de la publication" />
+        <!-- si pas de fichier avec le post = pas de balise img  -->
+        <img
+          v-if="post.attachment"
+          v-bind:src="post.attachment"
+          alt="image de la publication"
+        />
       </div>
       <!-- Partie modifier apparait que si admin ou user auteur du post -->
       <div v-if="admin.length == 4 || userId == post.UserId">
@@ -114,10 +118,10 @@
         >
           <div class="comment">
             <div class="comment-text">
-              {{ user }} a commenté : {{ comment.contentCom }}
+              {{ nameAuthorComment }} a commenté : {{ comment.contentCom }}
             </div>
-            <div class="comment-file">
-              <!-- si pas d'url d'image = pas de balise img == v-if="comment.attachmentCom != null"-->
+            <!-- si pas d'url d'image = pas de div -->
+            <div v-if="comment.attachmentCom" class="comment-file">
               <img
                 v-bind:src="comment.attachmentCom"
                 alt="image du commentaire"
@@ -164,6 +168,7 @@ export default {
       contentPost: null,
       attachment: null,
       updateTextPost: null,
+      nameAuthorComment: null,
 
       //user: "",
     };
@@ -192,33 +197,29 @@ export default {
   },
   methods: {
     fileChangePost(e) {
-      console.log(e);
-      this.attachment = e.target.files || e.dataTransfer.files;
-      console.log(this.attachment);
+      this.attachment = e.target.files[0] || e.dataTransfer.files;
     },
     createPost() {
       //rajouter UserId en paramètre
       let userTokenStorage = localStorage.getItem("token");
       let userIdStorage = localStorage.getItem("userId");
 
-      let configHeaders = {
-        headers: {
-          Authorization: `Bearer ${userTokenStorage}`,
-        },
-      };
       let infos = JSON.stringify({
         content: this.contentPost,
       });
       const formData = new FormData();
       formData.append("post", infos);
-      formData.append("file", this.attachment);
+      formData.append("image", this.attachment);
 
-      axios
-        .post(
-          `http://localhost:3000/api/post/${userIdStorage}`,
-          formData,
-          configHeaders
-        )
+      axios({
+        method: "post",
+        url: `http://localhost:3000/api/post/${userIdStorage}`,
+        data: formData,
+        headers: {
+          "content-type": "multipart/form-data",
+          Authorization: `Bearer ${userTokenStorage}`,
+        },
+      })
         .then((response) => {
           console.log(response);
           window.location.reload();
@@ -282,14 +283,15 @@ export default {
     createComment(postId) {
       let userTokenStorage = localStorage.getItem("token");
       let userIdStorage = localStorage.getItem("userId");
+      let nameAuthorComment = localStorage.getItem("name");
+      this.nameAuthorComment = nameAuthorComment;
 
-      let configHeaders = {
-        headers: {
-          Authorization: `Bearer ${userTokenStorage}`,
-        },
-      };
+      console.log(nameAuthorComment);
+      console.log(userTokenStorage);
+
       let infos = JSON.stringify({
         UserId: userIdStorage,
+
         contentCom: this.commentaire,
       });
 
@@ -297,24 +299,23 @@ export default {
       formData.append("comment", infos);
       formData.append("image", this.attachmentCom);
 
-      axios
-        .post(
-          `http://localhost:3000/api/post/comment/${postId}`,
-          formData,
-          configHeaders
-        )
+      axios({
+        method: "post",
+        url: `http://localhost:3000/api/post/comment/${postId}`,
+        data: formData,
+        headers: {
+          "content-type": "multipart/form-data",
+          Authorization: `Bearer ${userTokenStorage}`,
+        },
+      })
         .then((response) => {
           console.log(response);
           window.location.reload();
-
-          //this.user = user;
         })
         .catch((error) => console.log(error));
     },
     fileChangeComment(e) {
-      console.log(e);
-      this.attachmentCom = e.target.files || e.dataTransfer.files;
-      console.log(this.attachmentCom);
+      this.attachmentCom = e.target.files[0] || e.dataTransfer.files;
     },
 
     deleteComment(commentId) {

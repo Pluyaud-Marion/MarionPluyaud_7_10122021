@@ -27,7 +27,7 @@ exports.createPost = (req,res) => {
 					const postObject = JSON.parse(req.body.post);
 					model.Post.create({
 						UserId : userIdToken,
-						content: postObject.content.trim(),
+						content: postObject.content,
 						attachment : `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
 					})
 					//contient le post créé -> affiche le message de réussite + l'auteur du post
@@ -57,7 +57,7 @@ exports.createPost = (req,res) => {
 
 					model.Post.create({
 						UserId : userIdToken,
-						content: postObject.content.trim()
+						content: postObject.content
 					})
 						.then(()=> res.status(201).json({
 							authorPost,

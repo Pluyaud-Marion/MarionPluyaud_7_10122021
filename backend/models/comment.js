@@ -34,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
 		},
 		contentCom : {
 			allowNull: true,
-			type : DataTypes.STRING
+			type : DataTypes.TEXT
 		},
 		attachmentCom : {
 			allowNull: true,

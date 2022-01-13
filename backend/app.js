@@ -1,6 +1,7 @@
 
 const express = require("express");
 const helmet = require("helmet");
+const cors = require("cors");
 
 const path = require ("path");
 
@@ -22,6 +23,9 @@ app.use((req, res, next) => {
 
 //configuration helmet
 app.use(helmet());
+
+//configuration cors
+app.use(cors());
 
 app.use("/images", express.static(path.join(__dirname, "images")));
 
