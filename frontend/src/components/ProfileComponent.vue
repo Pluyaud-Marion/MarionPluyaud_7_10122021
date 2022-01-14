@@ -6,27 +6,13 @@
       Mes informations
       <p>Prénom : {{ infos.firstname }}</p>
 
-      <input
-        v-show="showUser"
-        type="text"
-        placeholder="Modifier prénom"
-        v-model="newFirstname"
-      />
-
+      <input v-show="showUser" type="text" v-model="infos.firstname" />
       <p>Nom : {{ infos.lastname }}</p>
-      <input
-        v-show="showUser"
-        type="text"
-        placeholder="Modifier nom"
-        v-model="newLastname"
-      />
+
+      <input v-show="showUser" type="text" v-model="infos.lastname" />
       <p>Email : {{ infos.email }}</p>
-      <input
-        v-show="showUser"
-        type="text"
-        placeholder="Modifier email"
-        v-model="newEmail"
-      />
+
+      <input v-show="showUser" type="text" v-model="infos.email" />
       <p>Mot de passe : {{ "*********" }}</p>
       <input
         v-show="showUser"
@@ -35,12 +21,8 @@
         v-model="newPassword"
       />
       <p>Fonction dans l'entreprise : {{ infos.job }}</p>
-      <input
-        v-show="showUser"
-        type="text"
-        placeholder="Modifier fonction"
-        v-model="newJob"
-      />
+
+      <input v-show="showUser" type="text" v-model="infos.job" />
       <p>Date de création du compte : {{ infos.createdAt }}</p>
       <button v-show="showUser" @click="update()">
         Valider les modifications
@@ -74,11 +56,11 @@
         </button>
         <div>
           Prénom : {{ profile.firstname }}
+
           <input
             v-show="show[profile.id]"
             type="text"
-            placeholder="Modifier prénom"
-            v-model.lazy="newFirstname"
+            v-model="profile.firstname"
           />
         </div>
         <div>
@@ -86,26 +68,19 @@
           <input
             v-show="show[profile.id]"
             type="text"
-            placeholder="Modifier nom"
-            v-model.lazy="newLastname"
+            v-model="profile.lastname"
           />
         </div>
         <div>
           Job : {{ profile.job }}
-          <input
-            v-show="show[profile.id]"
-            type="text"
-            placeholder="Modifier fonction"
-            v-model.lazy="newJob"
-          />
+          <input v-show="show[profile.id]" type="text" v-model="profile.job" />
         </div>
         <div>
           Email : {{ profile.email }}
           <input
             v-show="show[profile.id]"
             type="text"
-            placeholder="Modifier email"
-            v-model.lazy="newEmail"
+            v-model="profile.email"
           />
         </div>
 
@@ -119,27 +94,20 @@
 
 <script>
 import axios from "axios";
+
 export default {
   name: "ProfileComponent",
+
   data() {
     return {
       show: [],
       showUser: false,
-
       user: null,
       userId: null,
       infos: "",
       admin: "",
       profiles: "",
-      // firstname: "",
-      // lastname: "",
-      // email: "",
-      // job: "",
-      newFirstname: "",
-      newLastname: "",
-      newEmail: "",
       newPassword: "",
-      newJob: "",
     };
   },
   created() {
@@ -162,6 +130,7 @@ export default {
       .get(`http://localhost:3000/api/user/full/${userId}`, configHeaders)
       .then((response) => {
         this.infos = response.data;
+        console.log("infos", this.infos);
       })
       .catch((error) => console.log(error));
   },
@@ -182,20 +151,22 @@ export default {
         .put(
           `http://localhost:3000/api/user/${userId}`,
           {
-            firstname: this.newFirstname,
-            lastname: this.newLastname,
-            email: this.newEmail,
+            firstname: this.infos.firstname,
+            lastname: this.infos.lastname,
+            email: this.infos.email,
+
             password: this.newPassword,
-            job: this.newJob,
+            job: this.infos.job,
           },
           configHeaders
         )
         .then(() => {
-          const name = this.newFirstname + " " + this.newLastname;
-          this.infos.firstname = this.newFirstname;
-          this.infos.lastname = this.newLastname;
-          this.infos.email = this.newEmail;
-          this.infos.job = this.newJob;
+          const name = this.infos.firstname + " " + this.infos.lastname;
+
+          this.infos.firstname;
+          this.infos.lastname;
+          this.infos.email;
+          this.infos.job;
           localStorage.setItem("name", name); // mets le nouveau nom dans LS
           window.location.reload(); // recharge la page
         })
@@ -249,26 +220,38 @@ export default {
         },
       };
 
-      axios
-        .put(
-          `http://localhost:3000/api/user/admin/${userId}`,
-          {
-            firstname: this.newFirstname,
-            lastname: this.newLastname,
-            email: this.newEmail,
-            job: this.newJob,
-          },
-          configHeaders
-        )
-        .then(() => {
-          this.infos.firstname = this.newFirstname;
-          this.infos.lastname = this.newLastname;
-          this.infos.email = this.newEmail;
-          this.infos.job = this.newJob;
+      for (const profile of this.profiles) {
+        axios
+          .put(
+            `http://localhost:3000/api/user/admin/${userId}`,
+            {
+              firstname: profile.firstname,
+              lastname: profile.lastname,
+              email: profile.email,
+              job: profile.job,
+            },
+            configHeaders
+          )
+          .then((response) => {
+            console.log("response", response);
+            // for (const profile of this.profiles) {
+            //   profile.firstname;
+            //   profile.lastname;
+            //   profile.email;
+            //   profile.job;
+            // }
 
-          window.location.reload(); // recharge la page
-        })
-        .catch((error) => console.log(error));
+            // for (this.profile of this.profiles) {
+            //   this.profile.firstname;
+            //   this.profile.lastname;
+            //   this.profile.email;
+            //   this.profile.job;
+            // }
+
+            window.location.reload(); // recharge la page
+          })
+          .catch((error) => console.log(error));
+      }
     },
     showInput(userId) {
       console.log(userId);
