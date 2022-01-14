@@ -10,7 +10,6 @@
             v-model.lazy="contentPost"
             placeholder="Rédigez votre post..."
           /> -->
-
           <textarea
             name="post"
             id="input-post"
@@ -28,7 +27,7 @@
     <div v-if="posts.length < 1">Désolé il n'y a pas de post...</div>
     <!-- 1ère boucle = pour chaque post sur le tableau posts -->
     <article class="vignette" v-for="post in posts" v-bind:key="post.id">
-      <div class="authorPost">
+      <div class="author">
         {{ post.User.firstname + " " + post.User.lastname }}
       </div>
       <p class="created-at">{{ formatDate(post.createdAt) }}</p>
@@ -41,13 +40,14 @@
 
         <!-- si pas de fichier avec le post = pas de balise img  -->
         <img
+          class="img-post"
           v-if="post.attachment"
           v-bind:src="post.attachment"
           alt="image de la publication"
         />
       </div>
       <!-- Partie modifier apparait que si admin ou user auteur du post -->
-      <div v-if="admin.length == 4 || userId == post.UserId">
+      <div class="update" v-if="admin.length == 4 || userId == post.UserId">
         <!-- 
           La fonction qui affiche les posts boucle sur chaque post et passe tous les showUpdate à false
           Dans la boucle (dans chaque post) elle boucle sur les commentaires et passe tous les showDoCom à false. 
@@ -55,13 +55,22 @@
           Le champ de modif du post est à show = false
           Au clic sur bouton Modifier = appel de la méthode "showInputUpdatePost qui prend en paramètre l'id du post qu'on veut modifier et qui passe pour cet id v-show à true (le fait apparaitre)"
            -->
-        <button
-          class="button"
-          v-show="!showUpdate[post.id]"
-          @click="showInputUpdatePost(post.id)"
-        >
-          Modifier
-        </button>
+        <div class="button-update-delete">
+          <button
+            class="button-update"
+            v-show="!showUpdate[post.id]"
+            @click="showInputUpdatePost(post.id)"
+          >
+            <i class="fas fa-edit"></i>
+          </button>
+          <button
+            class="button-delete"
+            v-if="admin.length == 4 || userId == post.UserId"
+            @click="deletePost(post.id)"
+          >
+            <i class="far fa-trash-alt"></i>
+          </button>
+        </div>
         <textarea
           v-show="showUpdate[post.id]"
           name="update-post"
@@ -71,7 +80,12 @@
           placeholder="Modifiez votre post..."
           v-model="updateTextPost"
         ></textarea>
-        <input name="file" type="file" v-on:change="fileChangePost" />
+        <input
+          v-show="showUpdate[post.id]"
+          name="file"
+          type="file"
+          v-on:change="fileChangePost"
+        />
         <button
           class="button"
           v-show="showUpdate[post.id]"
@@ -86,49 +100,42 @@
         /> -->
       </div>
 
-      <button
-        class="button"
-        v-if="admin.length == 4 || userId == post.UserId"
-        @click="deletePost(post.id)"
-      >
-        Supprimer
-      </button>
-      <div class="comments">
-        <!-- 
+      <!-- 
           La fonction qui affiche les posts boucle sur chaque post et passe tous les showUpdate à false
           Dans la boucle (dans chaque post) elle boucle sur les commentaires et passe tous les showDoCom à false. 
           Le bouton commenter est a show = true
           Le champ du commentaire est à show = false
           Au clic sur bouton commenter = appel de la méthode "showInputDoCom qui prend en paramètre l'id du post sur lequel est le commentaire et qui passe pour cet id v-show à true (le fait apparaitre)"
            -->
-        <button
-          class="button"
-          v-show="!showDoCom[post.id]"
-          @click="showInputDoCom(post.id)"
-        >
-          Commenter
-        </button>
 
-        <div class="new-comment" v-show="showDoCom[post.id]">
-          <!-- <input
+      <button
+        class="button"
+        v-show="!showDoCom[post.id]"
+        @click="showInputDoCom(post.id)"
+      >
+        Commenter
+      </button>
+
+      <div class="new-comment" v-show="showDoCom[post.id]">
+        <!-- <input
             type="text"
             v-model.lazy="commentaire"
             placeholder="Votre commentaire ici..."
           /> -->
-          <textarea
-            name="comment"
-            cols="50"
-            rows="2"
-            placeholder="Commentez..."
-            v-model="commentaire"
-          ></textarea>
-          <input type="file" v-on:change="fileChangeComment" />
+        <textarea
+          name="comment"
+          cols="50"
+          rows="2"
+          placeholder="Commentez..."
+          v-model="commentaire"
+        ></textarea>
+        <input type="file" v-on:change="fileChangeComment" />
 
-          <button class="button-validate-com" @click="createComment(post.id)">
-            Publier le commentaire
-          </button>
-        </div>
-
+        <button class="button-validate-com" @click="createComment(post.id)">
+          Publier le commentaire
+        </button>
+      </div>
+      <div class="comments">
         <!-- 2ème boucle = Boucle sur chaque commentaire dans le tableau des commentaires du post = post.Comments -->
         <div
           class="container-comment"
@@ -136,30 +143,27 @@
           v-bind:key="comment.id"
         >
           <div class="comment">
-            <div class="comment-text">
-              {{ comment.User.firstname + " " + comment.User.lastname }} :
-              {{ comment.contentCom }}
-            </div>
-            <span class="dateComment">
-              {{ formatDate(comment.createdAt) }}</span
-            >
+            <p class="author-com">
+              {{ comment.User.firstname + " " + comment.User.lastname }}
+            </p>
+            <span class="created-at"> {{ formatDate(comment.createdAt) }}</span>
+            <p class="content">{{ comment.contentCom }}</p>
 
-            <!-- si pas d'url d'image = pas de div -->
-            <div v-if="comment.attachmentCom" class="comment-file">
+            <div class="comment-file" v-if="comment.attachmentCom">
               <img
+                class="img-com"
                 v-bind:src="comment.attachmentCom"
                 alt="image du commentaire"
               />
             </div>
-          </div>
-          <div v-if="admin.length == 4 || userId == comment.UserId">
-            <button
-              class="button"
-              id="button-delete"
-              @click="deleteComment(comment.id)"
+            <div
+              class="button-delete-com"
+              v-if="admin.length == 4 || userId == comment.UserId"
             >
-              Supprimer
-            </button>
+              <button @click="deleteComment(comment.id)">
+                <i class="far fa-trash-alt"></i>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -385,8 +389,11 @@ section {
   background-attachment: fixed;
   padding-bottom: 15%;
 }
-img {
-  width: 20%;
+.img-post {
+  width: 40%;
+}
+.img-com {
+  width: 50%;
 }
 .name {
   font-size: large;
@@ -427,12 +434,19 @@ img {
   border-radius: 20px;
   margin-bottom: 2%;
   background-color: white;
-  .authorPost {
+  .author {
     margin-top: 2%;
     font-weight: bold;
     font-size: large;
     text-align: initial;
     margin-left: 2%;
+  }
+  .author-com {
+    font-weight: bold;
+    font-size: medium;
+    text-align: initial;
+    margin-left: 2%;
+    margin-bottom: 0;
   }
   .created-at {
     margin-left: 2%;
@@ -440,6 +454,7 @@ img {
     margin-top: 0;
     margin-bottom: 0;
   }
+
   .updated-at {
     margin-left: 2%;
     text-align: initial;
@@ -469,47 +484,60 @@ img {
       transform: scale(1.2);
     }
   }
+  .update {
+    border: red solid;
+    margin-bottom: 5%;
+    .button-update,
+    .button-delete {
+      margin-right: 10%;
+      font-size: x-large;
+      border-radius: 20rem;
+      padding: 1%;
+      background-color: red;
+      opacity: 75%;
+      cursor: pointer;
+    }
+  }
   .comments {
     border-top: black dashed;
-    padding-top: 2%;
-    border-width: 1px;
-    .comment {
-      display: flex;
-    }
-    .comment-text,
-    .comment-file {
-      border: solid;
-      border-width: 2px;
-      border-radius: 10px;
-      width: fit-content;
-      padding: 1%;
-      margin-left: 5%;
-      margin-bottom: 2%;
-    }
-
     .container-comment {
       display: flex;
       flex-direction: column;
     }
-    .new-comment {
+
+    .comment {
       display: flex;
       flex-direction: column;
-      width: 50%;
-      align-items: center;
-    }
-    .button-validate-com {
-      height: 30px;
-      width: 50%;
-      background-color: red;
-      opacity: 75%;
-      border-radius: 20rem;
-      cursor: pointer;
-      margin-left: 5%;
-      margin-bottom: 3%;
-      margin-top: 3%;
-      font-weight: bold;
-      &:hover {
-        transform: scale(1.2);
+      border-top: black dashed;
+      // padding-top: 2%;
+      // border-width: 1px;
+      border: solid;
+      border-width: 2px;
+      border-radius: 10px;
+      padding: 1%;
+      width: 60%;
+      margin: 2%;
+
+      .new-comment {
+        display: flex;
+        flex-direction: column;
+        width: 50%;
+        align-items: center;
+      }
+      .button-validate-com {
+        height: 30px;
+        width: 50%;
+        background-color: red;
+        opacity: 75%;
+        border-radius: 20rem;
+        cursor: pointer;
+        margin-left: 5%;
+        margin-bottom: 3%;
+        margin-top: 3%;
+        font-weight: bold;
+        &:hover {
+          transform: scale(1.2);
+        }
       }
     }
   }

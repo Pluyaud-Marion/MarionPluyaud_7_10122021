@@ -13,8 +13,9 @@
         <div class="profile">
           <router-link to="/profile">Profil</router-link>
         </div>
-        <div class="logout">
-          <router-link to="/">Deconnexion</router-link>
+        <div class="logout" @click="logout()">
+          Deconnexion
+          <!-- <router-link to="/">Deconnexion</router-link> -->
         </div>
       </div>
     </div>
@@ -34,6 +35,12 @@ export default {
   created() {
     let name = localStorage.getItem("name");
     this.name = name;
+  },
+  methods: {
+    logout() {
+      localStorage.clear();
+      window.location = "/";
+    },
   },
 };
 </script>

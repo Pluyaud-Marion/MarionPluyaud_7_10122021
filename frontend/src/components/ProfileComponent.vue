@@ -23,7 +23,7 @@
       <p>Fonction dans l'entreprise : {{ infos.job }}</p>
 
       <input v-show="showUser" type="text" v-model="infos.job" />
-      <p>Date de création du compte : {{ infos.createdAt }}</p>
+      <p>Date de création du compte : {{ formatDate(infos.createdAt) }}</p>
       <button v-show="showUser" @click="update()">
         Valider les modifications
       </button>
@@ -93,6 +93,8 @@
 </template>
 
 <script>
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 import axios from "axios";
 
 export default {
@@ -134,7 +136,11 @@ export default {
       })
       .catch((error) => console.log(error));
   },
+
   methods: {
+    formatDate() {
+      return format(new Date(), "dd-MM-yyyy", { locale: fr });
+    },
     //modification d'un profil
     update() {
       localStorage.removeItem("name"); //retire du LS le champ name à l'appel de la fonction update
