@@ -22,6 +22,7 @@
           <input name="file" type="file" v-on:change="fileChangePost" />
         </div>
         <button class="button" @click="createPost()">Publier mon post</button>
+        <p class="error-create-post"></p>
       </div>
     </div>
     <div v-if="posts.length < 1">Désolé il n'y a pas de post...</div>
@@ -71,6 +72,12 @@
             <i class="far fa-trash-alt"></i>
           </button>
         </div>
+        <!-- retour en arriere -->
+        <i
+          v-show="showUpdate[post.id]"
+          class="far fa-times-circle"
+          @click="returnBack()"
+        ></i>
         <textarea
           v-show="showUpdate[post.id]"
           name="update-post"
@@ -93,6 +100,7 @@
         >
           Valider la modification
         </button>
+        <p class="error-update-post"></p>
         <!-- <input
           type="text"
           v-model.lazy="updateTextPost"
@@ -122,6 +130,10 @@
             v-model.lazy="commentaire"
             placeholder="Votre commentaire ici..."
           /> -->
+
+        <!-- retour en arriere -->
+        <i class="far fa-times-circle" @click="returnBack()"></i>
+
         <textarea
           name="comment"
           cols="50"
@@ -134,6 +146,7 @@
         <button class="button-validate-com" @click="createComment(post.id)">
           Publier le commentaire
         </button>
+        <p class="error-create-com"></p>
       </div>
       <div class="comments">
         <!-- 2ème boucle = Boucle sur chaque commentaire dans le tableau des commentaires du post = post.Comments -->
@@ -142,6 +155,7 @@
           v-for="comment in post.Comments"
           v-bind:key="comment.id"
         >
+          <!-- v-if="comment.length > 2 -->
           <div class="comment">
             <p class="author-com">
               {{ comment.User.firstname + " " + comment.User.lastname }}
@@ -226,6 +240,9 @@ export default {
   },
 
   methods: {
+    returnBack() {
+      window.location = "/posts";
+    },
     formatDate(date) {
       return formatRelative(new Date(date), new Date(), { locale: fr });
     },
@@ -234,7 +251,6 @@ export default {
       this.attachment = e.target.files[0] || e.dataTransfer.files;
     },
     createPost() {
-      //rajouter UserId en paramètre
       let userTokenStorage = localStorage.getItem("token");
       let userIdStorage = localStorage.getItem("userId");
 
@@ -245,20 +261,27 @@ export default {
       formData.append("post", infos);
       formData.append("image", this.attachment);
 
-      axios({
-        method: "post",
-        url: `http://localhost:3000/api/post/${userIdStorage}`,
-        data: formData,
-        headers: {
-          "content-type": "multipart/form-data",
-          Authorization: `Bearer ${userTokenStorage}`,
-        },
-      })
-        .then((response) => {
-          console.log(response);
-          window.location.reload();
+      if (this.contentPost === null && this.attachment === null) {
+        document.querySelector(
+          ".error-create-post"
+        ).innerHTML = `Rien à poster`;
+      } else {
+        document.querySelector(".error-create-post").innerHTML = ``;
+        axios({
+          method: "post",
+          url: `http://localhost:3000/api/post/${userIdStorage}`,
+          data: formData,
+          headers: {
+            "content-type": "multipart/form-data",
+            Authorization: `Bearer ${userTokenStorage}`,
+          },
         })
-        .catch((error) => console.log(error));
+          .then((response) => {
+            console.log(response);
+            window.location.reload();
+          })
+          .catch((error) => console.log(error));
+      }
     },
 
     updatePost(postId) {
@@ -269,23 +292,36 @@ export default {
       });
 
       const formData = new FormData();
-      formData.append("post", infos);
-      formData.append("image", this.attachment);
 
-      axios({
-        method: "put",
-        url: `http://localhost:3000/api/post/${postId}`,
-        data: formData,
-        headers: {
-          "content-type": "multipart/form-data",
-          Authorization: `Bearer ${userTokenStorage}`,
-        },
-      })
-        .then((response) => {
-          console.log(response);
-          window.location.reload();
+      if (this.updateTextPost === null && this.attachment === null) {
+        document.querySelector(
+          ".error-update-post"
+        ).innerHTML = `Pour modifier un post vous devez mettre soit du texte, soit un fichier`;
+      } else {
+        document.querySelector(".error-update-post").innerHTML = ``;
+        if (!this.updateTextPost) {
+          formData.append("image", this.attachment);
+        } else if (!this.attachment) {
+          formData.append("post", infos);
+        } else {
+          formData.append("image", this.attachment);
+          formData.append("post", infos);
+        }
+        axios({
+          method: "put",
+          url: `http://localhost:3000/api/post/${postId}`,
+          data: formData,
+          headers: {
+            "content-type": "multipart/form-data",
+            Authorization: `Bearer ${userTokenStorage}`,
+          },
         })
-        .catch((error) => console.log(error));
+          .then((response) => {
+            console.log(response);
+            window.location.reload();
+          })
+          .catch((error) => console.log("il n'y a pas de texte", error));
+      }
     },
 
     deletePost(postId) {
@@ -326,22 +362,29 @@ export default {
       formData.append("comment", infos);
       formData.append("image", this.attachmentCom);
 
-      axios({
-        method: "post",
-        url: `http://localhost:3000/api/post/comment/${postId}`,
-        data: formData,
-        headers: {
-          "content-type": "multipart/form-data",
-          Authorization: `Bearer ${userTokenStorage}`,
-        },
-      })
-        .then((response) => {
-          console.log("response", response);
-          console.log("infos", infos);
-
-          window.location.reload();
+      if (this.attachmentCom === null && this.commentaire === null) {
+        document.querySelector(
+          ".error-create-com"
+        ).innerHTML = `Le commentaire est vide`;
+      } else {
+        document.querySelector(".error-create-com").innerHTML = ``;
+        axios({
+          method: "post",
+          url: `http://localhost:3000/api/post/comment/${postId}`,
+          data: formData,
+          headers: {
+            "content-type": "multipart/form-data",
+            Authorization: `Bearer ${userTokenStorage}`,
+          },
         })
-        .catch((error) => console.log(error));
+          .then((response) => {
+            console.log("response", response);
+            console.log("infos", infos);
+
+            window.location.reload();
+          })
+          .catch((error) => console.log(error));
+      }
     },
     fileChangeComment(e) {
       this.attachmentCom = e.target.files[0] || e.dataTransfer.files;

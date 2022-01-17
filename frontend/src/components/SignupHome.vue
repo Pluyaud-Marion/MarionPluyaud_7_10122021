@@ -39,6 +39,15 @@
           placeholder="********"
         />
       </div>
+      <div class="password">
+        <label for="password">Retapez le même mot de passe : </label>
+        <input
+          v-model="passwordVerify"
+          type="text"
+          id="password"
+          placeholder="********"
+        />
+      </div>
       <div class="job">
         <label for="job">Fonction : </label>
         <input
@@ -56,68 +65,18 @@
           v-show="validatedFields()"
           @click="signup()"
         >
-          <router-link to="/">Créer mon compte</router-link>
+          Créer mon compte
+          <!-- <router-link to="/">Créer mon compte</router-link> -->
         </button>
+        <p v-text="errors"></p>
       </div>
     </div>
-
-    <!--
-    <div class="container">
-      <h2>Inscription</h2>
-      <div class="firstname">
-        <input
-          v-model="firstname"
-          type="text"
-          id="firstname"
-          placeholder="Prénom"
-        />
-      </div>
-      <div class="lastname">
-        <input v-model="lastname" type="text" id="lastname" placeholder="Nom" />
-      </div>
-      <div class="email">
-        <input
-          v-model="email"
-          type="email"
-          id="email"
-          placeholder="Adresse email"
-        />
-      </div>
-      <div class="password">
-        <input
-          v-model="password"
-          type="text"
-          id="password"
-          placeholder="Mot de passe"
-        />
-      </div>
-      <div class="job">
-        <input
-          v-model="job"
-          type="text"
-          id="job"
-          placeholder="Votre fonction dans l'entreprise"
-        />
-      </div>
-      <div>
-        <button
-          @click="createAccount()"
-          class="button"
-          :class="{ 'button--inactif': !validatedFields() }"
-        >
-          <span v-if="status == 'loading'">Création en cours...</span>
-          <span v-else>Créer mon compte</span>
-        </button>
-      </div>
-    </div>
-    -->
   </section>
 </template>
 
 <script>
 import axios from "axios";
-//import { mapState } from "vuex";
-// import axios from "axios";
+
 export default {
   name: "SignupHome",
   data: function () {
@@ -126,7 +85,9 @@ export default {
       lastname: "",
       email: "",
       password: "",
+      passwordVerify: "",
       job: "",
+      errors: "",
     };
   },
   methods: {
@@ -135,77 +96,44 @@ export default {
         this.email != "" &&
         this.firstname != "" &&
         this.lastname != "" &&
-        this.password != ""
+        this.password != "" &&
+        this.passwordVerify != "" &&
+        this.job != ""
       ) {
         return true;
       } else {
         return false;
       }
     },
+
     signup() {
-      axios
-        .post("http://localhost:3000/api/user/signup", {
-          firstname: this.firstname,
-          lastname: this.lastname,
-          email: this.email,
-          password: this.password,
-          job: this.job,
-        })
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-  },
-  /* ESSAI avec vuex
-  data: function () {
-    return {
-      firstname: "",
-      lastname: "",
-      email: "",
-      password: "",
-      job: "",
-    };
-  },
-  computed: {
-    ...mapState(["status"]), //on récupère le state status
-  },
-  methods: {
-    validatedFields: function () {
+      const regexNameJob = /^[a-zA-ZÀ-ÿ_-]{2,60}$/;
       if (
-        this.email != "" &&
-        this.firstname != "" &&
-        this.lastname != "" &&
-        this.password != ""
+        regexNameJob.test(this.firstname) &&
+        regexNameJob.test(this.lastname) &&
+        regexNameJob.test(this.job) &&
+        this.password === this.passwordVerify
       ) {
-        return true;
+        axios
+          .post("http://localhost:3000/api/user/signup", {
+            firstname: this.firstname,
+            lastname: this.lastname,
+            email: this.email,
+            password: this.password,
+            job: this.job,
+          })
+          .then(() => {
+            window.location = "/";
+          })
+          .catch((error) => {
+            this.errors = error.response.data.message;
+          });
       } else {
-        return false;
+        this.errors =
+          "Votre nom, prénom et fonction ne doit contenir que des lettres et les deux mots de passe doivent être identiques ";
       }
     },
-    createAccount: function () {
-      const self = this;
-      this.$store
-        .dispatch("createAccount", {
-          email: this.email,
-          firstname: this.firstname,
-          lastname: this.lastname,
-          password: this.password,
-          job: this.job,
-        })
-        .then(
-          function () {
-            self.$router.push("/posts");
-          },
-          function (error) {
-            console.log(error);
-          }
-        );
-    },
   },
-  */
 };
 </script>
 

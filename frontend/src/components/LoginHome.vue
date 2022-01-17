@@ -59,6 +59,7 @@
           Envoyer
           <!-- <router-link to="/posts">Envoyer</router-link> -->
         </button>
+        <p v-text="error"></p>
       </div>
     </div>
 
@@ -87,6 +88,7 @@ export default {
     return {
       email: "",
       password: "",
+      error: "",
     };
   },
   methods: {
@@ -116,7 +118,10 @@ export default {
               window.location = "/posts";
             }
           })
-          .catch((error) => console.log(error));
+          .catch((error) => {
+            console.log(error.response.data);
+            this.error = error.response.data.error;
+          });
       }
     },
   },

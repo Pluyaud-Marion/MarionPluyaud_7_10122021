@@ -16,9 +16,9 @@ router.get("/full/:userId", auth, limiter.globalLimiter, userController.getOnePr
 router.get("/:userId", auth, limiter.globalLimiter, userController.getOneProfileSimplify);
 router.get("/", auth, limiter.globalLimiter, userController.adminGetAllProfile);
 
-router.put("/:userId", auth, limiter.globalLimiter, userController.updateProfileByUser);
+router.put("/:userId", auth, password, limiter.globalLimiter, userController.updateProfileByUser);
 router.put("/admin/:userId", auth, limiter.globalLimiter, userController.updateProfileByAdmin);
-//router.put("/:userId", auth, limiter.globalLimiter, userController.updateProfile);
+
 router.delete("/:userId", auth, limiter.globalLimiter, userController.deleteProfile);
 
 module.exports = router;

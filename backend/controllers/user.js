@@ -13,16 +13,17 @@ const model = require("../models");
 // regex validation pour champs firstname, lastname, job dans modèle user
 exports.signUp = (req, res) => {
 	const regexEmail = /^[^@\s]{2,30}@[^@\s]{2,30}\.[^@\s]{2,5}$/;
+	
 	const email = req.body.email;
 	// si format email conforme à regex -> cryptage du mail, hashage password et enregistrement dans db
 	if (regexEmail.test(email)) {
-		//const emailCryptoJs = cryptojs.HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`).toString();
+	
 		bcrypt.hash(req.body.password, 10)
 			.then(hash => {
 				model.User.create({
 					firstname: req.body.firstname,
 					lastname : req.body.lastname,
-					//email : emailCryptoJs,
+				
 					email: req.body.email,
 					password : hash,
 		
@@ -34,7 +35,7 @@ exports.signUp = (req, res) => {
 			})
 			.catch(error => res.status(500).json({error}));
 	} else {
-		return res.status(404).json({message : "Le format de la requête est invalide"});
+		return res.status(404).json({message : "Le format de l'adresse mail n'est pas correct"});
 	}
 };
 
@@ -50,7 +51,7 @@ exports.login = (req, res) => {
 		.then(user => {
 			//si l'user n'existe pas dans la db
 			if(!user){
-				return res.status(400).json({error : "User inexistant"});
+				return res.status(400).json({error : "Utilisateur inexistant"});
 				//si user existe = on compare mot de passe enregistré dans db avec cet user, et celui de la requete 
 			} else {
 				bcrypt.compare(req.body.password, user.password)
@@ -109,7 +110,7 @@ exports.getOneProfileFull = (req, res) => {
 			//on trouve l'user concerné par la requête (celui envoyé dans les params de requete) -> user
 			model.User.findOne({
 				where : {id : req.params.userId},
-				attributes: {exclude: ["password"]}
+				//attributes: {exclude: ["password"]}
 			})
 				.then(user=> {
 					// si l'user qui veut faire la requête est admin ou si c'est le même que celui qui a fait l'user qu'on cible
@@ -242,16 +243,13 @@ exports.updateProfileByUser = (req, res) => {
 							return res.status(401).json({error : "Cet utilisateur n'existe pas"});
 						} else {
 							if (regexEmail.test(email)) {
-								//const emailCryptoJs = cryptojs.HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`).toString();
 								bcrypt.hash(req.body.password, 10)
 									.then(hash => {
 										user.update({
 											firstname: req.body.firstname,
 											lastname : req.body.lastname,
-											//email : emailCryptoJs,
 											email: req.body.email,
 											password : hash,
-									
 											job : req.body.job,
 											isadmin : req.body.isadmin
 										})
@@ -260,7 +258,7 @@ exports.updateProfileByUser = (req, res) => {
 									})
 									.catch(error => res.status(500).json({error}));
 							} else {
-								return res.status(404).json({message : "Le format de la requête est invalide"});
+								return res.status(404).json({message : "Le format de l'adresse mail est invalide"});
 							}
 						} 
 					} else {

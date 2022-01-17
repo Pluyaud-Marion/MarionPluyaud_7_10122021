@@ -17,8 +17,15 @@
       <input
         v-show="showUser"
         type="password"
-        placeholder="Modifier mot de passe"
+        placeholder="Mot de passe"
         v-model="newPassword"
+      />
+      <p v-show="showUser">Confirmez le mot de passe</p>
+      <input
+        v-show="showUser"
+        type="password"
+        placeholder="Mot de passe"
+        v-model="newPasswordVerify"
       />
       <p>Fonction dans l'entreprise : {{ infos.job }}</p>
 
@@ -27,7 +34,7 @@
       <button v-show="showUser" @click="update()">
         Valider les modifications
       </button>
-
+      <p v-text="errors"></p>
       <button v-show="!showUser" @click="showUser = !showUser">
         Modifier ton profil
       </button>
@@ -110,6 +117,8 @@ export default {
       admin: "",
       profiles: "",
       newPassword: "",
+      newPasswordVerify: "",
+      errors: "",
     };
   },
   created() {
@@ -138,12 +147,26 @@ export default {
   },
 
   methods: {
+    validateFields() {
+      if (
+        this.infos.email != "" &&
+        this.infos.firstname != "" &&
+        this.infos.lastname != "" &&
+        this.newPassword != "" &&
+        this.infos.job != ""
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     formatDate() {
       return format(new Date(), "dd-MM-yyyy", { locale: fr });
     },
     //modification d'un profil
     update() {
       localStorage.removeItem("name"); //retire du LS le champ name à l'appel de la fonction update
+      const regexNameJob = /^[a-zA-ZÀ-ÿ_-]{2,60}$/;
 
       let userToken = localStorage.getItem("token");
       let userId = localStorage.getItem("userId");
@@ -152,31 +175,43 @@ export default {
           Authorization: `Bearer ${userToken}`,
         },
       };
+      if (
+        regexNameJob.test(this.infos.firstname) &&
+        regexNameJob.test(this.infos.lastname) &&
+        regexNameJob.test(this.infos.job) &&
+        this.validateFields() &&
+        this.newPassword === this.newPasswordVerify
+      ) {
+        axios
+          .put(
+            `http://localhost:3000/api/user/${userId}`,
+            {
+              firstname: this.infos.firstname,
+              lastname: this.infos.lastname,
+              email: this.infos.email,
+              password: this.newPassword,
+              job: this.infos.job,
+            },
+            configHeaders
+          )
+          .then(() => {
+            const name = this.infos.firstname + " " + this.infos.lastname;
 
-      axios
-        .put(
-          `http://localhost:3000/api/user/${userId}`,
-          {
-            firstname: this.infos.firstname,
-            lastname: this.infos.lastname,
-            email: this.infos.email,
-
-            password: this.newPassword,
-            job: this.infos.job,
-          },
-          configHeaders
-        )
-        .then(() => {
-          const name = this.infos.firstname + " " + this.infos.lastname;
-
-          this.infos.firstname;
-          this.infos.lastname;
-          this.infos.email;
-          this.infos.job;
-          localStorage.setItem("name", name); // mets le nouveau nom dans LS
-          window.location.reload(); // recharge la page
-        })
-        .catch((error) => console.log(error));
+            // this.infos.firstname;
+            // this.infos.lastname;
+            // this.infos.email;
+            // this.newpPassword;
+            // this.infos.job;
+            localStorage.setItem("name", name); // mets le nouveau nom dans LS
+            window.location.reload(); // recharge la page
+          })
+          .catch((error) => {
+            this.errors = error.response.data.message;
+          });
+      } else {
+        this.errors =
+          "Votre nom, prénom et fonction ne doit contenir que des lettres et tous les champs doivent être complêtés ";
+      }
     },
     //suppression du profil
     deleteProfile() {
