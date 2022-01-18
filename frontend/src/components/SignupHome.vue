@@ -3,70 +3,65 @@
     <div class="container">
       <h2>Inscription</h2>
 
-      <div class="firstname">
+      <div class="input">
         <label for="firstname">Prénom : </label>
         <input
           v-model="firstname"
           type="text"
           id="firstname"
-          placeholder="Votre prénom"
+          placeholder="Prénom"
         />
       </div>
-      <div class="lastname">
+      <div class="input">
         <label for="lastname">Nom : </label>
-        <input
-          v-model="lastname"
-          type="text"
-          id="lastname"
-          placeholder="Votre nom"
-        />
+        <input v-model="lastname" type="text" id="lastname" placeholder="Nom" />
       </div>
-      <div class="email">
+      <div class="input">
         <label for="email">Email : </label>
         <input
           v-model="email"
           type="email"
           id="email"
-          placeholder="votreadressemail@gmail.com"
+          placeholder="Adresse mail"
         />
       </div>
-      <div class="password">
+      <div class="input">
         <label for="password">Mot de passe : </label>
         <input
           v-model="password"
           type="password"
           id="password"
-          placeholder="********"
+          placeholder="Mot de passe"
         />
       </div>
-      <div class="password">
-        <label for="password">Retapez le même mot de passe : </label>
+      <div class="input">
+        <label for="password">Confirmez le mot de passe : </label>
         <input
           v-model="passwordVerify"
           type="password"
           id="passwordVerify"
-          placeholder="********"
+          placeholder="Rappel Mot de passe"
         />
       </div>
-      <div class="job">
+      <div class="input">
         <label for="job">Fonction : </label>
         <input
           v-model="job"
           type="text"
           id="job"
-          placeholder="Votre fonction dans l'entreprise"
+          placeholder="Fonction dans l'entreprise"
         />
       </div>
 
-      <div>
+      <div class="button-container">
         <button
           class="button"
           type="submit"
           v-show="validatedFields()"
           @click="signup()"
         >
-          <!-- Créer mon compte -->
-          <router-link to="/">Créer mon compte</router-link>
+          Créer mon compte
+          <!-- <router-link to="/">Créer mon compte</router-link> -->
         </button>
         <p v-text="errors"></p>
       </div>
@@ -123,7 +118,7 @@ export default {
               job: this.job,
             })
             .then(() => {
-              // window.location = "/";
+              window.location = "/";
             })
             .catch((error) => {
               this.errors = error.response.data.message;
@@ -134,7 +129,7 @@ export default {
         }
       } else {
         this.errors =
-          "Votre nom, prénom et fonction ne doit contenir que des lettres";
+          "Votre nom, prénom et fonction ne peut ni contenir moins de 2 lettres, ni des chiffres ";
       }
     },
   },
@@ -142,54 +137,40 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-section {
-  padding-top: 5%;
-  background-image: url("../assets/icon.png");
-  background-attachment: fixed;
-  padding-bottom: 15%;
-}
 h2 {
   font-size: x-large;
   text-align: center;
 }
 .container {
-  border: red ridge 4mm;
-  opacity: 80%;
+  text-align: initial;
   border-radius: 20px;
-  width: 60%;
-  height: 480px;
+  width: 70%;
+  height: auto;
+  margin: 0 auto;
   margin-top: 5%;
-  margin-left: 25%;
   background-color: white;
-
-  .email,
-  .password,
-  .firstname,
-  .lastname,
-  .job {
-    font-size: large;
-    font-weight: bold;
-    margin-bottom: 8%;
-    text-align: left;
-    margin-left: 10%;
+  padding-top: 2%;
+  padding-bottom: 2%;
+  box-shadow: 0px 0px 11px 1px;
+  .button-container {
+    text-align: center;
   }
 
-  .email,
-  .job {
-    input {
-      width: 250px;
-    }
+  .input {
+    display: flex;
+    flex-direction: column;
+    margin: 5%;
   }
   .button {
-    width: 50%;
+    width: 55%;
     height: 30px;
     border-radius: 10px;
-    background-color: red;
-    opacity: 80%;
-    color: white;
+    background-color: #ff9830cc;
+    border: none;
+
     font-weight: bold;
-    font-size: medium;
-    //cursor: pointer;
+    font-size: small;
+    cursor: pointer;
   }
 }
 </style>

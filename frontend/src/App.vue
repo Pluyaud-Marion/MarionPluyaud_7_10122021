@@ -5,12 +5,14 @@
 </template>
 
 <style lang="scss">
+* {
+  font-family: "Poppins", sans-serif;
+}
+body {
+  background-color: #ff9830cc;
+}
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
 }
 
 #nav {
@@ -22,7 +24,7 @@
     text-decoration: none;
 
     &.router-link-exact-active {
-      color: red;
+      border-bottom: black solid;
     }
   }
 }

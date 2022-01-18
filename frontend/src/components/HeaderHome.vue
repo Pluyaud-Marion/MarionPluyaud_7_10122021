@@ -3,14 +3,13 @@
     <div id="logo-button">
       <img
         id="logo-left"
-        src="../assets/icon-left-font.png"
+        src="../assets/icon-left-font-monochrome-black.png"
         alt="logo groupomania"
       />
       <div class="button-container">
         <button class="button-signup">
           <router-link to="/signup">Inscription</router-link>
         </button>
-
         <button class="button-login">
           <router-link to="/">Connexion</router-link>
         </button>
@@ -50,10 +49,8 @@ export default {
     .button-login {
       width: 100%;
       height: 50px;
-      border-radius: 20px;
+      border-radius: 10px;
       border: none;
-      background-color: red;
-      opacity: 70%;
       color: white;
       font-weight: bold;
       font-size: medium;
@@ -65,18 +62,12 @@ export default {
     }
 
     .router-link-exact-active {
-      text-decoration: underline;
-      color: white;
+      border-bottom: black solid;
     }
-    // .active {
-    //   background-color: red;
-    //   opacity: 70%;
-    //   border: black thick double;
-    // }
   }
 }
 h1 {
-  color: red;
-  opacity: 80%;
+  color: black;
+  font-weight: bold;
 }
 </style>

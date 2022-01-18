@@ -9,7 +9,7 @@
           v-model="email"
           type="email"
           id="email"
-          placeholder="adresse email"
+          placeholder="Adresse email"
         />
       </div>
       <div class="password">
@@ -17,7 +17,7 @@
           v-model="password"
           type="text"
           id="password"
-          placeholder="********"
+          placeholder="Mot de passe"
         />
       </div>
       <div>
@@ -85,22 +85,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-section {
-  padding-top: 5%;
-  background-image: url("../assets/icon.png");
-  background-attachment: fixed;
-  padding-bottom: 15%;
-}
-
 .container {
-  border: red ridge 4mm;
-  opacity: 80%;
   border-radius: 20px;
   width: 50%;
-  height: 250px;
-  margin-top: 5%;
-  margin-left: 25%;
+  height: auto;
   background-color: white;
+  margin: 0 auto;
+  box-shadow: 0px 0px 11px 1px;
+  margin-top: 10%;
+  padding-top: 2%;
+  padding-bottom: 2%;
 }
 .email,
 .password {
@@ -123,9 +117,9 @@ section {
   width: 55%;
   height: 30px;
   border-radius: 10px;
-  background-color: red;
-  opacity: 80%;
-  color: white;
+  background-color: #ff9830cc;
+  border: none;
+
   font-weight: bold;
   font-size: small;
 }

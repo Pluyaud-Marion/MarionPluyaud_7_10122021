@@ -3,7 +3,7 @@
     <div id="logo-button">
       <img
         id="logo-left"
-        src="../assets/icon-left-font.png"
+        src="../assets/icon-left-font-monochrome-black.png"
         alt="logo groupomania"
       />
       <div class="button-container">
@@ -19,8 +19,8 @@
         </div>
       </div>
     </div>
-    <h2 class="name">Bienvenue {{ name }}</h2>
     <h1>Groupomania : Votre réseau social d'entreprise</h1>
+    <h2 class="name">Bienvenue {{ name }}</h2>
   </section>
 </template>
 
@@ -50,31 +50,32 @@ export default {
   display: flex;
   align-items: center;
   height: 110px;
+  justify-content: space-between;
 
   #logo-left {
     width: 25%;
   }
   .button-container {
     display: flex;
-    align-items: center;
-    margin-left: 40%;
+    width: 45%;
+    justify-content: space-between;
     .news,
     .logout,
     .profile {
-      width: 100%;
-      opacity: 80%;
-      color: black;
       font-weight: bold;
       font-size: large;
       cursor: pointer;
-      margin-left: 10%;
     }
   }
 }
 
 h1 {
-  color: red;
-  opacity: 80%;
+  color: black;
+  font-size: 20px;
+}
+h2 {
+  font-size: 25px;
+  margin-bottom: 10%;
 }
 .name {
   margin-top: 0;
