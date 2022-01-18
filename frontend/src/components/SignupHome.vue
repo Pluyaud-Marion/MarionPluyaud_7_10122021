@@ -34,7 +34,7 @@
         <label for="password">Mot de passe : </label>
         <input
           v-model="password"
-          type="text"
+          type="password"
           id="password"
           placeholder="********"
         />
@@ -43,8 +43,8 @@
         <label for="password">Retapez le même mot de passe : </label>
         <input
           v-model="passwordVerify"
-          type="text"
-          id="password"
+          type="password"
+          id="passwordVerify"
           placeholder="********"
         />
       </div>
@@ -65,8 +65,8 @@
           v-show="validatedFields()"
           @click="signup()"
         >
-          Créer mon compte
-          <!-- <router-link to="/">Créer mon compte</router-link> -->
+          <!-- Créer mon compte -->
+          <router-link to="/">Créer mon compte</router-link>
         </button>
         <p v-text="errors"></p>
       </div>
@@ -111,26 +111,30 @@ export default {
       if (
         regexNameJob.test(this.firstname) &&
         regexNameJob.test(this.lastname) &&
-        regexNameJob.test(this.job) &&
-        this.password === this.passwordVerify
+        regexNameJob.test(this.job)
       ) {
-        axios
-          .post("http://localhost:3000/api/user/signup", {
-            firstname: this.firstname,
-            lastname: this.lastname,
-            email: this.email,
-            password: this.password,
-            job: this.job,
-          })
-          .then(() => {
-            window.location = "/";
-          })
-          .catch((error) => {
-            this.errors = error.response.data.message;
-          });
+        if (this.password === this.passwordVerify) {
+          axios
+            .post("http://localhost:3000/api/user/signup", {
+              firstname: this.firstname,
+              lastname: this.lastname,
+              email: this.email,
+              password: this.password,
+              job: this.job,
+            })
+            .then(() => {
+              // window.location = "/";
+            })
+            .catch((error) => {
+              this.errors = error.response.data.message;
+            });
+        } else {
+          this.errors =
+            "Les deux champs de mot de passe doivent être identiques";
+        }
       } else {
         this.errors =
-          "Votre nom, prénom et fonction ne doit contenir que des lettres et les deux mots de passe doivent être identiques ";
+          "Votre nom, prénom et fonction ne doit contenir que des lettres";
       }
     },
   },

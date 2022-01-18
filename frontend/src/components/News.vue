@@ -205,8 +205,6 @@ export default {
       contentPost: null,
       attachment: null,
       updateTextPost: null,
-
-      //user: "",
     };
   },
   created() {

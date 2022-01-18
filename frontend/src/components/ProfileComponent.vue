@@ -179,35 +179,33 @@ export default {
         regexNameJob.test(this.infos.firstname) &&
         regexNameJob.test(this.infos.lastname) &&
         regexNameJob.test(this.infos.job) &&
-        this.validateFields() &&
-        this.newPassword === this.newPasswordVerify
+        this.validateFields()
       ) {
-        axios
-          .put(
-            `http://localhost:3000/api/user/${userId}`,
-            {
-              firstname: this.infos.firstname,
-              lastname: this.infos.lastname,
-              email: this.infos.email,
-              password: this.newPassword,
-              job: this.infos.job,
-            },
-            configHeaders
-          )
-          .then(() => {
-            const name = this.infos.firstname + " " + this.infos.lastname;
-
-            // this.infos.firstname;
-            // this.infos.lastname;
-            // this.infos.email;
-            // this.newpPassword;
-            // this.infos.job;
-            localStorage.setItem("name", name); // mets le nouveau nom dans LS
-            window.location.reload(); // recharge la page
-          })
-          .catch((error) => {
-            this.errors = error.response.data.message;
-          });
+        if (this.newPassword === this.newPasswordVerify) {
+          axios
+            .put(
+              `http://localhost:3000/api/user/${userId}`,
+              {
+                firstname: this.infos.firstname,
+                lastname: this.infos.lastname,
+                email: this.infos.email,
+                password: this.newPassword,
+                job: this.infos.job,
+              },
+              configHeaders
+            )
+            .then(() => {
+              const name = this.infos.firstname + " " + this.infos.lastname;
+              localStorage.setItem("name", name); // mets le nouveau nom dans LS
+              window.location.reload(); // recharge la page
+            })
+            .catch((error) => {
+              this.errors = error.response.data.message;
+            });
+        } else {
+          this.errors =
+            "Les deux champs de mot de passe doivent être identiques";
+        }
       } else {
         this.errors =
           "Votre nom, prénom et fonction ne doit contenir que des lettres et tous les champs doivent être complêtés ";
