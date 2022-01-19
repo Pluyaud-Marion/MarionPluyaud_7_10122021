@@ -6,14 +6,20 @@
         src="../assets/icon-left-font-monochrome-black.png"
         alt="logo groupomania"
       />
-      <div class="button-container">
-        <button class="button-signup">
+      <nav class="button-container">
+        <button
+          class="button-signup"
+          aria-label="bouton pour se rendre sur la page inscription du site"
+        >
           <router-link to="/signup">Inscription</router-link>
         </button>
-        <button class="button-login">
+        <button
+          class="button-login"
+          aria-label="bouton pour se rendre sur la page connexion du site"
+        >
           <router-link to="/">Connexion</router-link>
         </button>
-      </div>
+      </nav>
     </div>
     <h1>Groupomania : Votre réseau social d'entreprise</h1>
   </section>

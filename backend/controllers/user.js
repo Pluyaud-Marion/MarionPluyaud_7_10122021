@@ -132,7 +132,7 @@ exports.getOneProfileFull = (req, res) => {
 
 
 // L'admin peut visualiser tous les profils - 
-// exclu le password qui n'est jamais renvoyé
+
 exports.adminGetAllProfile = (req, res) => {
 	//on cherche l'user qui envoie la requête -> userRequest
 	model.User.findOne({
@@ -142,7 +142,14 @@ exports.adminGetAllProfile = (req, res) => {
 		.then((userRequest) =>{
 			//s'il est admin = on visualise tous les users de la db
 			if(userRequest.isadmin === true) {
+				// model.User.findAll({
+				// 	attributes: {exclude: ["password"]},
+				// 	order : [["createdAt", "DESC"]] 
+				// })
+
+				// ne renvoie que les utilisateurs qui sont pas admin
 				model.User.findAll({
+					where : { isadmin : false},
 					attributes: {exclude: ["password"]},
 					order : [["createdAt", "DESC"]] 
 				})

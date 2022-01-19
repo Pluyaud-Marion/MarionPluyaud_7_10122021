@@ -4,52 +4,59 @@
       <h2>Inscription</h2>
 
       <div class="input">
-        <label for="firstname">Prénom : </label>
+        <label for="firstname" class="display">Prénom : </label>
         <input
           v-model="firstname"
           type="text"
           id="firstname"
           placeholder="Prénom"
+          aria-required="true"
         />
       </div>
       <div class="input">
-        <label for="lastname">Nom : </label>
+        <label for="lastname" class="display">Nom : </label>
         <input v-model="lastname" type="text" id="lastname" placeholder="Nom" />
       </div>
       <div class="input">
-        <label for="email">Email : </label>
+        <label for="email" class="display">Email : </label>
         <input
           v-model="email"
           type="email"
           id="email"
           placeholder="Adresse mail"
+          aria-required="true"
         />
       </div>
       <div class="input">
-        <label for="password">Mot de passe : </label>
+        <label for="password" class="display">Mot de passe : </label>
         <input
           v-model="password"
           type="password"
           id="password"
           placeholder="Mot de passe"
+          aria-required="true"
         />
       </div>
       <div class="input">
-        <label for="password">Confirmez le mot de passe : </label>
+        <label for="passwordVerify" class="display"
+          >Confirmez le mot de passe :
+        </label>
         <input
           v-model="passwordVerify"
           type="password"
           id="passwordVerify"
           placeholder="Rappel Mot de passe"
+          aria-required="true"
         />
       </div>
       <div class="input">
-        <label for="job">Fonction : </label>
+        <label for="job" class="display">Fonction : </label>
         <input
           v-model="job"
           type="text"
           id="job"
           placeholder="Fonction dans l'entreprise"
+          aria-required="true"
         />
       </div>
 
@@ -137,6 +144,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.display {
+  display: inline;
+}
 h2 {
   font-size: x-large;
   text-align: center;

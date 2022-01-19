@@ -5,19 +5,23 @@
       <h2>Connexion à votre compte</h2>
 
       <div class="email">
+        <label for="email">Adresse email</label>
         <input
           v-model="email"
           type="email"
           id="email"
           placeholder="Adresse email"
+          aria-required="true"
         />
       </div>
       <div class="password">
+        <label for="password">Mot de passe</label>
         <input
           v-model="password"
           type="text"
           id="password"
           placeholder="Mot de passe"
+          aria-required="true"
         />
       </div>
       <div>

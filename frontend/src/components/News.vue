@@ -1,8 +1,34 @@
 
 <template>
   <section>
-    <CreatePost />
-
+    <div class="container-create-post">
+      <div class="create-post">
+        <div class="input-post-file">
+          <label for="input-post" title="nouveau post">Nouveau post</label>
+          <textarea
+            aria-label="input rédaction du contenu du post"
+            title="rédaction du contenu du post ici"
+            name="post"
+            id="input-post"
+            cols="60"
+            rows="3"
+            placeholder="Rédigez votre post..."
+            v-model="contentPost"
+          ></textarea>
+          <label for="file-post">Choisissez votre fichier</label>
+          <input
+            id="file-post"
+            name="file"
+            type="file"
+            v-on:change="fileChangePost"
+          />
+        </div>
+        <button class="button" @click="createPost()" role="button">
+          Publier mon post
+        </button>
+        <p class="error-create-post"></p>
+      </div>
+    </div>
     <div v-if="posts.length < 1">Désolé il n'y a pas de post...</div>
     <!-- 1ère boucle = pour chaque post sur le tableau posts -->
     <article class="vignette" v-for="post in posts" v-bind:key="post.id">
@@ -23,7 +49,7 @@
             class="img-post"
             v-if="post.attachment"
             v-bind:src="post.attachment"
-            alt="image de la publication"
+            :alt="'image du post : ' + post.id"
           />
         </div>
         <!-- Partie modifier apparait que si admin ou user auteur du post -->
@@ -40,6 +66,7 @@
               class="button-update"
               v-show="!showUpdate[post.id]"
               @click="showInputUpdatePost(post.id)"
+              role="button"
             >
               Modifier
             </button>
@@ -48,33 +75,48 @@
               class="button-delete"
               v-if="admin.length == 4 || userId == post.UserId"
               @click="deletePost(post.id)"
+              role="button"
             >
               Supprimer
             </button>
           </div>
 
           <div class="update-container">
+            <label v-bind:for="'postUpdate' + post.id"
+              >Modifiez votre post</label
+            >
             <textarea
+              v-bind:id="'postUpdate' + post.id"
               v-show="showUpdate[post.id]"
-              name="update-post"
               class="update-post"
               cols="60"
               rows="3"
               placeholder="Modifiez votre post..."
               v-model="updateTextPost"
             ></textarea>
+            <label v-bind:for="'fileUpdatePost' + post.id"
+              >Choisissez votre fichier pour modifier votre post</label
+            >
             <input
               v-show="showUpdate[post.id]"
-              name="file"
+              v-bind:id="'fileUpdatePost' + post.id"
               type="file"
               v-on:change="fileChangePost"
             />
           </div>
           <div class="update-return-button">
-            <button v-show="showUpdate[post.id]" @click="returnBack()">
+            <button
+              v-show="showUpdate[post.id]"
+              @click="returnBack()"
+              role="button"
+            >
               Annuler
             </button>
-            <button v-show="showUpdate[post.id]" @click="updatePost(post.id)">
+            <button
+              v-show="showUpdate[post.id]"
+              @click="updatePost(post.id)"
+              role="button"
+            >
               Valider
             </button>
           </div>
@@ -94,6 +136,7 @@
         class="button"
         v-show="!showDoCom[post.id]"
         @click="showInputDoCom(post.id)"
+        role="button"
       >
         Commenter
       </button>
@@ -102,7 +145,9 @@
         <!-- retour en arriere -->
 
         <div class="create-com-container">
+          <label v-bind:for="'createComment' + post.id">Commentez</label>
           <textarea
+            v-bind:id="'createComment' + post.id"
             class="create-com"
             name="comment"
             cols="50"
@@ -110,14 +155,29 @@
             placeholder="Commentez..."
             v-model="commentaire"
           ></textarea>
-          <input type="file" v-on:change="fileChangeComment" />
+          <label v-bind:for="'fileCreateComment' + post.id"
+            >Choisissez votre fichier pour ajouter au commentaire</label
+          >
+          <input
+            v-bind:id="'fileCreateComment' + post.id"
+            type="file"
+            v-on:change="fileChangeComment"
+          />
         </div>
 
         <div class="create-return-button">
-          <button v-show="!showUpdate[post.id]" @click="returnBack()">
+          <button
+            v-show="!showUpdate[post.id]"
+            @click="returnBack()"
+            role="button"
+          >
             Annuler
           </button>
-          <button class="button-validate-com" @click="createComment(post.id)">
+          <button
+            class="button-validate-com"
+            @click="createComment(post.id)"
+            role="button"
+          >
             Commenter
           </button>
         </div>
@@ -151,8 +211,13 @@
                 class="button-delete-com"
                 v-if="admin.length == 4 || userId == comment.UserId"
               >
-                <button @click="deleteComment(comment.id)">
-                  <i class="far fa-trash-alt"></i>
+                <button @click="deleteComment(comment.id)" role="button">
+                  <label :for="'delete' + post.id">Boutton suppression</label>
+                  <i
+                    :id="'delete' + post.id"
+                    class="far fa-trash-alt"
+                    alt="icone pour suppression"
+                  ></i>
                 </button>
               </div>
             </div>
@@ -164,16 +229,11 @@
 </template>
 
 <script>
-import CreatePost from "@/components/CreatePost.vue";
-
 import axios from "axios";
 import { formatRelative } from "date-fns";
 import { fr } from "date-fns/locale";
 export default {
   name: "News",
-  components: {
-    CreatePost,
-  },
 
   data() {
     return {
@@ -186,7 +246,7 @@ export default {
 
       commentaire: null,
       attachmentCom: null,
-      // contentPost: null,
+      contentPost: null,
       attachment: null,
       updateTextPost: null,
     };
@@ -230,42 +290,42 @@ export default {
       return formatRelative(new Date(date), new Date(), { locale: fr });
     },
 
-    // fileChangePost(e) {
-    //   this.attachment = e.target.files[0] || e.dataTransfer.files;
-    // },
-    // createPost() {
-    //   let userTokenStorage = localStorage.getItem("token");
-    //   let userIdStorage = localStorage.getItem("userId");
+    fileChangePost(e) {
+      this.attachment = e.target.files[0] || e.dataTransfer.files;
+    },
+    createPost() {
+      let userTokenStorage = localStorage.getItem("token");
+      let userIdStorage = localStorage.getItem("userId");
 
-    //   let infos = JSON.stringify({
-    //     content: this.contentPost,
-    //   });
-    //   const formData = new FormData();
-    //   formData.append("post", infos);
-    //   formData.append("image", this.attachment);
+      let infos = JSON.stringify({
+        content: this.contentPost,
+      });
+      const formData = new FormData();
+      formData.append("post", infos);
+      formData.append("image", this.attachment);
 
-    //   if (this.contentPost === null && this.attachment === null) {
-    //     document.querySelector(
-    //       ".error-create-post"
-    //     ).innerHTML = `Rien à poster`;
-    //   } else {
-    //     document.querySelector(".error-create-post").innerHTML = ``;
-    //     axios({
-    //       method: "post",
-    //       url: `http://localhost:3000/api/post/${userIdStorage}`,
-    //       data: formData,
-    //       headers: {
-    //         "content-type": "multipart/form-data",
-    //         Authorization: `Bearer ${userTokenStorage}`,
-    //       },
-    //     })
-    //       .then((response) => {
-    //         console.log(response);
-    //         window.location.reload();
-    //       })
-    //       .catch((error) => console.log(error));
-    //   }
-    // },
+      if (this.contentPost === null && this.attachment === null) {
+        document.querySelector(
+          ".error-create-post"
+        ).innerHTML = `Rien à poster`;
+      } else {
+        document.querySelector(".error-create-post").innerHTML = ``;
+        axios({
+          method: "post",
+          url: `http://localhost:3000/api/post/${userIdStorage}`,
+          data: formData,
+          headers: {
+            "content-type": "multipart/form-data",
+            Authorization: `Bearer ${userTokenStorage}`,
+          },
+        })
+          .then((response) => {
+            console.log(response);
+            window.location.reload();
+          })
+          .catch((error) => console.log(error));
+      }
+    },
 
     updatePost(postId) {
       let userTokenStorage = localStorage.getItem("token");
@@ -301,7 +361,7 @@ export default {
         })
           .then((response) => {
             console.log(response);
-            //window.location.reload();
+            window.location.reload();
           })
           .catch((error) => console.log("il n'y a pas de texte", error));
       }
@@ -409,7 +469,41 @@ export default {
 body {
   margin: 0 auto;
 }
-
+#input-post {
+  border-radius: 10px;
+  margin-bottom: 2%;
+}
+.container-create-post {
+  width: 100%;
+  .create-post {
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    .error-create-post {
+      font-style: italic;
+    }
+    .input-post-file {
+      display: flex;
+      flex-direction: column;
+    }
+    .button {
+      border-radius: 10px;
+      background-color: #df7512;
+      border: none;
+      font-weight: bold;
+      font-size: small;
+      cursor: pointer;
+      color: black;
+      box-shadow: 0px 0px 4px;
+      padding-right: 5%;
+      padding-left: 5%;
+      padding-top: 1%;
+      padding-bottom: 1%;
+      width: 30%;
+      margin-top: 3%;
+    }
+  }
+}
 .img-post {
   width: 100%;
   border-radius: 10px;

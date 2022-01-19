@@ -6,21 +6,46 @@
       Mes informations
       <div class="container-inputs">
         <div class="input">
-          <p>Prénom : {{ infos.firstname }}</p>
-          <input v-show="showUser" type="text" v-model="infos.firstname" />
-        </div>
-        <div class="input">
-          <p>Nom : {{ infos.lastname }}</p>
-          <input v-show="showUser" type="text" v-model="infos.lastname" />
-        </div>
-        <div class="input">
-          <p>Email : {{ infos.email }}</p>
-
-          <input v-show="showUser" type="text" v-model="infos.email" />
-        </div>
-        <div class="input">
-          <p>Mot de passe : {{ "*********" }}</p>
+          <label for="firstname" class="display"
+            >Prénom : {{ infos.firstname }}</label
+          >
+          <!-- <p>Prénom : {{ infos.firstname }}</p> -->
           <input
+            id="firstname"
+            v-show="showUser"
+            type="text"
+            v-model="infos.firstname"
+          />
+        </div>
+        <div class="input">
+          <label for="lastname" class="display"
+            >Nom : {{ infos.lastname }}</label
+          >
+          <!-- <p>Nom : {{ infos.lastname }}</p> -->
+          <input
+            id="lastname"
+            v-show="showUser"
+            type="text"
+            v-model="infos.lastname"
+          />
+        </div>
+        <div class="input">
+          <label for="email" class="display">Email : {{ infos.email }}</label>
+          <!-- <p>Email : {{ infos.email }}</p> -->
+          <input
+            id="email"
+            v-show="showUser"
+            type="text"
+            v-model="infos.email"
+          />
+        </div>
+        <div class="input">
+          <label for="password" class="display"
+            >Mot de passe : {{ "*********" }}
+          </label>
+          <!-- <p>Mot de passe : {{ "*********" }}</p> -->
+          <input
+            id="password"
             v-show="showUser"
             type="password"
             placeholder="Mot de passe"
@@ -28,8 +53,12 @@
           />
         </div>
         <div class="input">
-          <p v-show="showUser">Confirmez le mot de passe</p>
+          <label v-show="showUser" for="passwordConfirm" class="display"
+            >Confirmez le mot de passe</label
+          >
+          <!-- <p v-show="showUser">Confirmez le mot de passe</p> -->
           <input
+            id="passwordConfirm"
             v-show="showUser"
             type="password"
             placeholder="Mot de passe"
@@ -37,9 +66,12 @@
           />
         </div>
         <div class="input">
-          <p>Fonction dans l'entreprise : {{ infos.job }}</p>
+          <label for="job" class="display"
+            >Fonction dans l'entreprise : {{ infos.job }}</label
+          >
+          <!-- <p>Fonction dans l'entreprise : {{ infos.job }}</p> -->
 
-          <input v-show="showUser" type="text" v-model="infos.job" />
+          <input id="job" v-show="showUser" type="text" v-model="infos.job" />
         </div>
         <p class="date">
           Date de création du compte : {{ formatDate(infos.createdAt) }}
@@ -91,33 +123,46 @@
         </button> -->
         <div class="container-inputs">
           <div class="input">
-            Prénom : {{ profile.firstname }}
-
+            <label :for="'firstname-by-admin' + profile.id" class="display"
+              >Prénom : {{ profile.firstname }}</label
+            >
             <input
+              :id="'firstname-by-admin' + profile.id"
               v-show="show[profile.id]"
               type="text"
               v-model="profile.firstname"
             />
           </div>
           <div class="input">
-            Nom : {{ profile.lastname }}
+            <label :for="'lastname-by-admin' + profile.id" class="display"
+              >Nom : {{ profile.lastname }}</label
+            >
             <input
+              :id="'lastname-by-admin' + profile.id"
               v-show="show[profile.id]"
               type="text"
               v-model="profile.lastname"
             />
           </div>
           <div class="input">
-            Job : {{ profile.job }}
+            <label :for="'job-by-admin' + profile.id" class="display"
+              >Job : {{ profile.job }}</label
+            >
+
             <input
+              :id="'job-by-admin' + profile.id"
               v-show="show[profile.id]"
               type="text"
               v-model="profile.job"
             />
           </div>
           <div class="input">
-            Email : {{ profile.email }}
+            <label :for="'email-by-admin' + profile.id" class="display"
+              >Email : {{ profile.email }}</label
+            >
+
             <input
+              :id="'email-by-admin' + profile.id"
               v-show="show[profile.id]"
               type="text"
               v-model="profile.email"
@@ -350,6 +395,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.display {
+  display: inline;
+}
 .container-inputs {
   text-align: initial;
   padding-top: 3%;
@@ -458,6 +506,6 @@ export default {
 .input {
   display: flex;
   flex-direction: column;
-  margin: 0 5%;
+  margin: 3% 5%;
 }
 </style>

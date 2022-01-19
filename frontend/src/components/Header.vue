@@ -6,18 +6,28 @@
         src="../assets/icon-left-font-monochrome-black.png"
         alt="logo groupomania"
       />
-      <div class="button-container">
-        <div class="news">
+      <nav class="button-container">
+        <div
+          class="news"
+          aria-label="lien pour se rendre sur la page actualités du site"
+        >
           <router-link to="/posts">Actualités</router-link>
         </div>
-        <div class="profile">
+        <div
+          class="profile"
+          aria-label="lien pour se rendre sur la page profil du site"
+        >
           <router-link to="/profile">Profil</router-link>
         </div>
-        <div class="logout" @click="logout()">
+        <div
+          class="logout"
+          @click="logout()"
+          aria-label="lien pour se déconnecter du site"
+        >
           Deconnexion
           <!-- <router-link to="/">Deconnexion</router-link> -->
         </div>
-      </div>
+      </nav>
     </div>
     <h1>Groupomania : Votre réseau social d'entreprise</h1>
     <h2 class="name">Bienvenue {{ name }}</h2>

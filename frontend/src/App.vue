@@ -5,6 +5,9 @@
 </template>
 
 <style lang="scss">
+label {
+  display: none;
+}
 * {
   font-family: "Poppins", sans-serif;
 }
