@@ -28,12 +28,6 @@
 <script>
 export default {
   name: "HeaderHome",
-  // data() {
-  //   return {
-  //     buttonActiveSignup: false,
-  //     buttonActiveLogin: true,
-  //   };
-  // },
 };
 </script>
 

@@ -132,6 +132,7 @@
           Au clic sur bouton commenter = appel de la méthode "showInputDoCom qui prend en paramètre l'id du post sur lequel est le commentaire et qui passe pour cet id v-show à true (le fait apparaitre)"
            -->
       <!-- <CreateComment :postId="post.id" /> -->
+
       <button
         class="button"
         v-show="!showDoCom[post.id]"
@@ -142,8 +143,6 @@
       </button>
 
       <div class="new-comment" v-show="showDoCom[post.id]">
-        <!-- retour en arriere -->
-
         <div class="create-com-container">
           <label v-bind:for="'createComment' + post.id">Commentez</label>
           <textarea
@@ -266,17 +265,19 @@ export default {
     };
     //affiche les posts et leurs commentaires
     axios
-      .get("http://localhost:3000/api/post/", configHeaders)
-      // fonction qui affiche les posts boucle sur chaque post et passe tous les showUpdate à false
-      // Dans la boucle (dans chaque post) elle boucle sur les commentaires et passe tous les showDoCom à false
+      .get(`${process.env.VUE_APP_LOCALHOST}post/`, configHeaders)
+      // fonction qui affiche les posts boucle sur chaque post et passe tous les showUpdate à false + les showDoCom à false
+
       .then((response) => {
         this.posts = response.data;
         console.log("data posts", response.data);
         for (const post of this.posts) {
           this.showUpdate[post.id] = false;
-          for (const comment of this.post.Comments) {
-            this.showDoCom[comment.id] = false;
-          }
+          this.showDoCom[post.id] = false;
+          // Dans la boucle (dans chaque post) elle boucle sur les commentaires et passe tous les showDoCom à false
+          //for (const comment of this.post.Comments) {
+          // this.showDoCom[comment.id] = false;
+          // }
         }
       })
       .catch((error) => console.log(error));
@@ -312,7 +313,7 @@ export default {
         document.querySelector(".error-create-post").innerHTML = ``;
         axios({
           method: "post",
-          url: `http://localhost:3000/api/post/${userIdStorage}`,
+          url: `${process.env.VUE_APP_LOCALHOST}post/${userIdStorage}`,
           data: formData,
           headers: {
             "content-type": "multipart/form-data",
@@ -352,7 +353,7 @@ export default {
         }
         axios({
           method: "put",
-          url: `http://localhost:3000/api/post/${postId}`,
+          url: `${process.env.VUE_APP_LOCALHOST}post/${postId}`,
           data: formData,
           headers: {
             "content-type": "multipart/form-data",
@@ -375,20 +376,18 @@ export default {
           Authorization: `Bearer ${userTokenStorage}`,
         },
       };
-      axios
-        .delete(`http://localhost:3000/api/post/${postId}`, configHeaders)
+      if (confirm("Voulez vous vraiment supprimer ce post?")) {
+        axios
+          .delete(
+            `${process.env.VUE_APP_LOCALHOST}post/${postId}`,
+            configHeaders
+          )
+          .then(() => {
+            window.location.reload();
+          })
 
-        .then((response) => {
-          console.log(response);
-          alert("Attention ce post va être supprimé");
-          window.location.reload();
-
-          // if(confirm("Voulez vous vraiment supprimer ce post?")) {
-
-          // }
-        })
-
-        .catch((error) => console.log(error));
+          .catch((error) => console.log(error));
+      }
     },
 
     createComment(postId) {
@@ -413,7 +412,7 @@ export default {
         document.querySelector(".error-create-com").innerHTML = ``;
         axios({
           method: "post",
-          url: `http://localhost:3000/api/post/comment/${postId}`,
+          url: `${process.env.VUE_APP_LOCALHOST}post/comment/${postId}`,
           data: formData,
           headers: {
             "content-type": "multipart/form-data",
@@ -441,19 +440,18 @@ export default {
           Authorization: `Bearer ${userTokenStorage}`,
         },
       };
+      if (confirm("Voulez vous vraiment supprimer ce commentaire?")) {
+        axios
+          .delete(
+            `${process.env.VUE_APP_LOCALHOST}post/comment/${commentId}`,
 
-      axios
-        .delete(
-          `http://localhost:3000/api/post/comment/${commentId}`,
-
-          configHeaders
-        )
-        .then((response) => {
-          console.log(response);
-          alert("Attention ce commentaire va être supprimé");
-          window.location.reload();
-        })
-        .catch((error) => console.log(error));
+            configHeaders
+          )
+          .then(() => {
+            window.location.reload();
+          })
+          .catch((error) => console.log(error));
+      }
     },
     showInputUpdatePost(postId) {
       this.showUpdate[postId] = !this.showUpdate[postId];

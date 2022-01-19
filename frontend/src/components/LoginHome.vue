@@ -31,8 +31,8 @@
           @click="login()"
           v-show="validatedFields()"
         >
-          <!-- Envoyer -->
-          <router-link to="/posts">Envoyer</router-link>
+          Envoyer
+          <!-- <router-link to="/posts">Envoyer</router-link> -->
         </button>
         <p v-text="error"></p>
       </div>
@@ -42,6 +42,7 @@
 
 <script>
 import axios from "axios";
+
 export default {
   name: "LoginHome",
   data: function () {
@@ -63,7 +64,7 @@ export default {
       if (this.validatedFields()) {
         // si les champs sont complétés
         axios
-          .post("http://localhost:3000/api/user/login", {
+          .post(`${process.env.VUE_APP_LOCALHOST}user/login`, {
             email: this.email,
             password: this.password,
           })
@@ -75,7 +76,7 @@ export default {
               localStorage.setItem("userId", response.data.userId);
               localStorage.setItem("name", name);
               localStorage.setItem("isadmin", response.data.isadmin);
-              // window.location = "/posts";
+              window.location = "/posts";
             }
           })
           .catch((error) => {

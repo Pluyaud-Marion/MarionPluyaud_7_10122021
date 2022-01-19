@@ -117,7 +117,7 @@ export default {
       ) {
         if (this.password === this.passwordVerify) {
           axios
-            .post("http://localhost:3000/api/user/signup", {
+            .post(`${process.env.VUE_APP_LOCALHOST}user/signup`, {
               firstname: this.firstname,
               lastname: this.lastname,
               email: this.email,

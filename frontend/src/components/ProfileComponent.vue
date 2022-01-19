@@ -228,7 +228,7 @@ export default {
     };
 
     axios
-      .get(`http://localhost:3000/api/user/full/${userId}`, configHeaders)
+      .get(`${process.env.VUE_APP_LOCALHOST}user/full/${userId}`, configHeaders)
       .then((response) => {
         this.infos = response.data;
         console.log("infos", this.infos);
@@ -277,7 +277,7 @@ export default {
         if (this.newPassword === this.newPasswordVerify) {
           axios
             .put(
-              `http://localhost:3000/api/user/${userId}`,
+              `${process.env.VUE_APP_LOCALHOST}user/${userId}`,
               {
                 firstname: this.infos.firstname,
                 lastname: this.infos.lastname,
@@ -314,7 +314,7 @@ export default {
         },
       };
       axios
-        .delete(`http://localhost:3000/api/user/${userId}`, configHeaders)
+        .delete(`${process.env.VUE_APP_LOCALHOST}user/${userId}`, configHeaders)
         .then(() => {
           alert("Attention cet utilisateur va être supprimé");
           location.replace(location.origin);
@@ -331,7 +331,7 @@ export default {
         },
       };
       axios
-        .get("http://localhost:3000/api/user", configHeaders)
+        .get(`${process.env.VUE_APP_LOCALHOST}user`, configHeaders)
         .then((response) => {
           this.profiles = response.data;
 
@@ -356,7 +356,7 @@ export default {
       for (const profile of this.profiles) {
         axios
           .put(
-            `http://localhost:3000/api/user/admin/${userId}`,
+            `${process.env.VUE_APP_LOCALHOST}user/admin/${userId}`,
             {
               firstname: profile.firstname,
               lastname: profile.lastname,
