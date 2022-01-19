@@ -23,15 +23,17 @@ exports.signUp = (req, res) => {
 				model.User.create({
 					firstname: req.body.firstname,
 					lastname : req.body.lastname,
-				
 					email: req.body.email,
 					password : hash,
-		
 					job : req.body.job,
 					isadmin : req.body.isadmin
 				})
 					.then(() => res.status(201).json({message : "Utilisateur créé et enregistré dans la base de données"}))
-					.catch(error => res.status(400).json({error}));
+					.catch(error => {
+						console.log(error);
+						return res.status(400).json({ message : "Cette adresse email est déjà utilisée"});
+					});
+					
 			})
 			.catch(error => res.status(500).json({error}));
 	} else {

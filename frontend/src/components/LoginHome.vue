@@ -31,8 +31,8 @@
           @click="login()"
           v-show="validatedFields()"
         >
-          Envoyer
-          <!-- <router-link to="/posts">Envoyer</router-link> -->
+          <!-- Envoyer -->
+          <router-link to="/posts">Envoyer</router-link>
         </button>
         <p v-text="error"></p>
       </div>
@@ -75,7 +75,7 @@ export default {
               localStorage.setItem("userId", response.data.userId);
               localStorage.setItem("name", name);
               localStorage.setItem("isadmin", response.data.isadmin);
-              window.location = "/posts";
+              // window.location = "/posts";
             }
           })
           .catch((error) => {

@@ -125,7 +125,10 @@ export default {
               job: this.job,
             })
             .then(() => {
-              window.location = "/";
+              alert(
+                "Votre compte a bien été créé, vous pouvez désormais vous connecter à partir de la page de connexion"
+              );
+              // window.location = "/";
             })
             .catch((error) => {
               this.errors = error.response.data.message;
