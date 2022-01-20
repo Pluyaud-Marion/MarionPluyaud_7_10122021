@@ -23,7 +23,7 @@ Développement Backend et Frontend d'un réseau social d'entreprise pour la soci
 # Installation en local du projet : 
 - cloner le repository
 
-- Pour le lancement de l'application et la connexion à la base de données, vous récupérer les valeurs des variables d'environnement contenues dans le fichier .env.dist
+- Pour le lancement de l'application et la connexion à la base de données, vous devez récupérer les valeurs des variables d'environnement contenues dans le fichier .env.dist
 
 - Ouvrir un terminal dans le dossier Frontend -> `cd frontend`
     - Exécuter la commande -> `npm install`
