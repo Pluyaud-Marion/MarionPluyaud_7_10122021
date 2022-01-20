@@ -42,7 +42,7 @@
 
 <script>
 import axios from "axios";
-
+import router from "@/router/index";
 export default {
   name: "LoginHome",
   data: function () {
@@ -54,11 +54,7 @@ export default {
   },
   methods: {
     validatedFields() {
-      if (this.email != "" && this.password != "") {
-        return true;
-      } else {
-        return false;
-      }
+      return this.email != "" && this.password != "";
     },
     login() {
       if (this.validatedFields()) {
@@ -76,7 +72,8 @@ export default {
               localStorage.setItem("userId", response.data.userId);
               localStorage.setItem("name", name);
               localStorage.setItem("isadmin", response.data.isadmin);
-              window.location = "/posts";
+              router.push("/posts");
+              // window.location = "/posts";
             }
           })
           .catch((error) => {

@@ -238,14 +238,18 @@ exports.updatePost = (req, res) => {
 									attachment : `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
 									content: postObject.content.trim()
 								})
-									.then(() => res.status(200).json({message: "Post modifié avec fichier et texte"}))
+									.then(() => {
+										res.status(200).json({message: "Post modifié avec fichier et texte"});
+									})
 									.catch(error => res.status(400).json({error}));
 
 							} else if (req.file) {  
 								post.update({
 									attachment : `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
 								})
-									.then(() => res.status(200).json({message: "Post modifié avec fichier uniquement"}))
+									.then(() => {
+										res.status(200).json({message: "Post modifié avec fichier uniquement"});
+									})
 									.catch(error => res.status(400).json({error}));
                      
 							} else if (contentText) {
@@ -256,6 +260,7 @@ exports.updatePost = (req, res) => {
 									.then(() => {
 										return res.status(200).json({message: "Post modifié avec texte uniquement"});
 									})
+			
 									.catch(error => res.status(400).json({error}));
 							}
 						} else {

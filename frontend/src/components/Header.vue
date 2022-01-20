@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import router from "@/router";
 export default {
   name: "Header",
   data() {
@@ -46,10 +47,11 @@ export default {
     let name = localStorage.getItem("name");
     this.name = name;
   },
+
   methods: {
     logout() {
       localStorage.clear();
-      window.location = "/";
+      router.push("/");
     },
   },
 };

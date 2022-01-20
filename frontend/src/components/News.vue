@@ -107,7 +107,7 @@
           <div class="update-return-button">
             <button
               v-show="showUpdate[post.id]"
-              @click="returnBack()"
+              @click="showUpdate[post.id] = !showUpdate[post.id]"
               role="button"
             >
               Annuler
@@ -167,7 +167,7 @@
         <div class="create-return-button">
           <button
             v-show="!showUpdate[post.id]"
-            @click="returnBack()"
+            @click="showInputDoCom(post.id)"
             role="button"
           >
             Annuler
@@ -231,6 +231,7 @@
 import axios from "axios";
 import { formatRelative } from "date-fns";
 import { fr } from "date-fns/locale";
+
 export default {
   name: "News",
 
@@ -242,8 +243,8 @@ export default {
       userToken: "",
       showUpdate: [],
       posts: [],
-
-      commentaire: null,
+      com: "",
+      commentaire: "",
       attachmentCom: null,
       contentPost: null,
       attachment: null,
@@ -284,9 +285,22 @@ export default {
   },
 
   methods: {
-    returnBack() {
-      window.location = "/posts";
+    displayPosts() {
+      let userToken = localStorage.getItem("token");
+      let configHeaders = {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      };
+      axios
+        .get(`${process.env.VUE_APP_LOCALHOST}post/`, configHeaders)
+        .then((response) => {
+          this.posts = response.data;
+          console.log("data posts", response.data);
+        })
+        .catch((error) => console.log(error));
     },
+
     formatDate(date) {
       return formatRelative(new Date(date), new Date(), { locale: fr });
     },
@@ -322,7 +336,8 @@ export default {
         })
           .then((response) => {
             console.log(response);
-            window.location.reload();
+            this.contentPost = infos.content;
+            this.displayPosts();
           })
           .catch((error) => console.log(error));
       }
@@ -361,8 +376,21 @@ export default {
           },
         })
           .then((response) => {
-            console.log(response);
-            window.location.reload();
+            console.log("response", response);
+            console.log("infos", infos);
+            this.updateTextPost = infos.content;
+            //this. = ;
+
+            // this.posts = this.posts.map((post) => {
+            //   console.log("==>>", post.id);
+            //   console.log(postId);
+            //   if (post.id === postId) {
+            //     console.log("coucou");
+            //     return (post.content = this.updateTextPost);
+            //   }
+            // });
+            //window.location.reload();
+            this.displayPosts();
           })
           .catch((error) => console.log("il n'y a pas de texte", error));
       }
@@ -383,7 +411,7 @@ export default {
             configHeaders
           )
           .then(() => {
-            window.location.reload();
+            this.displayPosts();
           })
 
           .catch((error) => console.log(error));
@@ -398,6 +426,7 @@ export default {
         UserId: userIdStorage,
 
         contentCom: this.commentaire,
+        //contentCom: this.com,
       });
 
       const formData = new FormData();
@@ -405,6 +434,7 @@ export default {
       formData.append("image", this.attachmentCom);
 
       if (this.attachmentCom === null && this.commentaire === null) {
+        // if (this.attachmentCom === null && this.com === null) {
         document.querySelector(
           ".error-create-com"
         ).innerHTML = `Le commentaire est vide`;
@@ -422,8 +452,8 @@ export default {
           .then((response) => {
             console.log("response", response);
             console.log("infos", infos);
-
-            window.location.reload();
+            this.commentaire = infos.contentCom;
+            this.displayPosts();
           })
           .catch((error) => console.log(error));
       }
@@ -448,7 +478,8 @@ export default {
             configHeaders
           )
           .then(() => {
-            window.location.reload();
+            //window.location.reload();
+            this.displayPosts();
           })
           .catch((error) => console.log(error));
       }

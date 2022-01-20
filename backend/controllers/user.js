@@ -262,7 +262,8 @@ exports.updateProfileByUser = (req, res) => {
 											job : req.body.job,
 											isadmin : req.body.isadmin
 										})
-											.then(() => res.status(200).json({message: "Utilisateur modifié"}))
+										//	.then(() => res.status(200).json({message: "Utilisateur modifié"}))
+											.then((newUser) => res.status(200).json(newUser))
 											.catch(error => res.status(400).json({error}));
 									})
 									.catch(error => res.status(500).json({error}));

@@ -192,6 +192,7 @@
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import axios from "axios";
+import router from "@/router";
 
 export default {
   name: "ProfileComponent",
@@ -237,8 +238,31 @@ export default {
   },
 
   methods: {
+    displayProfileUser() {
+      let user = localStorage.getItem("name");
+      let userToken = localStorage.getItem("token");
+      let userId = localStorage.getItem("userId");
+
+      this.user = user;
+      this.userId = userId;
+
+      let configHeaders = {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      };
+      axios
+        .get(
+          `${process.env.VUE_APP_LOCALHOST}user/full/${userId}`,
+          configHeaders
+        )
+        .then((response) => {
+          this.infos = response.data;
+        })
+        .catch((error) => console.log(error));
+    },
     returnBack() {
-      window.location = "/profile";
+      router.push("/posts");
     },
     validateFields() {
       if (
@@ -287,10 +311,18 @@ export default {
               },
               configHeaders
             )
-            .then(() => {
+            .then((response) => {
+              console.log("response", response);
               const name = this.infos.firstname + " " + this.infos.lastname;
-              localStorage.setItem("name", name); // mets le nouveau nom dans LS
-              window.location.reload(); // recharge la page
+              localStorage.setItem("name", name);
+
+              (response.data.firstname = this.infos.firstname),
+                (response.data.lastname = this.infos.lastname),
+                (response.data.email = this.infos.email),
+                (response.data.password = this.newPassword),
+                (response.data.job = this.infos.job);
+              this.showUser = !this.showUser;
+              this.displayProfileUser();
             })
             .catch((error) => {
               this.errors = error.response.data.message;
@@ -313,13 +345,17 @@ export default {
           Authorization: `Bearer ${userToken}`,
         },
       };
-      axios
-        .delete(`${process.env.VUE_APP_LOCALHOST}user/${userId}`, configHeaders)
-        .then(() => {
-          alert("Attention cet utilisateur va être supprimé");
-          location.replace(location.origin);
-        })
-        .catch((error) => console.log(error));
+      if (confirm("Voulez vous vraiment supprimer votre profil?")) {
+        axios
+          .delete(
+            `${process.env.VUE_APP_LOCALHOST}user/${userId}`,
+            configHeaders
+          )
+          .then(() => {
+            router.push("/");
+          })
+          .catch((error) => console.log(error));
+      }
     },
     //affichage de tous les profils pour l'admin
     showAllProfiles() {
@@ -354,40 +390,28 @@ export default {
       };
 
       for (const profile of this.profiles) {
-        axios
-          .put(
-            `${process.env.VUE_APP_LOCALHOST}user/admin/${userId}`,
-            {
-              firstname: profile.firstname,
-              lastname: profile.lastname,
-              email: profile.email,
-              job: profile.job,
-            },
-            configHeaders
-          )
-          .then((response) => {
-            console.log("response", response);
-            // for (const profile of this.profiles) {
-            //   profile.firstname;
-            //   profile.lastname;
-            //   profile.email;
-            //   profile.job;
-            // }
-
-            // for (this.profile of this.profiles) {
-            //   this.profile.firstname;
-            //   this.profile.lastname;
-            //   this.profile.email;
-            //   this.profile.job;
-            // }
-
-            window.location.reload(); // recharge la page
-          })
-          .catch((error) => console.log(error));
+        if (profile.id == userId) {
+          console.log("profile", profile);
+          axios
+            .put(
+              `${process.env.VUE_APP_LOCALHOST}user/admin/${userId}`,
+              {
+                firstname: profile.firstname,
+                lastname: profile.lastname,
+                email: profile.email,
+                job: profile.job,
+              },
+              configHeaders
+            )
+            .then((response) => {
+              console.log("response", response);
+              this.showAllProfiles();
+            })
+            .catch((error) => console.log(error));
+        }
       }
     },
     showInput(userId) {
-      console.log(userId);
       this.show[userId] = !this.show[userId];
     },
   },

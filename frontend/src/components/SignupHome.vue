@@ -78,7 +78,7 @@
 
 <script>
 import axios from "axios";
-
+import router from "@/router/index";
 export default {
   name: "SignupHome",
   data: function () {
@@ -128,6 +128,7 @@ export default {
               alert(
                 "Votre compte a bien été créé, vous pouvez désormais vous connecter à partir de la page de connexion"
               );
+              router.push("/");
               // window.location = "/";
             })
             .catch((error) => {
