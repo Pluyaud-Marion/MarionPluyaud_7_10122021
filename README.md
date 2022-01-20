@@ -23,6 +23,8 @@ Développement Backend et Frontend d'un réseau social d'entreprise pour la soci
 # Installation en local du projet : 
 - cloner le repository
 
+- Pour le lancement de l'application et la connexion à la base de données, vous devez récupérer les valeurs des variables d'environnement contenues dans le fichier .env.dist
+
 - Ouvrir un terminal dans le dossier Frontend -> `cd frontend`
     - Exécuter la commande -> `npm install`
     - Lancer le serveur -> `npm run serve`
@@ -30,6 +32,7 @@ Développement Backend et Frontend d'un réseau social d'entreprise pour la soci
     
 - Ouvrir un terminal dans le dossier Backend -> `cd backend`
     - Exécuter la commande -> `npm install`
+    - Créer un dossier images -> `mkdir images`
     - Lancer le serveur -> `npm run start`
 
 
