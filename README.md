@@ -30,6 +30,7 @@ Développement Backend et Frontend d'un réseau social d'entreprise pour la soci
     
 - Ouvrir un terminal dans le dossier Backend -> `cd backend`
     - Exécuter la commande -> `npm install`
+    - Créer un dossier images -> `mkdir images`
     - Lancer le serveur -> `npm run start`
 
 
