@@ -33,4 +33,5 @@ Développement Backend et Frontend d'un réseau social d'entreprise pour la soci
     - Créer un dossier images -> `mkdir images`
     - Lancer le serveur -> `npm run start`
 
+- Pour le lancement de l'application et la connexion à la base de données, vous récupérer les valeurs des variables d'environnement contenues dans le fichier .env.dist
 
