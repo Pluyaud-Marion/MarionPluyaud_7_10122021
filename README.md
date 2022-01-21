@@ -12,27 +12,25 @@ Développement Backend et Frontend d'un réseau social d'entreprise pour la soci
 - Réalisé avec : 
     - Sequelize
     - MySql
-    - Node.js
+    - Node.js v14.17.6
     - Express
-- Base de données en ligne : alwaysdata
-- Documentation de l'API : https://documenter.getpostman.com/view/17753616/UVXojt2b
+- Documentation de l'API :  https://documenter.getpostman.com/view/17753616/UVXojt2b
 
 # Frontend :
-- Réalisé avec Vue.js
+- Réalisé avec Vue.js @vue/cli 4.5.15
 
 # Installation en local du projet : 
 - cloner le repository
 
 - Pour le lancement de l'application et la connexion à la base de données, vous devez récupérer les valeurs des variables d'environnement contenues dans le fichier .env.dist
 
-- Ouvrir un terminal dans le dossier Frontend -> `cd frontend`
-    - Exécuter la commande -> `npm install`
-    - Lancer le serveur -> `npm run serve`
-    - Ouvrir une fenêtre sur votre navigateur à l'adresse -> http://localhost:8080
+- Puis exécuter la commande suivante : `cd backend && npm install && npm run start`
+
+- Exécuter la commande suivante : `cd frontend && npm install && npm run serve`
+
+- Ouvrir une fenêtre sur votre navigateur à l'adresse -> http://localhost:8080
     
-- Ouvrir un terminal dans le dossier Backend -> `cd backend`
-    - Exécuter la commande -> `npm install`
-    - Créer un dossier images -> `mkdir images`
-    - Lancer le serveur -> `npm run start`
+
+- Dans le dossier Backend : Créer un dossier images -> `cd backend && mkdir images`
 
 
