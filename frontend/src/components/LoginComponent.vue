@@ -132,4 +132,30 @@ export default {
   font-weight: bold;
   font-size: small;
 }
+@media screen and (max-width: 480px) {
+  .container {
+    width: 100%;
+    h2 {
+      font-size: large;
+    }
+  }
+}
+@media screen and (min-width: 1440px) {
+  h2 {
+    font-size: 30px;
+  }
+  .email input,
+  .password input {
+    width: 450px;
+    height: 30px;
+  }
+  .button {
+    height: 35px;
+    font-size: 20px;
+  }
+  #email,
+  #password {
+    font-size: 20px;
+  }
+}
 </style>

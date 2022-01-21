@@ -70,4 +70,35 @@ h1 {
   color: black;
   font-weight: bold;
 }
+@media screen and (max-width: 480px) {
+  #logo-button {
+    flex-direction: column;
+    margin-bottom: 15%;
+    .button-container {
+      width: 100%;
+      .button-signup,
+      .button-login {
+        font-size: small;
+      }
+    }
+  }
+  h1 {
+    font-size: medium;
+    margin-bottom: 10%;
+    margin-top: 10%;
+  }
+}
+@media screen and (min-width: 1440px) {
+  #logo-button {
+    .button-container {
+      .button-signup,
+      .button-login {
+        font-size: 20px;
+      }
+    }
+  }
+  h1 {
+    font-size: 30px;
+  }
+}
 </style>

@@ -187,4 +187,40 @@ h2 {
     cursor: pointer;
   }
 }
+@media screen and (max-width: 480px) {
+  .container {
+    width: 100%;
+    h2 {
+      font-size: large;
+    }
+  }
+}
+@media screen and (min-width: 1440px) {
+  .container {
+    h2 {
+      font-size: 30px;
+    }
+    .button {
+      height: 35px;
+      font-size: 20px;
+      margin-top: 5%;
+    }
+    .input {
+      height: 30px;
+      margin: 7%;
+    }
+  }
+
+  label {
+    font-size: 20px;
+  }
+  #job,
+  #email,
+  #firstname,
+  #password,
+  #passwordVerify,
+  #lastname {
+    font-size: 20px;
+  }
+}
 </style>

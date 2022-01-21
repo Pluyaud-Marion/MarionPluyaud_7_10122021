@@ -109,4 +109,48 @@ h3 {
 .name {
   margin-top: 0;
 }
+@media screen and (max-width: 480px) {
+  #logo-button {
+    flex-direction: column;
+    margin-bottom: 7%;
+    .button-container {
+      width: 100%;
+      .news,
+      .profile,
+      .logout {
+        font-size: small;
+      }
+    }
+  }
+  h1 {
+    font-size: medium;
+    margin-bottom: 10%;
+  }
+  h2 {
+    font-size: medium;
+  }
+  h3 {
+    font-size: small;
+  }
+}
+@media screen and (min-width: 1440px) {
+  #logo-button {
+    .button-container {
+      .news,
+      .profile,
+      .logout {
+        font-size: 25px;
+      }
+    }
+  }
+  h1 {
+    font-size: 35px;
+  }
+  h2 {
+    font-size: 30px;
+  }
+  h3 {
+    font-size: 25px;
+  }
+}
 </style>

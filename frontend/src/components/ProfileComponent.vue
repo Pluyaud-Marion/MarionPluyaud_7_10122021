@@ -3,7 +3,7 @@
     <h1>Votre Profil - {{ user }}</h1>
     <!-- Si admin = false -->
     <div v-if="admin.length == 5">
-      Mes informations
+      <h2>Mes informations</h2>
       <div class="container-inputs">
         <div class="input">
           <label for="firstname" class="display"
@@ -326,6 +326,7 @@ export default {
               //met dans le LS le nouveau nom
               const name = this.infos.firstname + " " + this.infos.lastname;
               localStorage.setItem("name", name);
+              document.querySelector(".error").innerHTML = ``;
 
               // (response.data.firstname = this.infos.firstname),
               //   (response.data.lastname = this.infos.lastname),
@@ -560,5 +561,86 @@ export default {
   display: flex;
   flex-direction: column;
   margin: 3% 5%;
+}
+@media screen and (max-width: 480px) {
+  h1 {
+    font-size: medium;
+  }
+  h2,
+  .home-admin {
+    font-size: small;
+  }
+  .container-inputs {
+    font-size: small;
+  }
+  .button-update,
+  .button-delete {
+    font-size: 12px;
+    width: 40%;
+  }
+  .input {
+    margin-bottom: 7%;
+  }
+  .error {
+    font-size: 10px;
+  }
+  .container-profile .home-admin .button-all-profiles-admin,
+  .container-profile .button-update-profile,
+  .container-profile .button-update-validate-profile {
+    width: 90%;
+    font-size: 10px;
+    margin-top: 5%;
+    margin-bottom: 5%;
+  }
+  .input input {
+    font-size: 10px;
+    margin-bottom: 3%;
+  }
+  .input label {
+    font-size: 10px;
+    margin-bottom: 1%;
+  }
+}
+@media screen and (min-width: 1440px) {
+  h1 {
+    font-size: 35px;
+  }
+  h2 {
+    font-size: 25px;
+  }
+  .container-inputs {
+    font-size: 20px;
+  }
+  .button-update,
+  .button-delete {
+    font-size: 25px;
+  }
+  .input,
+  .date,
+  .home-admin {
+    font-size: 25px;
+  }
+  .container-profile .home-admin .button-all-profiles-admin,
+  .container-profile .button-update-profile,
+  .container-profile .button-update-validate-profile {
+    font-size: 23px;
+  }
+  #firstname,
+  #lastname,
+  #email,
+  #password,
+  #passwordConfirm,
+  #job {
+    font-size: 20px;
+  }
+  .error {
+    font-size: 20px;
+  }
+  .input input {
+    font-size: 25px;
+  }
+  .input label {
+    margin-bottom: 1%;
+  }
 }
 </style>

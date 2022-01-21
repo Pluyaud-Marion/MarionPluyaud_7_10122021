@@ -17,6 +17,7 @@
           ></textarea>
           <label for="file-post">Choisissez votre fichier</label>
           <input
+            class="file"
             id="file-post"
             name="file"
             type="file"
@@ -98,6 +99,7 @@
               >Choisissez votre fichier pour modifier votre post</label
             >
             <input
+              class="file"
               v-show="showUpdate[post.id]"
               v-bind:id="'fileUpdatePost' + post.id"
               type="file"
@@ -165,6 +167,7 @@
             >Choisissez votre fichier pour ajouter au commentaire</label
           >
           <input
+            class="file"
             v-bind:id="'fileCreateComment' + post.id"
             type="file"
             v-on:change="fileChangeComment"
@@ -828,6 +831,85 @@ body {
     width: 80%;
     margin: 0 auto;
     margin-top: 5%;
+  }
+}
+@media screen and (max-width: 480px) {
+  .container-create-post {
+    .create-post {
+      width: 100%;
+      .button {
+        width: 100%;
+      }
+    }
+  }
+  .vignette .update .button-update-delete,
+  .vignette .create-return-button,
+  .vignette .update .update-return-button {
+    width: 80%;
+    button {
+      font-size: 10px;
+    }
+  }
+  .vignette {
+    .button {
+      font-size: 10px;
+    }
+    .content {
+      font-size: 13px;
+    }
+    .author,
+    .author-com {
+      font-size: 12px;
+    }
+    .created-at,
+    .updated-at {
+      font-size: 10px;
+    }
+    .comments .comment {
+      width: 80%;
+    }
+  }
+  .file {
+    font-size: 10px;
+  }
+}
+@media screen and (min-width: 1440px) {
+  #input-post,
+  #file-post,
+  .update-post,
+  .create-com,
+  .file {
+    font-size: 20px;
+  }
+  .container-create-post .create-post .button {
+    font-size: 20px;
+  }
+  .vignette .update .button-update-delete,
+  .vignette .create-return-button,
+  .vignette .update .update-return-button {
+    button {
+      font-size: 20px;
+    }
+  }
+
+  .vignette {
+    .author,
+    .author-com {
+      font-size: 20px;
+    }
+    .created-at,
+    .updated-at {
+      font-size: 15px;
+    }
+    .content {
+      font-size: 25px;
+    }
+    .button {
+      font-size: 20px;
+    }
+  }
+  .far {
+    font-size: x-large;
   }
 }
 </style>

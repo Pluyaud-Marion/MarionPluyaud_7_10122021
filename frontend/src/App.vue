@@ -31,4 +31,9 @@ body {
     }
   }
 }
+@media screen and (max-width: 480px) {
+  #nav {
+    padding: 10px;
+  }
+}
 </style>
