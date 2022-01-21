@@ -9,7 +9,7 @@
           <label for="firstname" class="display"
             >Prénom : {{ infos.firstname }}</label
           >
-          <!-- <p>Prénom : {{ infos.firstname }}</p> -->
+
           <input
             id="firstname"
             v-show="showUser"
@@ -21,7 +21,7 @@
           <label for="lastname" class="display"
             >Nom : {{ infos.lastname }}</label
           >
-          <!-- <p>Nom : {{ infos.lastname }}</p> -->
+
           <input
             id="lastname"
             v-show="showUser"
@@ -31,7 +31,7 @@
         </div>
         <div class="input">
           <label for="email" class="display">Email : {{ infos.email }}</label>
-          <!-- <p>Email : {{ infos.email }}</p> -->
+
           <input
             id="email"
             v-show="showUser"
@@ -43,7 +43,7 @@
           <label for="password" class="display"
             >Mot de passe : {{ "*********" }}
           </label>
-          <!-- <p>Mot de passe : {{ "*********" }}</p> -->
+
           <input
             id="password"
             v-show="showUser"
@@ -56,7 +56,7 @@
           <label v-show="showUser" for="passwordConfirm" class="display"
             >Confirmez le mot de passe</label
           >
-          <!-- <p v-show="showUser">Confirmez le mot de passe</p> -->
+
           <input
             id="passwordConfirm"
             v-show="showUser"
@@ -69,7 +69,6 @@
           <label for="job" class="display"
             >Fonction dans l'entreprise : {{ infos.job }}</label
           >
-          <!-- <p>Fonction dans l'entreprise : {{ infos.job }}</p> -->
 
           <input id="job" v-show="showUser" type="text" v-model="infos.job" />
         </div>
@@ -81,7 +80,7 @@
         Valider les modifications
       </button>
 
-      <p v-text="errors"></p>
+      <p class="error" v-text="errors"></p>
       <div class="button-update-delete">
         <button
           class="button-update"
@@ -118,9 +117,6 @@
         v-for="profile in profiles"
         v-bind:key="profile.id"
       >
-        <!-- <button v-show="!show[profile.id]" @click="showInput(profile.id)">
-          Modifier le profil de cet utilisateur
-        </button> -->
         <div class="container-inputs">
           <div class="input">
             <label :for="'firstname-by-admin' + profile.id" class="display"
@@ -201,7 +197,6 @@ export default {
     return {
       show: [],
       showUser: false,
-
       user: null,
       userId: null,
       infos: "",
@@ -212,7 +207,11 @@ export default {
       errors: "",
     };
   },
-  created() {
+
+  /*
+    Permet l'affichage des informations du profil pour l'utilisateur non admin
+    */
+  mounted() {
     let user = localStorage.getItem("name");
     let userId = localStorage.getItem("userId");
     let userToken = localStorage.getItem("token");
@@ -232,12 +231,14 @@ export default {
       .get(`${process.env.VUE_APP_LOCALHOST}user/full/${userId}`, configHeaders)
       .then((response) => {
         this.infos = response.data;
-        console.log("infos", this.infos);
       })
       .catch((error) => console.log(error));
   },
 
   methods: {
+    /*
+    Méthode permettant d'afficher les informations du profil
+    */
     displayProfileUser() {
       let user = localStorage.getItem("name");
       let userToken = localStorage.getItem("token");
@@ -261,28 +262,37 @@ export default {
         })
         .catch((error) => console.log(error));
     },
+
     returnBack() {
       router.push("/posts");
     },
+
+    /*
+    Méthode permettant de return true si les champs ne sont pas vides
+    */
     validateFields() {
-      if (
+      return (
         this.infos.email != "" &&
         this.infos.firstname != "" &&
         this.infos.lastname != "" &&
         this.newPassword != "" &&
+        this.newPasswordVerify != "" &&
         this.infos.job != ""
-      ) {
-        return true;
-      } else {
-        return false;
-      }
+      );
     },
+
+    /*
+    Méthode permettant de formater la date
+    */
     formatDate() {
       return format(new Date(), "dd-MM-yyyy", { locale: fr });
     },
-    //modification d'un profil
+
+    /*
+    Méthode permettant à un utilisateur de modifier son profil
+    */
     update() {
-      localStorage.removeItem("name"); //retire du LS le champ name à l'appel de la fonction update
+      //localStorage.removeItem("name"); //retire du LS le champ name à l'appel de la fonction update
       const regexNameJob = /^[a-zA-ZÀ-ÿ_-]{2,60}$/;
 
       let userToken = localStorage.getItem("token");
@@ -311,16 +321,19 @@ export default {
               },
               configHeaders
             )
-            .then((response) => {
-              console.log("response", response);
+            .then(() => {
+              localStorage.removeItem("name"); //retire du LS le champ name à l'appel de la fonction update
+              //met dans le LS le nouveau nom
               const name = this.infos.firstname + " " + this.infos.lastname;
               localStorage.setItem("name", name);
 
-              (response.data.firstname = this.infos.firstname),
-                (response.data.lastname = this.infos.lastname),
-                (response.data.email = this.infos.email),
-                (response.data.password = this.newPassword),
-                (response.data.job = this.infos.job);
+              // (response.data.firstname = this.infos.firstname),
+              //   (response.data.lastname = this.infos.lastname),
+              //   (response.data.email = this.infos.email),
+              //   (response.data.password = this.newPassword),
+              //   (response.data.job = this.infos.job);
+
+              //passe showUser à true pour que les inputs de modification disparaissent
               this.showUser = !this.showUser;
               this.displayProfileUser();
             })
@@ -336,7 +349,11 @@ export default {
           "Votre nom, prénom et fonction ne doit contenir que des lettres et tous les champs doivent être complêtés ";
       }
     },
-    //suppression du profil
+
+    /*
+    Méthode permettant à un utilisateur de supprimer son profil 
+    Supprime aussi les posts et commentaires qu'il avait publié
+    */
     deleteProfile() {
       let userToken = localStorage.getItem("token");
       let userId = localStorage.getItem("userId");
@@ -352,12 +369,16 @@ export default {
             configHeaders
           )
           .then(() => {
-            router.push("/");
+            router.push("/login");
           })
           .catch((error) => console.log(error));
       }
     },
-    //affichage de tous les profils pour l'admin
+
+    /*
+    Méthode permettant d'afficher tous les profils utilisateurs (sauf le sien)
+    uniquement accessible à l'admin
+    */
     showAllProfiles() {
       let userToken = localStorage.getItem("token");
 
@@ -375,12 +396,14 @@ export default {
           for (const profile of this.profiles) {
             this.show[profile.id] = false;
           }
-          console.log(response);
         })
         .catch((error) => console.log(error));
     },
+
+    /*
+    Méthode permettant à l'admin de modifier le profil d'un utilisateur
+    */
     updateByAdmin(userId) {
-      // en paramètres l'id du user à modifier
       let userToken = localStorage.getItem("token");
 
       let configHeaders = {
@@ -390,7 +413,7 @@ export default {
       };
 
       for (const profile of this.profiles) {
-        if (profile.id == userId) {
+        if (profile.id === userId) {
           console.log("profile", profile);
           axios
             .put(
@@ -403,14 +426,20 @@ export default {
               },
               configHeaders
             )
-            .then((response) => {
-              console.log("response", response);
+            .then(() => {
               this.showAllProfiles();
             })
             .catch((error) => console.log(error));
         }
       }
     },
+
+    /*
+    (Dans data les balises show sont un []
+    A l'appel de la méthode showAllProfiles() -> toutes ces balises passent à false)
+    Fonction =
+    passe toutes les balises show de l'userId à true -> les balises pour modifier le profil de l'userId n'apparaissent plus
+    */
     showInput(userId) {
       this.show[userId] = !this.show[userId];
     },

@@ -53,12 +53,20 @@ export default {
     };
   },
   methods: {
+    /*
+    Méthode permettant de return true si les champs ne sont pas vides
+    */
     validatedFields() {
       return this.email != "" && this.password != "";
     },
+
+    /*
+    Méthode permettant le login de l'utilisateur 
+    Si login ok = envoi dans localstorage du nom / token / userId / qualité admin
+    */
     login() {
+      //appel de la fonction validateFields pour vérifier complétude des champs
       if (this.validatedFields()) {
-        // si les champs sont complétés
         axios
           .post(`${process.env.VUE_APP_LOCALHOST}user/login`, {
             email: this.email,

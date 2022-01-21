@@ -68,7 +68,6 @@
           @click="signup()"
         >
           Créer mon compte
-          <!-- <router-link to="/">Créer mon compte</router-link> -->
         </button>
         <p v-text="errors"></p>
       </div>
@@ -93,21 +92,23 @@ export default {
     };
   },
   methods: {
-    validatedFields: function () {
-      if (
+    /*
+    Méthode permettant de return true si les champs ne sont pas vides
+    */
+    validatedFields() {
+      return (
         this.email != "" &&
         this.firstname != "" &&
         this.lastname != "" &&
         this.password != "" &&
         this.passwordVerify != "" &&
         this.job != ""
-      ) {
-        return true;
-      } else {
-        return false;
-      }
+      );
     },
 
+    /*
+    Méthode permettant la création du compte si les champs firstname / lastname / job sont conformes à la regex + si les 2 mots de passe renseignés sont identiques - vérification des champs complétés dans le template avec apparition du bouton
+    */
     signup() {
       const regexNameJob = /^[a-zA-ZÀ-ÿ_-]{2,60}$/;
       if (
@@ -129,7 +130,6 @@ export default {
                 "Votre compte a bien été créé, vous pouvez désormais vous connecter à partir de la page de connexion"
               );
               router.push("/login");
-              // window.location = "/";
             })
             .catch((error) => {
               this.errors = error.response.data.message;

@@ -285,6 +285,9 @@ export default {
   },
 
   methods: {
+    /*
+    Méthode permettant l'affichage de tous les posts
+    */
     displayPosts() {
       let userToken = localStorage.getItem("token");
       let configHeaders = {
@@ -300,14 +303,26 @@ export default {
         .catch((error) => console.log(error));
     },
 
+    /*
+    Méthode permettant de formater la date
+    */
     formatDate(date) {
       return formatRelative(new Date(date), new Date(), { locale: fr });
     },
 
+    /*
+    Méthode permettant la gestion des fichiers pour la création des posts
+    */
     fileChangePost(e) {
       this.attachment = e.target.files[0] || e.dataTransfer.files;
     },
 
+    /*
+    Méthode permettant la création d'un post / 
+    avec fichier + texte /
+    avec fichier uniquement /
+    avec texte uniquement /
+    */
     createPost() {
       let userTokenStorage = localStorage.getItem("token");
       let userIdStorage = localStorage.getItem("userId");
@@ -335,6 +350,7 @@ export default {
           },
         })
           .then(() => {
+            // passe les inputs contentPost et attachment à null
             this.contentPost = null;
             this.attachment = null;
             document.querySelector("#file-post").value = null;
@@ -344,6 +360,12 @@ export default {
       }
     },
 
+    /*
+    Méthode permettant la modification d'un post
+    Accessible pour l'admin
+    Accessible pour l'utilisateur créateur du post
+    Vérification Backend
+    */
     updatePost(postId) {
       let userTokenStorage = localStorage.getItem("token");
 
@@ -377,10 +399,13 @@ export default {
           },
         })
           .then(() => {
+            // passe les inputs updateTextPost et attachment à null
             this.updateTextPost = null;
             this.attachment = null;
             document.querySelector(`#fileUpdatePost${postId}`).value = null;
             this.displayPosts();
+            // appelle la fonction pour passer les balises de modification à false (non visibles)
+            this.showInputUpdatePost(postId);
 
             // this.posts = this.posts.map((post) => {
             //   console.log("==>>", post.id);
@@ -390,12 +415,17 @@ export default {
             //     return (post.content = this.updateTextPost);
             //   }
             // });
-            //window.location.reload();
           })
           .catch((error) => console.log("il n'y a pas de texte", error));
       }
     },
 
+    /*
+    Méthode permettant la suppression d'un post
+    Accessible pour l'admin
+    Accessible pour l'utilisateur créateur du post
+    Vérification Backend
+    */
     deletePost(postId) {
       let userTokenStorage = localStorage.getItem("token");
 
@@ -413,11 +443,16 @@ export default {
           .then(() => {
             this.displayPosts();
           })
-
           .catch((error) => console.log(error));
       }
     },
 
+    /*
+    Méthode permettant la création d'un commentaire / 
+    avec fichier + texte /
+    avec fichier uniquement /
+    avec texte uniquement /
+    */
     createComment(postId) {
       let userTokenStorage = localStorage.getItem("token");
       let userIdStorage = localStorage.getItem("userId");
@@ -447,18 +482,31 @@ export default {
           },
         })
           .then(() => {
+            // passe les inputs commentaire et attachmentCom à null
             this.commentaire = null;
             this.attachmentCom = null;
             document.querySelector(`#fileCreateComment${postId}`).value = null;
             this.displayPosts();
+            //appelle fonction pour passer les balises pour commenter à false (non visibles)
+            this.showInputDoCom(postId);
           })
           .catch((error) => console.log(error));
       }
     },
+
+    /*
+    Méthode permettant la gestion des fichiers d'un commentaire
+    */
     fileChangeComment(e) {
       this.attachmentCom = e.target.files[0] || e.dataTransfer.files;
     },
 
+    /*
+    Méthode permettant la suppression d'un post
+    Accessible pour l'admin
+    Accessible pour l'utilisateur créateur du post
+    Vérification Backend
+    */
     deleteComment(commentId) {
       let userTokenStorage = localStorage.getItem("token");
 
@@ -471,7 +519,6 @@ export default {
         axios
           .delete(
             `${process.env.VUE_APP_LOCALHOST}post/comment/${commentId}`,
-
             configHeaders
           )
           .then(() => {
@@ -480,6 +527,12 @@ export default {
           .catch((error) => console.log(error));
       }
     },
+
+    /*
+    passe le contenu des inputs commentaire et attachementCom à null
+    + retire le message d'erreur
+    + appelle la fonction showInputDoCom pour passer toutes les balises de commentaire à false (n'apparaissent plus)
+    */
     returnComment(postId) {
       this.commentaire = null;
       this.attachmentCom = null;
@@ -488,6 +541,11 @@ export default {
       this.showInputDoCom(postId);
     },
 
+    /*
+    passe le contenu des inputs updateTextPost et attachement à null
+    + retire le message d'erreur
+    + appelle la fonction showInputUpdatePost pour passer toutes les balises de modification à false (n'apparaissent plus)
+    */
     returnUpdate(postId) {
       this.updateTextPost = null;
       this.attachment = null;
@@ -495,9 +553,23 @@ export default {
       document.querySelector(`#error-update-post${postId}`).innerHTML = ``;
       this.showInputUpdatePost(postId);
     },
+
+    /*
+    (Dans data les balises showUpdate sont un []
+    A l'affichage des posts -> toutes ces balises passent à false)
+    Fonction = 
+    passe toutes les balises showUpdate du post à false -> les balises pour modifier n'apparaissent plus
+    */
     showInputUpdatePost(postId) {
       this.showUpdate[postId] = !this.showUpdate[postId];
     },
+
+    /*
+    (Dans data les balises showDoCom sont un []
+    A l'affichage des posts -> toutes ces balises passent à false)
+    Fonction =
+    passe toutes les balises showDoCom du post à false -> les balises pour commenter n'apparaissent plus
+    */
     showInputDoCom(postId) {
       this.showDoCom[postId] = !this.showDoCom[postId];
     },

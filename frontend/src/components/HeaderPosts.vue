@@ -46,6 +46,10 @@ export default {
       isadmin: false,
     };
   },
+
+  /*
+    Récupération du nom et de la qualité admin ou non dans le localstorage pour injection dans les datas
+    */
   created() {
     let name = localStorage.getItem("name");
     let isadmin = localStorage.getItem("isadmin");
@@ -54,6 +58,9 @@ export default {
   },
 
   methods: {
+    /*
+    Méthode permettant la déconnexion
+    */
     logout() {
       localStorage.clear();
       router.push("/login");

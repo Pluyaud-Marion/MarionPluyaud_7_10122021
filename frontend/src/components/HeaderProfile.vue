@@ -38,6 +38,9 @@ export default {
   name: "HeaderProfile",
 
   methods: {
+    /*
+    Méthode permettant la déconnexion
+    */
     logout() {
       localStorage.clear();
       router.push("/login");
