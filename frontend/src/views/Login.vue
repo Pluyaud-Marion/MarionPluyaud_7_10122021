@@ -1,18 +1,18 @@
 <template>
-  <div class="home">
-    <HeaderHome />
+  <div class="login">
+    <HeaderLoginSignup />
     <LoginHome />
   </div>
 </template>
 
 <script>
-import HeaderHome from "@/components/HeaderHome.vue";
+import HeaderLoginSignup from "@/components/HeaderLoginSignup.vue";
 import LoginHome from "@/components/LoginHome.vue";
 
 export default {
-  name: "Home",
+  name: "Login",
   components: {
-    HeaderHome,
+    HeaderLoginSignup,
     LoginHome,
   },
 };

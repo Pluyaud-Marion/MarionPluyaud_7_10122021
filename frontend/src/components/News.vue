@@ -243,8 +243,7 @@ export default {
       userToken: "",
       showUpdate: [],
       posts: [],
-      com: "",
-      commentaire: "",
+      commentaire: null,
       attachmentCom: null,
       contentPost: null,
       attachment: null,
@@ -337,6 +336,7 @@ export default {
           .then((response) => {
             console.log(response);
             this.contentPost = infos.content;
+            document.querySelector("#file-post").value = null;
             this.displayPosts();
           })
           .catch((error) => console.log(error));
@@ -379,7 +379,7 @@ export default {
             console.log("response", response);
             console.log("infos", infos);
             this.updateTextPost = infos.content;
-            //this. = ;
+            document.querySelector(`#fileUpdatePost${postId}`).value = null;
 
             // this.posts = this.posts.map((post) => {
             //   console.log("==>>", post.id);
@@ -424,9 +424,7 @@ export default {
 
       let infos = JSON.stringify({
         UserId: userIdStorage,
-
         contentCom: this.commentaire,
-        //contentCom: this.com,
       });
 
       const formData = new FormData();
@@ -434,7 +432,6 @@ export default {
       formData.append("image", this.attachmentCom);
 
       if (this.attachmentCom === null && this.commentaire === null) {
-        // if (this.attachmentCom === null && this.com === null) {
         document.querySelector(
           ".error-create-com"
         ).innerHTML = `Le commentaire est vide`;
@@ -453,6 +450,7 @@ export default {
             console.log("response", response);
             console.log("infos", infos);
             this.commentaire = infos.contentCom;
+            document.querySelector(`#fileCreateComment${postId}`).value = null;
             this.displayPosts();
           })
           .catch((error) => console.log(error));

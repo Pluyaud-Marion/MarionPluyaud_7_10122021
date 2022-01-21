@@ -1,19 +1,22 @@
 <template>
   <div class="posts">
-    <Header />
+    <HeaderProfile />
     <ProfileComponent />
   </div>
 </template>
 
 <script>
-import Header from "@/components/Header.vue";
+import HeaderProfile from "@/components/HeaderProfile.vue";
 import ProfileComponent from "@/components/ProfileComponent.vue";
 
 export default {
   name: "Profile",
   components: {
-    Header,
+    HeaderProfile,
     ProfileComponent,
   },
 };
 </script>
+
+<style lang="scss" scoped>
+</style>

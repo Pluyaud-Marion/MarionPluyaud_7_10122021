@@ -30,28 +30,18 @@
       </nav>
     </div>
     <h1>Groupomania : Votre réseau social d'entreprise</h1>
-    <h2 class="name">Bienvenue {{ name }}</h2>
   </section>
 </template>
 
 <script>
 import router from "@/router";
 export default {
-  name: "Header",
-  data() {
-    return {
-      name: "",
-    };
-  },
-  created() {
-    let name = localStorage.getItem("name");
-    this.name = name;
-  },
+  name: "HeaderProfile",
 
   methods: {
     logout() {
       localStorage.clear();
-      router.push("/");
+      router.push("/login");
     },
   },
 };
@@ -84,12 +74,5 @@ export default {
 h1 {
   color: black;
   font-size: 20px;
-}
-h2 {
-  font-size: 25px;
-  margin-bottom: 10%;
-}
-.name {
-  margin-top: 0;
 }
 </style>

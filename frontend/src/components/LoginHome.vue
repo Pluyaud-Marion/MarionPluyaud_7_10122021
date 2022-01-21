@@ -73,7 +73,6 @@ export default {
               localStorage.setItem("name", name);
               localStorage.setItem("isadmin", response.data.isadmin);
               router.push("/posts");
-              // window.location = "/posts";
             }
           })
           .catch((error) => {
