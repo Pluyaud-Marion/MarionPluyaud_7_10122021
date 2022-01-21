@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-
+import PageNotFound from "@/components/PageNotFound.vue"
 
 const routes = [
   
@@ -25,6 +25,11 @@ const routes = [
     path: '/profile',
     name: 'Profile',
     component: () => import(/* webpackChunkName: "login" */ '../views/Profile.vue')
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: PageNotFound
   }
 ]
 

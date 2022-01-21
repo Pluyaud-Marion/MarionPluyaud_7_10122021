@@ -562,6 +562,9 @@ export default {
   flex-direction: column;
   margin: 3% 5%;
 }
+h2 {
+  font-size: 15px;
+}
 @media screen and (max-width: 480px) {
   h1 {
     font-size: medium;
