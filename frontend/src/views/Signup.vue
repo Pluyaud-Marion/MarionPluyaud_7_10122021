@@ -1,19 +1,19 @@
 <template>
   <div class="signup">
     <HeaderLoginSignup />
-    <SignupHome />
+    <SignupComponent />
   </div>
 </template>
 
 <script>
 import HeaderLoginSignup from "@/components/HeaderLoginSignup.vue";
-import SignupHome from "@/components/SignupHome.vue";
+import SignupComponent from "@/components/SignupComponent.vue";
 
 export default {
   name: "Signup",
   components: {
     HeaderLoginSignup,
-    SignupHome,
+    SignupComponent,
   },
 };
 </script>

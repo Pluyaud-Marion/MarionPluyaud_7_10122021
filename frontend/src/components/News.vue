@@ -105,9 +105,16 @@
             />
           </div>
           <div class="update-return-button">
-            <button
+            <!-- <button
               v-show="showUpdate[post.id]"
               @click="showUpdate[post.id] = !showUpdate[post.id]"
+              role="button"
+            >
+              Annuler
+            </button> -->
+            <button
+              v-show="showUpdate[post.id]"
+              @click="returnUpdate(post.id)"
               role="button"
             >
               Annuler
@@ -120,7 +127,7 @@
               Valider
             </button>
           </div>
-          <p class="error-update-post"></p>
+          <p :id="'error-update-post' + post.id"></p>
         </div>
       </div>
 
@@ -167,7 +174,7 @@
         <div class="create-return-button">
           <button
             v-show="!showUpdate[post.id]"
-            @click="showInputDoCom(post.id)"
+            @click="returnComment(post.id)"
             role="button"
           >
             Annuler
@@ -180,7 +187,7 @@
             Commenter
           </button>
         </div>
-        <p class="error-create-com"></p>
+        <p :id="'error-create-com' + post.id"></p>
       </div>
 
       <div class="comments">
@@ -267,17 +274,11 @@ export default {
     axios
       .get(`${process.env.VUE_APP_LOCALHOST}post/`, configHeaders)
       // fonction qui affiche les posts boucle sur chaque post et passe tous les showUpdate à false + les showDoCom à false
-
       .then((response) => {
         this.posts = response.data;
-        console.log("data posts", response.data);
         for (const post of this.posts) {
           this.showUpdate[post.id] = false;
           this.showDoCom[post.id] = false;
-          // Dans la boucle (dans chaque post) elle boucle sur les commentaires et passe tous les showDoCom à false
-          //for (const comment of this.post.Comments) {
-          // this.showDoCom[comment.id] = false;
-          // }
         }
       })
       .catch((error) => console.log(error));
@@ -295,7 +296,6 @@ export default {
         .get(`${process.env.VUE_APP_LOCALHOST}post/`, configHeaders)
         .then((response) => {
           this.posts = response.data;
-          console.log("data posts", response.data);
         })
         .catch((error) => console.log(error));
     },
@@ -307,6 +307,7 @@ export default {
     fileChangePost(e) {
       this.attachment = e.target.files[0] || e.dataTransfer.files;
     },
+
     createPost() {
       let userTokenStorage = localStorage.getItem("token");
       let userIdStorage = localStorage.getItem("userId");
@@ -333,9 +334,9 @@ export default {
             Authorization: `Bearer ${userTokenStorage}`,
           },
         })
-          .then((response) => {
-            console.log(response);
-            this.contentPost = infos.content;
+          .then(() => {
+            this.contentPost = null;
+            this.attachment = null;
             document.querySelector("#file-post").value = null;
             this.displayPosts();
           })
@@ -354,10 +355,10 @@ export default {
 
       if (this.updateTextPost === null && this.attachment === null) {
         document.querySelector(
-          ".error-update-post"
+          `#error-update-post${postId}`
         ).innerHTML = `Pour modifier ce post, vous devez modifier le fichier ou le texte`;
       } else {
-        document.querySelector(".error-update-post").innerHTML = ``;
+        document.querySelector(`#error-update-post${postId}`).innerHTML = ``;
         if (!this.updateTextPost) {
           formData.append("image", this.attachment);
         } else if (!this.attachment) {
@@ -375,11 +376,11 @@ export default {
             Authorization: `Bearer ${userTokenStorage}`,
           },
         })
-          .then((response) => {
-            console.log("response", response);
-            console.log("infos", infos);
-            this.updateTextPost = infos.content;
+          .then(() => {
+            this.updateTextPost = null;
+            this.attachment = null;
             document.querySelector(`#fileUpdatePost${postId}`).value = null;
+            this.displayPosts();
 
             // this.posts = this.posts.map((post) => {
             //   console.log("==>>", post.id);
@@ -390,7 +391,6 @@ export default {
             //   }
             // });
             //window.location.reload();
-            this.displayPosts();
           })
           .catch((error) => console.log("il n'y a pas de texte", error));
       }
@@ -433,10 +433,10 @@ export default {
 
       if (this.attachmentCom === null && this.commentaire === null) {
         document.querySelector(
-          ".error-create-com"
+          `#error-create-com${postId}`
         ).innerHTML = `Le commentaire est vide`;
       } else {
-        document.querySelector(".error-create-com").innerHTML = ``;
+        document.querySelector(`#error-create-com${postId}`).innerHTML = ``;
         axios({
           method: "post",
           url: `${process.env.VUE_APP_LOCALHOST}post/comment/${postId}`,
@@ -446,10 +446,9 @@ export default {
             Authorization: `Bearer ${userTokenStorage}`,
           },
         })
-          .then((response) => {
-            console.log("response", response);
-            console.log("infos", infos);
-            this.commentaire = infos.contentCom;
+          .then(() => {
+            this.commentaire = null;
+            this.attachmentCom = null;
             document.querySelector(`#fileCreateComment${postId}`).value = null;
             this.displayPosts();
           })
@@ -476,11 +475,25 @@ export default {
             configHeaders
           )
           .then(() => {
-            //window.location.reload();
             this.displayPosts();
           })
           .catch((error) => console.log(error));
       }
+    },
+    returnComment(postId) {
+      this.commentaire = null;
+      this.attachmentCom = null;
+      document.querySelector(`#fileCreateComment${postId}`).value = null;
+      document.querySelector(`#error-create-com${postId}`).innerHTML = ``;
+      this.showInputDoCom(postId);
+    },
+
+    returnUpdate(postId) {
+      this.updateTextPost = null;
+      this.attachment = null;
+      document.querySelector(`#fileUpdatePost${postId}`).value = null;
+      document.querySelector(`#error-update-post${postId}`).innerHTML = ``;
+      this.showInputUpdatePost(postId);
     },
     showInputUpdatePost(postId) {
       this.showUpdate[postId] = !this.showUpdate[postId];

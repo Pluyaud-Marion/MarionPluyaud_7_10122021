@@ -25,12 +25,14 @@
           aria-label="lien pour se déconnecter du site"
         >
           Deconnexion
-          <!-- <router-link to="/">Deconnexion</router-link> -->
         </div>
       </nav>
     </div>
     <h1>Groupomania : Votre réseau social d'entreprise</h1>
-    <h2 class="name">Bienvenue {{ name }}</h2>
+    <div class="container-name-admin">
+      <h2 class="name">Bienvenue {{ name }}</h2>
+      <h3 class="admin" v-if="isadmin.length == 4">Vous êtes administrateur</h3>
+    </div>
   </section>
 </template>
 
@@ -41,12 +43,14 @@ export default {
   data() {
     return {
       name: "",
-      firstname: this.firstnameTest,
+      isadmin: false,
     };
   },
   created() {
     let name = localStorage.getItem("name");
+    let isadmin = localStorage.getItem("isadmin");
     this.name = name;
+    this.isadmin = isadmin;
   },
 
   methods: {
@@ -88,6 +92,11 @@ h1 {
 }
 h2 {
   font-size: 25px;
+}
+h3 {
+  font-size: 20px;
+}
+.container-name-admin {
   margin-bottom: 10%;
 }
 .name {

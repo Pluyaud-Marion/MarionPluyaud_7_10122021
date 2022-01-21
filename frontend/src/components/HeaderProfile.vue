@@ -25,7 +25,6 @@
           aria-label="lien pour se déconnecter du site"
         >
           Deconnexion
-          <!-- <router-link to="/">Deconnexion</router-link> -->
         </div>
       </nav>
     </div>

@@ -18,7 +18,7 @@
         <label for="password">Mot de passe</label>
         <input
           v-model="password"
-          type="text"
+          type="password"
           id="password"
           placeholder="Mot de passe"
           aria-required="true"
