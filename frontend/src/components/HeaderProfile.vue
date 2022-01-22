@@ -43,7 +43,7 @@ export default {
     */
     logout() {
       localStorage.clear();
-      router.push("/login");
+      router.push("/");
     },
   },
 };

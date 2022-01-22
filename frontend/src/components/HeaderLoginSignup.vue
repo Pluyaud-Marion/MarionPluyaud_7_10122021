@@ -17,7 +17,7 @@
           class="button-login"
           aria-label="bouton pour se rendre sur la page connexion du site"
         >
-          <router-link to="/login">Connexion</router-link>
+          <router-link to="/">Connexion</router-link>
         </button>
       </nav>
     </div>

@@ -129,7 +129,7 @@ export default {
               alert(
                 "Votre compte a bien été créé, vous pouvez désormais vous connecter à partir de la page de connexion"
               );
-              router.push("/login");
+              router.push("/");
             })
             .catch((error) => {
               this.errors = error.response.data.message;

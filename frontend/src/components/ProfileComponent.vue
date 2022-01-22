@@ -40,18 +40,15 @@
           />
         </div>
         <div class="input">
-          <!-- <label for="password" class="display"
-            >Mot de passe : {{ "*********" }}
-          </label> -->
           <label for="password" class="display"
-            >Pour des raisons de sécurité vous devez renseigner votre mot de
-            passe
+            >Mot de passe : {{ "*********" }}
           </label>
+
           <input
             id="password"
             v-show="showUser"
             type="password"
-            placeholder="Mot de passe"
+            placeholder="Sécurité - Renseignez votre mot de passe"
             v-model="newPassword"
           />
         </div>
@@ -65,7 +62,7 @@
             id="passwordConfirm"
             v-show="showUser"
             type="password"
-            placeholder="Mot de passe"
+            placeholder="Sécurité - confirmez votre mot de passe"
             v-model="newPasswordVerify"
           />
         </div>
@@ -374,7 +371,7 @@ export default {
             configHeaders
           )
           .then(() => {
-            router.push("/login");
+            router.push("/");
           })
           .catch((error) => console.log(error));
       }
