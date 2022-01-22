@@ -40,10 +40,13 @@
           />
         </div>
         <div class="input">
-          <label for="password" class="display"
+          <!-- <label for="password" class="display"
             >Mot de passe : {{ "*********" }}
+          </label> -->
+          <label for="password" class="display"
+            >Pour des raisons de sécurité vous devez renseigner votre mot de
+            passe
           </label>
-
           <input
             id="password"
             v-show="showUser"
@@ -54,7 +57,8 @@
         </div>
         <div class="input">
           <label v-show="showUser" for="passwordConfirm" class="display"
-            >Confirmez le mot de passe</label
+            >Pour des raisons de sécurité, vous devez confirmer le mot de
+            passe</label
           >
 
           <input

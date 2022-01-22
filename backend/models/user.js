@@ -44,14 +44,14 @@ module.exports = (sequelize, DataTypes) => {
 			allowNull: false,
 			type: DataTypes.STRING,
 			validate: {
-				is:/^[a-zA-ZÀ-ÿ_-]{2,60}$/
+				is:/^[a-zA-ZÀ-ÿ\s_-]{2,60}$/
 			}
 		},
 		lastname: {
 			allowNull: false,
 			type: DataTypes.STRING,
 			validate: {
-				is:/^[a-zA-ZÀ-ÿ_-]{2,60}$/
+				is:/^[a-zA-ZÀ-ÿ\s_-]{2,60}$/
 			}
 		},
 		email: {
@@ -67,7 +67,7 @@ module.exports = (sequelize, DataTypes) => {
 			allowNull: true,
 			type: DataTypes.STRING,
 			validate: {
-				is:/^[a-zA-ZÀ-ÿ_-]{2,60}$/
+				is:/^[a-zA-ZÀ-ÿ\s_-]{2,60}$/
 			}
 		},
 		isadmin: {

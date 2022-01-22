@@ -110,7 +110,7 @@ export default {
     Méthode permettant la création du compte si les champs firstname / lastname / job sont conformes à la regex + si les 2 mots de passe renseignés sont identiques - vérification des champs complétés dans le template avec apparition du bouton
     */
     signup() {
-      const regexNameJob = /^[a-zA-ZÀ-ÿ_-]{2,60}$/;
+      const regexNameJob = /^[a-zA-ZÀ-ÿ\s_-]{2,60}$/;
       if (
         regexNameJob.test(this.firstname) &&
         regexNameJob.test(this.lastname) &&
