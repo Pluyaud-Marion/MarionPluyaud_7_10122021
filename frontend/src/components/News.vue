@@ -252,7 +252,7 @@ export default {
     };
   },
 
-  mounted() {
+  created() {
     let admin = localStorage.getItem("isadmin");
     let userToken = localStorage.getItem("token");
     let userId = localStorage.getItem("userId");

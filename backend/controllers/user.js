@@ -46,14 +46,14 @@ exports.login = (req, res) => {
 		.then(user => {
 			//si l'user n'existe pas dans la db
 			if(!user){
-				return res.status(400).json({error : "Utilisateur inexistant"});
+				return res.status(400).json({error : "Utilisateur inexistant et/ou Mot de passe incorrect"});
 				//si user existe = on compare mot de passe enregistré dans db avec cet user, et celui de la requete 
 			} else {
 				bcrypt.compare(req.body.password, user.password)
 					.then(verifyPassword => {
 						//si verif KO
 						if(!verifyPassword) { 
-							return res.status(400).json({error : "Mot de passe incorrect"});
+							return res.status(400).json({error : "Utilisateur inexistant et/ou Mot de passe incorrect"});
 							//si vérif ok -> connecté -> on retourne l'userId + isadmin + le token (qui contient userId, la clé, l'expiration)
 						} else {
 							res.status(200).json({

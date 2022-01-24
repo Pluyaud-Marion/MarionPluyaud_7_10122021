@@ -206,7 +206,7 @@ export default {
   /*
     Permet l'affichage des informations du profil pour l'utilisateur non admin
     */
-  mounted() {
+  created() {
     let user = localStorage.getItem("name");
     let userId = localStorage.getItem("userId");
     let userToken = localStorage.getItem("token");
