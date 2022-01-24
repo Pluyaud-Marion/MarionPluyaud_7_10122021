@@ -19,5 +19,7 @@ router.put("/admin/:userId", auth, limiter.globalLimiter, userController.updateP
 router.delete("/:userId", auth, limiter.globalLimiter, userController.deleteProfile);
 
 
+//non utilisée pour le front
 router.get("/:userId", auth, limiter.globalLimiter, userController.getOneProfileSimplify);
+
 module.exports = router;

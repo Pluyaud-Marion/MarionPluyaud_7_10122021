@@ -12,6 +12,7 @@ router.get("/", auth, limiter.globalLimiter, postController.getAllPost);
 router.put("/:postId", auth, limiter.globalLimiter, multer, postController.updatePost);
 router.delete("/:postId", auth, limiter.globalLimiter, postController.deletePost);
 
-
+//non utilisée pour le front
 router.get("/:userId", auth, limiter.globalLimiter, postController.getUserPost);
+
 module.exports = router;

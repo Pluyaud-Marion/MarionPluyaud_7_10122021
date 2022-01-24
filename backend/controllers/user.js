@@ -1,9 +1,6 @@
 // importation bcrypt
 const bcrypt = require("bcrypt");
 
-//importation crypto-js
-//const cryptojs = require("crypto-js");
-
 //importation jwt
 const jwt = require("jsonwebtoken");
 
@@ -33,7 +30,6 @@ exports.signUp = (req, res) => {
 						console.log(error);
 						return res.status(400).json({ message : "Cette adresse email est déjà utilisée"});
 					});
-					
 			})
 			.catch(error => res.status(500).json({error}));
 	} else {
@@ -42,12 +38,9 @@ exports.signUp = (req, res) => {
 };
 
 exports.login = (req, res) => {
-	//chiffrement de l'email
-	//const emailCryptoJs = cryptojs.HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`).toString();
-    
+
 	//cherche l'email dans la db
 	model.User.findOne({ 
-		//where : {email : emailCryptoJs}
 		where : {email : req.body.email}
 	})
 		.then(user => {
@@ -102,7 +95,6 @@ exports.getOneProfileSimplify = (req, res) => {
 };
 
 // visualiser un profil en totalité / admin ou utilisateur lui même 
-// exclu le password qui n'est jamais renvoyé
 exports.getOneProfileFull = (req, res) => {
 	//on trouve l'user qui envoie la requête -> userRequest
 	model.User.findOne({
@@ -112,7 +104,7 @@ exports.getOneProfileFull = (req, res) => {
 			//on trouve l'user concerné par la requête (celui envoyé dans les params de requete) -> user
 			model.User.findOne({
 				where : {id : req.params.userId},
-				//attributes: {exclude: ["password"]}
+
 			})
 				.then(user=> {
 					// si l'user qui veut faire la requête est admin ou si c'est le même que celui qui a fait l'user qu'on cible
@@ -134,7 +126,6 @@ exports.getOneProfileFull = (req, res) => {
 
 
 // L'admin peut visualiser tous les profils - 
-
 exports.adminGetAllProfile = (req, res) => {
 	//on cherche l'user qui envoie la requête -> userRequest
 	model.User.findOne({
@@ -144,11 +135,6 @@ exports.adminGetAllProfile = (req, res) => {
 		.then((userRequest) =>{
 			//s'il est admin = on visualise tous les users de la db
 			if(userRequest.isadmin === true) {
-				// model.User.findAll({
-				// 	attributes: {exclude: ["password"]},
-				// 	order : [["createdAt", "DESC"]] 
-				// })
-
 				// ne renvoie que les utilisateurs qui sont pas admin
 				model.User.findAll({
 					where : { isadmin : false},
@@ -206,21 +192,15 @@ exports.updateProfileByAdmin = (req, res) => {
 							return res.status(401).json({error : "Cet utilisateur n'existe pas"});
 						} else {
 							if (regexEmail.test(email)) {
-								//const emailCryptoJs = cryptojs.HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`).toString();
-								
 								user.update({
 									firstname: req.body.firstname,
 									lastname: req.body.lastname,
 									email: req.body.email,
 									job: req.body.job,
 									isadmin: req.body.isadmin,
-							
-									//email : emailCryptoJs,
-								
 								})
 									.then(() => res.status(200).json({message: "Utilisateur modifié"}))
 									.catch(error => res.status(400).json({error}));
-								
 							} else {
 								return res.status(404).json({message : "Le format de la requête est invalide"});
 							}
@@ -262,7 +242,6 @@ exports.updateProfileByUser = (req, res) => {
 											job : req.body.job,
 											isadmin : req.body.isadmin
 										})
-										//	.then(() => res.status(200).json({message: "Utilisateur modifié"}))
 											.then((newUser) => res.status(200).json(newUser))
 											.catch(error => res.status(400).json({error}));
 									})

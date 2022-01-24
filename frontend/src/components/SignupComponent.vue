@@ -197,6 +197,7 @@ h2 {
 }
 @media screen and (min-width: 1440px) {
   .container {
+    width: 60%;
     h2 {
       font-size: 30px;
     }

@@ -9,7 +9,6 @@
           <label for="firstname" class="display"
             >Prénom : {{ infos.firstname }}</label
           >
-
           <input
             id="firstname"
             v-show="showUser"
@@ -21,7 +20,6 @@
           <label for="lastname" class="display"
             >Nom : {{ infos.lastname }}</label
           >
-
           <input
             id="lastname"
             v-show="showUser"
@@ -31,7 +29,6 @@
         </div>
         <div class="input">
           <label for="email" class="display">Email : {{ infos.email }}</label>
-
           <input
             id="email"
             v-show="showUser"
@@ -43,7 +40,6 @@
           <label for="password" class="display"
             >Mot de passe : {{ "*********" }}
           </label>
-
           <input
             id="password"
             v-show="showUser"
@@ -57,7 +53,6 @@
             >Pour des raisons de sécurité, vous devez confirmer le mot de
             passe</label
           >
-
           <input
             id="passwordConfirm"
             v-show="showUser"
@@ -70,7 +65,6 @@
           <label for="job" class="display"
             >Fonction dans l'entreprise : {{ infos.job }}</label
           >
-
           <input id="job" v-show="showUser" type="text" v-model="infos.job" />
         </div>
         <p class="date">
@@ -499,7 +493,8 @@ export default {
 
 .container-profile {
   margin-top: 5%;
-  width: 100%;
+  width: 80%;
+  margin: 0 auto;
   box-shadow: 0px 0px 11px 1px;
   border-radius: 20px;
   margin-bottom: 2%;
@@ -604,8 +599,18 @@ h2 {
     font-size: 10px;
     margin-bottom: 1%;
   }
+  .container-profile {
+    width: 100%;
+  }
+  .date {
+    font-size: 10px;
+  }
 }
 @media screen and (min-width: 1440px) {
+  .container-profile {
+    width: 80%;
+    margin: 0 auto;
+  }
   h1 {
     font-size: 35px;
   }

@@ -41,10 +41,8 @@
         <p class="updated-at" v-if="post.updatedAt > post.createdAt">
           Post modifié le : {{ formatDate(post.updatedAt) }}
         </p>
-
         <div class="container-post">
           <div class="content">{{ post.content }}</div>
-
           <!-- si pas de fichier avec le post = pas de balise img  -->
           <img
             class="img-post"
@@ -107,13 +105,6 @@
             />
           </div>
           <div class="update-return-button">
-            <!-- <button
-              v-show="showUpdate[post.id]"
-              @click="showUpdate[post.id] = !showUpdate[post.id]"
-              role="button"
-            >
-              Annuler
-            </button> -->
             <button
               v-show="showUpdate[post.id]"
               @click="returnUpdate(post.id)"
@@ -587,6 +578,8 @@ body {
 #input-post {
   border-radius: 10px;
   margin-bottom: 2%;
+  width: 80%;
+  font-size: 15px;
 }
 .container-create-post {
   width: 100%;
@@ -634,7 +627,8 @@ body {
 
 .vignette {
   margin-top: 5%;
-  width: 100%;
+  width: 80%;
+  margin: 0 auto;
   box-shadow: 0px 0px 11px 1px;
   border-radius: 20px;
   margin-bottom: 2%;
@@ -834,6 +828,9 @@ body {
   }
 }
 @media screen and (max-width: 480px) {
+  #input-post {
+    font-size: 10px;
+  }
   .container-create-post {
     .create-post {
       width: 100%;
@@ -851,6 +848,8 @@ body {
     }
   }
   .vignette {
+    width: 100%;
+    margin-top: 5%;
     .button {
       font-size: 10px;
     }
@@ -874,6 +873,9 @@ body {
   }
 }
 @media screen and (min-width: 1440px) {
+  #input-post {
+    width: 80%;
+  }
   #input-post,
   #file-post,
   .update-post,
@@ -893,6 +895,8 @@ body {
   }
 
   .vignette {
+    width: 80%;
+    margin: 3% auto;
     .author,
     .author-com {
       font-size: 20px;

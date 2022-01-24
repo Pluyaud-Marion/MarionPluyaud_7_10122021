@@ -4,11 +4,6 @@ const {
 } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
 	class Post extends Model {
-		/**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
 		static associate(models) {
 			/*
       Relation 0 à plusieurs entre Post et Comment
@@ -37,14 +32,6 @@ module.exports = (sequelize, DataTypes) => {
 			primaryKey: true,
 			type: DataTypes.INTEGER
 		},
-		// userId:{
-		//   allowNull: false,
-		//   type: DataTypes.INTEGER,
-		//   references : {
-		//     model: 'Users',
-		//     key: 'id'
-		//   }
-		//},
 		content: {
 			allowNull: true,
 			type: DataTypes.TEXT
@@ -63,7 +50,6 @@ module.exports = (sequelize, DataTypes) => {
 		}
 	}, {
 		sequelize,
-		//updatedAt: false,
 		modelName: "Post",
 	});
 	return Post;
