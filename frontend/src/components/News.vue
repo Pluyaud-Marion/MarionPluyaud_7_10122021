@@ -400,15 +400,6 @@ export default {
             this.displayPosts();
             // appelle la fonction pour passer les balises de modification à false (non visibles)
             this.showInputUpdatePost(postId);
-
-            // this.posts = this.posts.map((post) => {
-            //   console.log("==>>", post.id);
-            //   console.log(postId);
-            //   if (post.id === postId) {
-            //     console.log("coucou");
-            //     return (post.content = this.updateTextPost);
-            //   }
-            // });
           })
           .catch((error) => console.log("il n'y a pas de texte", error));
       }
@@ -578,15 +569,16 @@ body {
 #input-post {
   border-radius: 10px;
   margin-bottom: 2%;
-  width: 80%;
+  width: 100%;
   font-size: 15px;
 }
 .container-create-post {
-  width: 100%;
+  width: 80%;
+  margin: 0 auto;
   .create-post {
     display: flex;
     flex-direction: column;
-    width: 90%;
+    width: 100%;
     .error-create-post {
       font-style: italic;
     }
@@ -599,7 +591,7 @@ body {
       background-color: #df7512;
       border: none;
       font-weight: bold;
-      font-size: small;
+      font-size: 16px;
       cursor: pointer;
       color: black;
       box-shadow: 0px 0px 4px;
@@ -624,7 +616,6 @@ body {
   font-size: large;
   color: red;
 }
-
 .vignette {
   margin-top: 5%;
   width: 80%;
@@ -643,7 +634,7 @@ body {
   .author {
     margin-top: 2%;
     font-weight: bold;
-    font-size: 15px;
+    font-size: 16px;
     text-align: initial;
     margin-left: 2%;
   }
@@ -682,7 +673,7 @@ body {
     text-align: left;
   }
   .container-post {
-    width: 90%;
+    width: 70%;
     margin: 0 auto;
     margin-top: 7%;
   }
@@ -704,7 +695,7 @@ body {
       background-color: #ff9830cc;
       border: none;
       font-weight: bold;
-      font-size: 12px;
+      font-size: 15px;
       cursor: pointer;
       box-shadow: 0px 0px 4px;
     }
@@ -867,15 +858,15 @@ body {
     .comments .comment {
       width: 80%;
     }
+    .container-post {
+      width: 100%;
+    }
   }
   .file {
     font-size: 10px;
   }
 }
 @media screen and (min-width: 1440px) {
-  #input-post {
-    width: 80%;
-  }
   #input-post,
   #file-post,
   .update-post,

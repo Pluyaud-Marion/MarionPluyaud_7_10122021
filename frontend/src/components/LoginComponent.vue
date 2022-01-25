@@ -107,19 +107,21 @@ export default {
 }
 .email,
 .password {
-  font-size: large;
+  font-size: 18px;
   font-weight: bold;
 }
 .email {
   margin-bottom: 8%;
   input {
     width: 250px;
+    font-size: 18px;
   }
 }
 .password {
   margin-bottom: 8%;
   input {
     width: 180px;
+    font-size: 18px;
   }
 }
 .button {
@@ -130,13 +132,19 @@ export default {
   border: none;
 
   font-weight: bold;
-  font-size: small;
+  font-size: 16px;
 }
 @media screen and (max-width: 480px) {
   .container {
     width: 100%;
     h2 {
       font-size: large;
+    }
+  }
+  .password,
+  .email {
+    input {
+      font-size: 15px;
     }
   }
 }

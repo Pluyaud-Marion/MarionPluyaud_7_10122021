@@ -174,6 +174,12 @@ h2 {
     display: flex;
     flex-direction: column;
     margin: 5%;
+    label {
+      font-size: 18px;
+    }
+    input {
+      font-size: 18px;
+    }
   }
   .button {
     width: 55%;
@@ -192,6 +198,14 @@ h2 {
     width: 100%;
     h2 {
       font-size: large;
+    }
+    .input {
+      label {
+        font-size: 15px;
+      }
+      input {
+        font-size: 15px;
+      }
     }
   }
 }
