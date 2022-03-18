@@ -11,21 +11,21 @@ const transporter = nodemailer.createTransport({
 	port : 465,
 	secure : true,
 	auth : {
-		user : process.env.EMAIL_ENVOI,
+		user : process.env.EMAIL_SEND,
 		pass: process.env.EMAIL_PASSWORD,
 	},
 });
 
 //paramétrage pour le dépassement de requête sur l'API globale
 const emailsParamsGlobal = {
-	from : process.env.EMAIL_ENVOI,
-	to : process.env.EMAIL_DESTINATAIRE,
+	from : process.env.EMAIL_SEND,
+	to : process.env.EMAIL_RECEIVED,
 	subject : "Attention danger sur l'application",
 	text : "Un utilisateur a effectué 50 requêtes en 15min sur l'application, il y a danger pour la sécurité de l'application"
 };
 //paramétrage pour le dépassement de requête sur le login
 const emailsParamsLogin = {
-	from : process.env.EMAIL_SENT,
+	from : process.env.EMAIL_SEND,
 	to : process.env.EMAIL_RECEIVED,
 	subject : "Attention danger sur l'application",
 	text : "Un utilisateur a fait plus de 5 tentatives de connexion sur l'application avec des identifiants invalides, il y a danger pour la sécurité de l'application"

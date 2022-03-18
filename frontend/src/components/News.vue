@@ -19,7 +19,7 @@
           <input
             class="file"
             id="file-post"
-            name="file"
+            name="file-post"
             type="file"
             v-on:change="fileChangePost"
           />
@@ -211,7 +211,11 @@
                 class="button-delete-com"
                 v-if="admin.length == 4 || userId == comment.UserId"
               >
-                <button @click="deleteComment(comment.id)" role="button">
+                <button
+                  @click="deleteComment(comment.id)"
+                  role="button"
+                  aria-label="bouton pour supprimer"
+                >
                   <label :for="'delete' + post.id">Boutton suppression</label>
                   <i
                     :id="'delete' + post.id"
